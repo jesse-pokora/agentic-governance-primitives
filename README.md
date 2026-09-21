@@ -63,7 +63,7 @@ agentic-governance-primitives/
 
 ## Status
 
-Phases 1–2 built. See [PLAN.md](PLAN.md) for the full catalog, phasing, and
+Phases 1–3 built. See [PLAN.md](PLAN.md) for the full catalog, phasing, and
 source mapping.
 
 | App | Enforcement | Status |
@@ -77,5 +77,10 @@ source mapping.
 | [execution-lock-and-recovery](apps/execution-lock-and-recovery) | deterministic | built |
 | [deterministic-primitives-kit](apps/deterministic-primitives-kit) | deterministic | built |
 | [workspace-attestation](apps/workspace-attestation) | deterministic | built |
+| [non-overlapping-error-mapping](apps/non-overlapping-error-mapping) | deterministic | built |
+| [canonical-outcome-reconciliation](apps/canonical-outcome-reconciliation) | deterministic | built |
+| [trusted-revision-anchor](apps/trusted-revision-anchor) | deterministic | built |
+| [typed-ledger-slot-supersession](apps/typed-ledger-slot-supersession) | deterministic | built |
 
-The remaining 9 apps in Phases 3–4 are planned but not yet scaffolded.
+The remaining 5 apps in Phase 4 (Tier 3 persona/agent architecture, Tier 4
+domain example) are planned but not yet scaffolded.
