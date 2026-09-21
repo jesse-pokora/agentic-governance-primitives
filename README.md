@@ -63,7 +63,7 @@ agentic-governance-primitives/
 
 ## Status
 
-Phase 1 built. See [PLAN.md](PLAN.md) for the full catalog, phasing, and
+Phases 1–2 built. See [PLAN.md](PLAN.md) for the full catalog, phasing, and
 source mapping.
 
 | App | Enforcement | Status |
@@ -72,5 +72,10 @@ source mapping.
 | [exact-plan-approval-gate](apps/exact-plan-approval-gate) | deterministic | built |
 | [authenticated-transition-ledger](apps/authenticated-transition-ledger) | deterministic | built |
 | [bounded-review-epoch-escalation](apps/bounded-review-epoch-escalation) | deterministic | built |
+| [governed-preflight-denial-evidence](apps/governed-preflight-denial-evidence) | deterministic | built |
+| [safe-failure-diagnostics](apps/safe-failure-diagnostics) | deterministic | built |
+| [execution-lock-and-recovery](apps/execution-lock-and-recovery) | deterministic | built |
+| [deterministic-primitives-kit](apps/deterministic-primitives-kit) | deterministic | built |
+| [workspace-attestation](apps/workspace-attestation) | deterministic | built |
 
-The remaining 14 apps in Phases 2–4 are planned but not yet scaffolded.
+The remaining 9 apps in Phases 3–4 are planned but not yet scaffolded.
