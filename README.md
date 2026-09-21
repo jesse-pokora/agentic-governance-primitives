@@ -63,8 +63,8 @@ agentic-governance-primitives/
 
 ## Status
 
-Phases 1–3 built. See [PLAN.md](PLAN.md) for the full catalog, phasing, and
-source mapping.
+All 18 apps built. See [PLAN.md](PLAN.md) for the full catalog, phasing,
+and source mapping.
 
 | App | Enforcement | Status |
 |---|---|---|
@@ -81,6 +81,11 @@ source mapping.
 | [canonical-outcome-reconciliation](apps/canonical-outcome-reconciliation) | deterministic | built |
 | [trusted-revision-anchor](apps/trusted-revision-anchor) | deterministic | built |
 | [typed-ledger-slot-supersession](apps/typed-ledger-slot-supersession) | deterministic | built |
+| [persona-capability-catalog](apps/persona-capability-catalog) | informational | built |
+| [single-purpose-adversarial-reviewer](apps/single-purpose-adversarial-reviewer) | hybrid | built |
+| [governed-context-provenance](apps/governed-context-provenance) | deterministic | built |
+| [deterministic-embedding-contract-check](apps/deterministic-embedding-contract-check) | deterministic | built |
+| [prompt-injection-scanner-mcp](apps/prompt-injection-scanner-mcp) | hybrid | built |
 
-The remaining 5 apps in Phase 4 (Tier 3 persona/agent architecture, Tier 4
-domain example) are planned but not yet scaffolded.
+Composing a few of these into a minimal pipeline is a possible future step
+(see PLAN.md's "Relationship to future IAB work"), not a default.

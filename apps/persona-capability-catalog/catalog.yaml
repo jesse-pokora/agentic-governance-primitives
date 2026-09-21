@@ -1,0 +1,7 @@
+personas:
+  reviewer-agent:
+    capabilities: [read_findings, submit_review]
+  deploy-agent:
+    capabilities: [read_findings, trigger_deploy]
+  triage-agent:
+    capabilities: [read_findings]

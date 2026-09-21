@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["personas"],
+  "additionalProperties": false,
+  "properties": {
+    "personas": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["capabilities"],
+        "additionalProperties": false,
+        "properties": {
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "enum": ["read_findings", "submit_review", "trigger_deploy"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
