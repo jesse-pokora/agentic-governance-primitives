@@ -63,5 +63,14 @@ agentic-governance-primitives/
 
 ## Status
 
-Planning stage. See [PLAN.md](PLAN.md) for the catalog of proposed apps,
-phasing, and source mapping. No app has been scaffolded yet.
+Phase 1 built. See [PLAN.md](PLAN.md) for the full catalog, phasing, and
+source mapping.
+
+| App | Enforcement | Status |
+|---|---|---|
+| [hash-pinned-identity](apps/hash-pinned-identity) | deterministic | built |
+| [exact-plan-approval-gate](apps/exact-plan-approval-gate) | deterministic | built |
+| [authenticated-transition-ledger](apps/authenticated-transition-ledger) | deterministic | built |
+| [bounded-review-epoch-escalation](apps/bounded-review-epoch-escalation) | deterministic | built |
+
+The remaining 14 apps in Phases 2–4 are planned but not yet scaffolded.
