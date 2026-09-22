@@ -122,7 +122,6 @@
   "claim": "A managed write replaces only the content between the exact markers \u2014 everything outside them survives byte for byte, and generated content carrying a marker of its own is refused rather than written.",
   "enforcement": "deterministic",
   "denial_type": "ManagedWriteDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "the agent rewrites its own block",
@@ -214,9 +213,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

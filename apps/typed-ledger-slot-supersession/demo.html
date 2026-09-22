@@ -122,7 +122,6 @@
   "claim": "A later record can only replace an earlier one by naming that exact slot key and the exact digest of the record it's replacing \u2014 a fork or missing predecessor fails closed.",
   "enforcement": "deterministic",
   "denial_type": "SupersessionDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "superseding while naming the exact predecessor digest",
@@ -206,9 +205,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

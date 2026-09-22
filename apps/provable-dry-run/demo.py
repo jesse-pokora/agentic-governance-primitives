@@ -45,7 +45,7 @@ def build() -> Trace:
     t.allow("a dry run over two writes",
             {"mode": "dry_run=True", "effects": "write AGENTS.md, write INDEX.md"},
             lambda: do_work(dry, guide, index),
-            evidence=lambda: f"files on disk: {os.listdir(tmp)}; effects performed: "
+            evidence=lambda: f"files on disk: {sorted(os.listdir(tmp))}; effects performed: "
                              f"{len(dry.performed)}")
     live = Executor(dry_run=False)
     t.allow("the same routine, live",

@@ -3,7 +3,6 @@
   "claim": "Generated output is accepted only if its headings are canonical, spelled exactly and in the declared order, with no wrapper fence, no empty section, and no more than the declared word bound \u2014 and the checker never repairs what it rejects.",
   "enforcement": "deterministic",
   "denial_type": "OutputShapeRejected",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a conforming document that omits two optional sections",

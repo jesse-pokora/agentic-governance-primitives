@@ -3,7 +3,6 @@
   "claim": "Every action must cite an objective declared for the run \u2014 an action citing nothing, or citing an objective never declared, is refused before it executes, and the declared set cannot be widened from inside the run.",
   "enforcement": "deterministic",
   "denial_type": "ObjectiveViolation",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "an action citing a declared objective",

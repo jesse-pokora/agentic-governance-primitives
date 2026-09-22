@@ -3,7 +3,6 @@
   "claim": "Every input key in a batch receives exactly one attributable success or failure outcome, in a fixed order \u2014 nothing silently dropped, nothing double-counted.",
   "enforcement": "deterministic",
   "denial_type": "n/a \u2014 this app returns one Outcome per key",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a batch where half the actions fail",

@@ -3,7 +3,6 @@
   "claim": "A dry run performs no effect and still produces the complete plan \u2014 and the plan a dry run produces is the same plan the live run produces, because both execute the same routine.",
   "enforcement": "deterministic",
   "denial_type": "EffectDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a dry run over two writes",
@@ -12,7 +11,7 @@
         "effects": "write AGENTS.md, write INDEX.md"
       },
       "outcome": "allowed",
-      "result": "[\"write <tmp>\\\\AGENTS.md: managed guide, 3 sections\", \"write <tmp>\\\\INDEX.md: index entry\"]",
+      "result": "[\"write <tmp>//AGENTS.md: managed guide, 3 sections\", \"write <tmp>//INDEX.md: index entry\"]",
       "reason": "",
       "detail": "",
       "evidence": "files on disk: []; effects performed: 0",
@@ -25,7 +24,7 @@
         "effects": "write AGENTS.md, write INDEX.md"
       },
       "outcome": "allowed",
-      "result": "[\"write <tmp>\\\\AGENTS.md: managed guide, 3 sections\", \"write <tmp>\\\\INDEX.md: index entry\"]",
+      "result": "[\"write <tmp>//AGENTS.md: managed guide, 3 sections\", \"write <tmp>//INDEX.md: index entry\"]",
       "reason": "",
       "detail": "",
       "evidence": "files on disk: ['AGENTS.md', 'INDEX.md']; effects performed: 2",

@@ -122,7 +122,6 @@
   "claim": "Only files matching the declared policy enter the agent's view, every excluded file is recorded with a fixed-vocabulary reason, and exceeding a declared cap stages nothing at all.",
   "enforcement": "deterministic",
   "denial_type": "StagingRefused",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "staging a small repository",
@@ -188,9 +187,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

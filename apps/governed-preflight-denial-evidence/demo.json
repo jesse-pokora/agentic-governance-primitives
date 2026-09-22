@@ -3,7 +3,6 @@
   "claim": "When a precondition fails, the system emits a fixed-shape, allowlisted-field denial record \u2014 never raw stderr, paths, or secrets.",
   "enforcement": "deterministic",
   "denial_type": "n/a \u2014 this app emits a denial record, it does not raise",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a precondition that holds emits no record at all",

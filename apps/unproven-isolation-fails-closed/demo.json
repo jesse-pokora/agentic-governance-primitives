@@ -3,7 +3,6 @@
   "claim": "A run proceeds only when isolation is verified by a probe that actually ran \u2014 an operator assertion and a child's capability declaration are recorded for audit and contribute nothing to the verdict.",
   "enforcement": "deterministic",
   "denial_type": "IsolationUnproven",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "two probes ran and both passed",

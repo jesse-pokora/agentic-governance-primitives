@@ -122,7 +122,6 @@
   "claim": "Authority can only shrink as it is delegated \u2014 each link in a chain may hold a subset of what the link before it held, never a capability its delegator did not have.",
   "enforcement": "deterministic",
   "denial_type": "DelegationDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a chain that narrows at every link",
@@ -216,9 +215,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

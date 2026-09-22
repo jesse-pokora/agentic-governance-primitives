@@ -3,7 +3,6 @@
   "claim": "One request passes through every declared gate in a fixed order, and the first gate that refuses stops it \u2014 no later gate is entered, no effect occurs, and the ledger records which gate refused.",
   "enforcement": "composition",
   "denial_type": "RequestRefused",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a request that satisfies every gate",

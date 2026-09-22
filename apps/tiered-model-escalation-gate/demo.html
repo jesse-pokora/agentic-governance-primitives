@@ -122,7 +122,6 @@
   "claim": "A cheap tier's output is used only if it passes the declared deterministic check \u2014 otherwise the call escalates to the next tier, and the ledger records which tier actually answered.",
   "enforcement": "hybrid",
   "denial_type": "NoTierPassed",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "the cheap tier returns output that passes the check",
@@ -190,9 +189,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

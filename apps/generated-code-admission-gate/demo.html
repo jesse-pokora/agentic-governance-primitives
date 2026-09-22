@@ -122,7 +122,6 @@
   "claim": "Model-generated code is admitted only if every import, call, and attribute access in its parsed AST is permitted by the declared policy \u2014 a denied program is never compiled and never runs.",
   "enforcement": "deterministic",
   "denial_type": "AdmissionDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "generated code using only permitted names",
@@ -214,9 +213,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

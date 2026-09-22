@@ -3,7 +3,6 @@
   "claim": "A run executes only under the exact instruction set it pinned \u2014 a single edited byte, an added file, a removed file, or two files swapping contents all fail closed before the run starts.",
   "enforcement": "deterministic",
   "denial_type": "InstructionDrift",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "the instruction set is byte-for-byte the pinned one",

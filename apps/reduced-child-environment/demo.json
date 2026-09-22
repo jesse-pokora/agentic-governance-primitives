@@ -3,7 +3,6 @@
   "claim": "A child process receives only the variables a declared policy passes through \u2014 every other variable in the parent's environment, including ones nobody anticipated, is absent rather than redacted.",
   "enforcement": "deterministic",
   "denial_type": "EnvironmentDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "building the child environment from an allowlist",

@@ -122,7 +122,6 @@
   "claim": "When two memory records assert different values for the same key, both are retained and the conflict is surfaced \u2014 the newer one never silently overwrites the older, and the key has no answer until someone resolves it.",
   "enforcement": "deterministic",
   "denial_type": "MemoryRejected",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "run-1 writes a key nobody has claimed",
@@ -208,9 +207,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

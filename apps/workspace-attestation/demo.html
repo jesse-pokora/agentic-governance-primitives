@@ -122,7 +122,6 @@
   "claim": "A governed run's claimed file changes are diffed against a real git-worktree snapshot taken immediately before and after \u2014 a claim that doesn't match the diff fails closed.",
   "enforcement": "deterministic",
   "denial_type": "AttestationMismatch",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "the run claims exactly what it did",
@@ -178,9 +177,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

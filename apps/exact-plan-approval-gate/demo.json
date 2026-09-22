@@ -3,7 +3,6 @@
   "claim": "A destructive action can only be approved by echoing back the exact SHA-256 of the plan that was shown \u2014 a \"yes\" with no hash is rejected.",
   "enforcement": "deterministic",
   "denial_type": "ApprovalDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "the operator echoes the exact hash of the plan shown",

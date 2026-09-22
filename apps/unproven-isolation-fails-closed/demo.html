@@ -122,7 +122,6 @@
   "claim": "A run proceeds only when isolation is verified by a probe that actually ran \u2014 an operator assertion and a child's capability declaration are recorded for audit and contribute nothing to the verdict.",
   "enforcement": "deterministic",
   "denial_type": "IsolationUnproven",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "two probes ran and both passed",
@@ -230,9 +229,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

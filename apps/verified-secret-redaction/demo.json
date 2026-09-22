@@ -3,7 +3,6 @@
   "claim": "No registered secret can appear in an emitted artifact \u2014 the emitter redacts, then re-reads its own serialized output and refuses to emit if any secret survived.",
   "enforcement": "deterministic",
   "denial_type": "RedactionFailure",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a secret nested inside an artifact",

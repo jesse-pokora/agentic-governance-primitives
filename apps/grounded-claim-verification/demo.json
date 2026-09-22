@@ -3,7 +3,6 @@
   "claim": "Every factual claim a model emits must name a ground-truth key that exists and quote that record's value exactly \u2014 an uncited claim, an invented source, or an altered quote fails closed.",
   "enforcement": "deterministic",
   "denial_type": "GroundingRejected",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "claims that cite held records and quote them exactly",

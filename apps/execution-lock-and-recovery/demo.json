@@ -3,7 +3,6 @@
   "claim": "A crashed run leaves a lock that only an explicit, challenge-authenticated operator attestation can clear \u2014 the system never infers liveness on its own.",
   "enforcement": "deterministic",
   "denial_type": "LockHeld / RecoveryDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a second run tries to take a lock that is already held",

@@ -122,7 +122,6 @@
   "claim": "A write is denied before any bytes touch disk unless its fully resolved path lies inside the declared scope root \u2014 traversal, absolute paths, prefix siblings, and symlink escapes all fail closed.",
   "enforcement": "deterministic",
   "denial_type": "WriteDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "a path inside the scope root",
@@ -131,7 +130,7 @@
         "path": "notes/toy.txt"
       },
       "outcome": "allowed",
-      "result": "<tmp>\\work\\notes\\toy.txt",
+      "result": "<tmp>/work/notes/toy.txt",
       "reason": "",
       "detail": "",
       "evidence": "file written, parent directory created inside the scope",
@@ -146,7 +145,7 @@
       "outcome": "denied",
       "result": "",
       "reason": "traversal_escape",
-      "detail": "<tmp>\\outside\\stolen.txt",
+      "detail": "<tmp>/outside/stolen.txt",
       "evidence": "target exists afterwards: False",
       "note": ""
     },
@@ -159,7 +158,7 @@
       "outcome": "denied",
       "result": "",
       "reason": "outside_scope",
-      "detail": "<tmp>\\outside\\stolen.txt",
+      "detail": "<tmp>/outside/stolen.txt",
       "evidence": "target exists afterwards: False",
       "note": ""
     },
@@ -172,7 +171,7 @@
       "outcome": "denied",
       "result": "",
       "reason": "outside_scope",
-      "detail": "<tmp>\\work-evil\\stolen.txt",
+      "detail": "<tmp>/work-evil/stolen.txt",
       "evidence": "",
       "note": "A startswith() containment check allows this write. Containment is compared component-wise instead."
     },
@@ -186,7 +185,7 @@
       "outcome": "denied",
       "result": "",
       "reason": "symlink_escape",
-      "detail": "<tmp>\\work\\escape_hatch\\stolen.txt -> <tmp>\\outside\\stolen.txt",
+      "detail": "<tmp>/work/escape_hatch/stolen.txt -> <tmp>/outside/stolen.txt",
       "evidence": "target exists afterwards: False",
       "note": "Looks inside lexically; resolves outside. Both paths are compared."
     }
@@ -204,9 +203,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

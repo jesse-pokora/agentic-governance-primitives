@@ -12,7 +12,6 @@ beside it; `demos/render.py` turns that JSON into a self-contained `demo.html`.
 from __future__ import annotations
 
 import json
-import platform
 import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -138,7 +137,13 @@ class Trace:
             for volatile, placeholder in self.redactions.items():
                 if volatile:
                     value = value.replace(volatile, placeholder)
-            return value
+            # Render path separators the same way everywhere. A recording is a
+            # committed artifact that CI regenerates on a different operating
+            # system; without this, the same code produces a different file on
+            # Windows and on Linux, and the byte-stability check becomes a test
+            # of where it ran. The apps themselves are untouched — only how a
+            # recorded string is displayed.
+            return value.replace("\\", "/")
         if isinstance(value, dict):
             return {self._scrub(k): self._scrub(v) for k, v in value.items()}
         if isinstance(value, list):
@@ -147,12 +152,16 @@ class Trace:
 
     def write(self, demo_file: str) -> Path:
         out = Path(demo_file).resolve().parent / "demo.json"
+        # Deliberately no interpreter version or timestamp. Provenance that
+        # changes with the environment turns every recording into a diff on
+        # somebody else's machine, and the thing worth asserting — that these
+        # steps came from running the real module — does not depend on which
+        # CPython ran it.
         payload = {
             "app": self.app,
             "claim": self.claim,
             "enforcement": self.enforcement,
             "denial_type": self.denial_type,
-            "recorded_with": f"CPython {platform.python_version()}",
             "steps": [self._scrub(asdict(step)) for step in self.steps],
         }
         # Explicit LF: recordings are committed and compared byte for byte,

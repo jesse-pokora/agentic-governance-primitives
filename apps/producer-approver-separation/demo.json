@@ -3,7 +3,6 @@
   "claim": "Whoever produced an artifact cannot approve it, and an approval is bound to the exact digest it covers \u2014 a rename, a delegate, or a later edit all fail closed.",
   "enforcement": "deterministic",
   "denial_type": "ApprovalDenied",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "an independent approver naming the exact digest",

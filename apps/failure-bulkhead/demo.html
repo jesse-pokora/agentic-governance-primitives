@@ -122,7 +122,6 @@
   "claim": "After a declared number of consecutive failures the breaker opens and every subsequent call fails fast without invoking the dependency \u2014 and it closes only when an explicit probe, allowed no earlier than a declared cooldown, actually succeeds.",
   "enforcement": "deterministic",
   "denial_type": "BreakerOpen",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "failure 1, below the threshold of 3",
@@ -244,9 +243,8 @@
     data.enforcement + " · denials raise " + data.denial_type +
     " · " + data.steps.length + " steps";
   document.getElementById("foot").innerHTML =
-    "Every step on this page was produced by running the app's real module — " +
-    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
-    "Regenerate with <code>python demo.py</code>.";
+    "Every step on this page was produced by running the app's real module, " +
+    "not reimplemented in JavaScript. Regenerate with <code>python demo.py</code>.";
 
   const esc = s => String(s == null ? "" : s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

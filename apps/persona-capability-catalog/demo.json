@@ -3,7 +3,6 @@
   "claim": "\"Who is allowed to do what\" (a YAML+JSON-Schema catalog) is fully separate from \"what's running right now\" (a runtime process list) \u2014 you can audit the first without touching the second.",
   "enforcement": "informational",
   "denial_type": "n/a \u2014 this app is a catalog, it denies nothing",
-  "recorded_with": "CPython 3.10.11",
   "steps": [
     {
       "label": "auditing the declared catalog",
