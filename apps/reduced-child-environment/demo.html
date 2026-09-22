@@ -150,16 +150,17 @@
       "note": "The property an allowlist has and a denylist cannot: it covers the variables that did not exist when the policy was written."
     },
     {
-      "label": "a real child process dumping its own environment",
+      "label": "a real child process, asked which seeded variables it can see",
       "request": {
-        "launched": "<python> -c '<dump env>'"
+        "launched": "<python> -c '<dump env>'",
+        "looking for": "AWS_SECRET_ACCESS_KEY, GITHUB_TOKEN, OPERATOR_SSH_KEY, SOME_FUTURE_SECRET, MODEL_ENDPOINT"
       },
       "outcome": "allowed",
-      "result": "[\"MODEL_ENDPOINT\", \"PATH\", \"SYSTEMROOT\"]",
+      "result": "{\"AWS_SECRET_ACCESS_KEY\": false, \"GITHUB_TOKEN\": false, \"OPERATOR_SSH_KEY\": false, \"SOME_FUTURE_SECRET\": false, \"MODEL_ENDPOINT\": true}",
       "reason": "",
       "detail": "",
-      "evidence": "no AWS_SECRET_ACCESS_KEY, no GITHUB_TOKEN, no SSH key",
-      "note": "Absent, not redacted: a variable that is not there cannot be read by anything the child runs later."
+      "evidence": "every seeded secret absent; the passthrough present",
+      "note": "Reported per variable rather than as the child's whole key list, because the interpreter adds variables of its own at startup \u2014 CPython sets LC_CTYPE on POSIX under locale coercion. The claim is about what the policy passes through from the parent, not about the child's environment being exactly one set."
     },
     {
       "label": "declining the platform essentials too",

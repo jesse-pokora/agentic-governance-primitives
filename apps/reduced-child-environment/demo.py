@@ -44,12 +44,21 @@ def build() -> Trace:
             evidence=lambda: "absent anyway",
             note="The property an allowlist has and a denylist cannot: it covers the "
                  "variables that did not exist when the policy was written.")
-    t.allow("a real child process dumping its own environment",
-            {"launched": "<python> -c '<dump env>'"},
-            lambda: run(sys.executable, ["-c", DUMP], PARENT, POLICY).stdout.strip(),
-            evidence=lambda: "no AWS_SECRET_ACCESS_KEY, no GITHUB_TOKEN, no SSH key",
-            note="Absent, not redacted: a variable that is not there cannot be read by "
-                 "anything the child runs later.")
+    t.allow("a real child process, asked which seeded variables it can see",
+            {"launched": "<python> -c '<dump env>'",
+             "looking for": "AWS_SECRET_ACCESS_KEY, GITHUB_TOKEN, OPERATOR_SSH_KEY, "
+                            "SOME_FUTURE_SECRET, MODEL_ENDPOINT"},
+            lambda: {
+                name: name in run(sys.executable, ["-c", DUMP], PARENT, POLICY).stdout
+                for name in ("AWS_SECRET_ACCESS_KEY", "GITHUB_TOKEN",
+                             "OPERATOR_SSH_KEY", "SOME_FUTURE_SECRET", "MODEL_ENDPOINT")
+            },
+            evidence=lambda: "every seeded secret absent; the passthrough present",
+            note="Reported per variable rather than as the child's whole key list, "
+                 "because the interpreter adds variables of its own at startup — "
+                 "CPython sets LC_CTYPE on POSIX under locale coercion. The claim is "
+                 "about what the policy passes through from the parent, not about the "
+                 "child's environment being exactly one set.")
     t.allow("declining the platform essentials too",
             {"include_platform_essentials": False},
             lambda: sorted(build_child_environment(

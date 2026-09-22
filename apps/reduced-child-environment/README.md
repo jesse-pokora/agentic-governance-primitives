@@ -38,6 +38,14 @@ Two supporting decisions:
 - **An injected value colliding with a passthrough is refused.** Silently
   choosing one would make the child's environment depend on evaluation order.
 
+**One honest limit.** The claim is about what the policy passes through *from
+the parent*. A child process also gets whatever its own runtime sets at
+startup — CPython adds `LC_CTYPE` on POSIX under PEP 538 locale coercion, for
+instance — so the child's environment is not exactly the constructed set, and
+this app does not claim it is. What it guarantees is that nothing reaches the
+child *from the parent* except what was allowed. CI found this by regenerating
+the demo on Linux.
+
 The test suite launches a real child process that dumps its own environment as
 JSON, and asserts the seeded secrets are not in the output — including one set
 on this test process itself, to show the child is not inheriting by another
