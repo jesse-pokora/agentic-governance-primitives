@@ -172,6 +172,19 @@ governed agent and asking which of its themes had no teaching app here.
 | [producer-approver-separation](apps/producer-approver-separation) | deterministic | built |
 | [provable-dry-run](apps/provable-dry-run) | deterministic | built |
 | [validated-artifact-reuse](apps/validated-artifact-reuse) | deterministic | built |
+
+
+### v1.4 — the multi-agent risks, as primitives
+
+The risks that involve more than one agent, built as contracts rather than as
+an orchestrator: an envelope is not a bus, and a breaker is not a scheduler.
+
+| App | Enforcement | Status |
+|---|---|---|
+| [failure-bulkhead](apps/failure-bulkhead) | deterministic | built |
+| [authenticated-agent-message](apps/authenticated-agent-message) | deterministic | built |
+| [delegation-scope-attenuation](apps/delegation-scope-attenuation) | deterministic | built |
+| [declared-objective-conformance](apps/declared-objective-conformance) | deterministic | built |
 <!-- END MANAGED BLOCK -->
 
 ## What the catalog adds up to

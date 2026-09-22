@@ -53,6 +53,33 @@
       "strength": "direct"
     },
     {
+      "name": "authenticated-agent-message",
+      "tier": 3,
+      "release": "v1.4",
+      "asi": [
+        "ASI07"
+      ],
+      "nist": [
+        "AU-10",
+        "SC-8",
+        "SI-10"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct",
+      "claim": "A message between agents is accepted only if it is signed by a sender the recipient knows, addressed to that recipient, and carries a sequence number strictly greater than the last one accepted from that sender.",
+      "enforcement": "deterministic",
+      "denial_type": "MessageRejected",
+      "modules": [
+        "agent_message.py"
+      ],
+      "tests": [
+        "test_agent_message.py"
+      ],
+      "demo_steps": 7
+    },
+    {
       "name": "authenticated-transition-ledger",
       "tier": 1,
       "release": "v1",
@@ -233,6 +260,60 @@
       "strength": "direct"
     },
     {
+      "name": "declared-objective-conformance",
+      "tier": 5,
+      "release": "v1.4",
+      "asi": [
+        "ASI10"
+      ],
+      "nist": [
+        "AC-3",
+        "AU-12"
+      ],
+      "iso": [
+        "A.9.4"
+      ],
+      "strength": "direct",
+      "claim": "Every action must cite an objective declared for the run — an action citing nothing, or citing an objective never declared, is refused before it executes, and the declared set cannot be widened from inside the run.",
+      "enforcement": "deterministic",
+      "denial_type": "ObjectiveViolation",
+      "modules": [
+        "objectives.py"
+      ],
+      "tests": [
+        "test_objectives.py"
+      ],
+      "demo_steps": 7
+    },
+    {
+      "name": "delegation-scope-attenuation",
+      "tier": 3,
+      "release": "v1.4",
+      "asi": [
+        "ASI03",
+        "ASI07"
+      ],
+      "nist": [
+        "AC-3",
+        "AC-4",
+        "AC-6"
+      ],
+      "iso": [
+        "A.9.4"
+      ],
+      "strength": "direct",
+      "claim": "Authority can only shrink as it is delegated — each link in a chain may hold a subset of what the link before it held, never a capability its delegator did not have.",
+      "enforcement": "deterministic",
+      "denial_type": "DelegationDenied",
+      "modules": [
+        "delegation.py"
+      ],
+      "tests": [
+        "test_delegation.py"
+      ],
+      "demo_steps": 6
+    },
+    {
       "name": "deterministic-embedding-contract-check",
       "tier": 4,
       "release": "v1",
@@ -361,6 +442,32 @@
         "A.6.2.6"
       ],
       "strength": "partial"
+    },
+    {
+      "name": "failure-bulkhead",
+      "tier": 2,
+      "release": "v1.4",
+      "asi": [
+        "ASI08"
+      ],
+      "nist": [
+        "SC-5",
+        "CP-10"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct",
+      "claim": "After a declared number of consecutive failures the breaker opens and every subsequent call fails fast without invoking the dependency — and it closes only when an explicit probe, allowed no earlier than a declared cooldown, actually succeeds.",
+      "enforcement": "deterministic",
+      "denial_type": "BreakerOpen",
+      "modules": [
+        "bulkhead.py"
+      ],
+      "tests": [
+        "test_bulkhead.py"
+      ],
+      "demo_steps": 8
     },
     {
       "name": "forward-only-revert-journal",

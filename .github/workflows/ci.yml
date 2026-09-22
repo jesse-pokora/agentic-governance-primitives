@@ -25,6 +25,11 @@ jobs:
       - name: Run every app's tests and re-record every demo
         run: python run_all.py --demos
 
+      # claims.json is the single source of truth. This fails when an app has no
+      # entry, when an entry has no app, or when a recorded claim has moved.
+      - name: Check claims.json covers every app and is current
+        run: python tools/sync_claims.py --check
+
       - name: Check the documents match claims.json
         run: python tools/generate_docs.py --check
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>managed-block-confinement — demo</title>
+<title>failure-bulkhead — demo</title>
 <style>
   :root {
     --bg: #fbfbfa; --panel: #ffffff; --ink: #1a1a18; --muted: #6b6b66;
@@ -118,87 +118,117 @@
 </div>
 
 <script id="trace" type="application/json">{
-  "app": "managed-block-confinement",
-  "claim": "A managed write replaces only the content between the exact markers \u2014 everything outside them survives byte for byte, and generated content carrying a marker of its own is refused rather than written.",
+  "app": "failure-bulkhead",
+  "claim": "After a declared number of consecutive failures the breaker opens and every subsequent call fails fast without invoking the dependency \u2014 and it closes only when an explicit probe, allowed no earlier than a declared cooldown, actually succeeds.",
   "enforcement": "deterministic",
-  "denial_type": "ManagedWriteDenied",
+  "denial_type": "BreakerOpen",
   "recorded_with": "CPython 3.10.11",
   "steps": [
     {
-      "label": "the agent rewrites its own block",
+      "label": "failure 1, below the threshold of 3",
       "request": {
-        "document": "human text + managed block + human text",
-        "new content": "generated v2"
+        "state": "closed",
+        "consecutive failures": 0
       },
       "outcome": "allowed",
-      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\r\ngenerated v2\r\n<!-- END MANAGED BLOCK -->\r\n## Notes\r\n\tstill hand-written\r\n",
+      "result": "dependency raised: toy dependency is down",
       "reason": "",
       "detail": "",
-      "evidence": "text above and below the markers is the original bytes, CRLF endings and trailing spaces included",
-      "note": "Rewriting the whole file is the usual approach, and it silently normalizes exactly this."
-    },
-    {
-      "label": "generated content carrying a start marker",
-      "request": {
-        "new content": "sneaky\n<!-- BEGIN MANAGED BLOCK -->\nsecond block"
-      },
-      "outcome": "denied",
-      "result": "",
-      "reason": "marker_injection",
-      "detail": "generated content carries a managed-block marker",
-      "evidence": "the file was never opened \u2014 the render is pure and refused first",
-      "note": "Two start markers means no single managed region, and every later edit would have to guess which one the agent owns."
-    },
-    {
-      "label": "generated content carrying an end marker",
-      "request": {
-        "new content": "<!-- END MANAGED BLOCK -->\nand then text pretending to be human"
-      },
-      "outcome": "denied",
-      "result": "",
-      "reason": "marker_injection",
-      "detail": "generated content carries a managed-block marker",
-      "evidence": "",
-      "note": "The inverse trick: escape the block and write below it."
-    },
-    {
-      "label": "a document that already contains two blocks",
-      "request": {
-        "document": "two managed blocks",
-        "new content": "which one is mine?"
-      },
-      "outcome": "denied",
-      "result": "",
-      "reason": "duplicate_markers",
-      "detail": "start=2 end=2",
-      "evidence": "",
-      "note": "Ambiguity fails closed. Absence does not \u2014 a document with no block yet is legal, and the block is created without moving anything."
-    },
-    {
-      "label": "creating the block for the first time",
-      "request": {
-        "document": "human text only, no markers",
-        "new content": "first generation"
-      },
-      "outcome": "allowed",
-      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\r\nfirst generation\r\n<!-- END MANAGED BLOCK -->\r\n",
-      "reason": "",
-      "detail": "",
-      "evidence": "exactly one block; temp files left behind: []",
+      "evidence": "dependency invoked 1 time(s); state closed",
       "note": ""
     },
     {
-      "label": "writing the same content a second time",
+      "label": "failure 2, below the threshold of 3",
       "request": {
-        "new content": "first generation",
-        "call": "2nd"
+        "state": "closed",
+        "consecutive failures": 1
       },
       "outcome": "allowed",
-      "result": "identical document, still exactly one block",
+      "result": "dependency raised: toy dependency is down",
       "reason": "",
       "detail": "",
+      "evidence": "dependency invoked 2 time(s); state closed",
+      "note": ""
+    },
+    {
+      "label": "failure 3 reaches the threshold and opens the breaker",
+      "request": {
+        "state": "closed",
+        "consecutive failures": 2,
+        "threshold": 3
+      },
+      "outcome": "allowed",
+      "result": "dependency raised: toy dependency is down",
+      "reason": "",
+      "detail": "",
+      "evidence": "state open; opened at tick 0",
+      "note": ""
+    },
+    {
+      "label": "the next fifty calls, with the breaker open",
+      "request": {
+        "state": "open",
+        "calls attempted": 50
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "circuit_open",
+      "detail": "opened at 0, cooldown 60",
+      "evidence": "dependency invoked 0 more times",
+      "note": "The retries are what carry one broken service outward into a queue of stuck runs. This is the thousandth error, not the first."
+    },
+    {
+      "label": "a normal call long after the cooldown elapsed",
+      "request": {
+        "state": "open",
+        "ticks since opening": 10000,
+        "cooldown": 60
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "circuit_open",
+      "detail": "opened at 0, cooldown 60",
       "evidence": "",
-      "note": "A re-run is a no-op, not a slow accumulation of blocks."
+      "note": "Time passing is not evidence of recovery. A breaker that closed on a timer would decide a service is healthy without ever asking it."
+    },
+    {
+      "label": "a probe that finds the dependency still down",
+      "request": {
+        "state": "open",
+        "cooldown": "elapsed"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "toy dependency is down",
+      "detail": "",
+      "evidence": "reopened at tick 10000; cooldown restarted",
+      "note": ""
+    },
+    {
+      "label": "a second probe immediately afterwards",
+      "request": {
+        "ticks since reopening": 0,
+        "cooldown": 60
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "cooldown_not_elapsed",
+      "detail": "0 < 60",
+      "evidence": "",
+      "note": "A failed probe restarts the cooldown, or a down dependency gets hammered on every call once the first cooldown passes."
+    },
+    {
+      "label": "a probe that finds the dependency healthy",
+      "request": {
+        "ticks since reopening": 60,
+        "cooldown": 60
+      },
+      "outcome": "allowed",
+      "result": "toy result",
+      "reason": "",
+      "detail": "",
+      "evidence": "state closed; transitions [('open', 'threshold_reached'), ('open', 'probe_failed'), ('closed', 'probe_succeeded')]",
+      "note": ""
     }
   ]
 }</script>

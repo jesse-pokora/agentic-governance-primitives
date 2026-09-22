@@ -40,6 +40,15 @@ If, after building the individual apps below, composing two or three of them
 into a minimal pipeline turns out to be the best teaching tool, that's a
 deliberate later decision — not the default.
 
+**A clarification added in v1.4.** This list rules out orchestration, not every
+risk that involves more than one agent. A message *bus* is orchestration; a
+signed, addressed, sequenced *envelope* is a primitive. A *scheduler* is
+orchestration; a *circuit breaker* around one dependency is a primitive. The
+catalog spent three revisions treating "multi-agent risk" and "multi-agent
+orchestration" as the same category, and left three published risks uncovered
+for a reason that did not apply to them. The rule did not change; the reading
+of it was wrong.
+
 ## App catalog
 
 ### Tier 1 — Deterministic security primitives
@@ -105,6 +114,7 @@ them is on the out-of-scope list above.
 | `provable-dry-run` | A dry run performs no effect and still produces the complete plan, and that plan is the same plan the live run produces. | deterministic | Nothing demonstrated that a preview is a preview of the real thing. |
 | `canonical-output-shape` | Generated output is accepted only if its headings are canonical, in the declared order, with no wrapper fence, no empty section, and within the word bound — and the checker never repairs what it rejects. | deterministic | `single-purpose-adversarial-reviewer` checks a payload schema; nothing checked the shape of prose an agent produces. |
 | `validated-artifact-reuse` | An existing artifact is reused only when it is still valid for the inputs at hand, and every decision records which way it went and why. | deterministic | Nothing addressed reuse, where the dangerous failure is a fast confident answer from inputs that have since changed. |
+| `failure-bulkhead` | After a declared number of consecutive failures the breaker opens and every subsequent call fails fast without invoking the dependency; it closes only when an explicit probe actually succeeds. | deterministic | Nothing stopped an agent hammering a dependency that was already down, which is what carries one failure outward. |
 | `concurrent-append-integrity` | Under concurrent writers an append-only ledger admits exactly one entry per accepted append, with contiguous indices and an unbroken chain — a writer whose predecessor moved is rejected. | deterministic | `execution-lock-and-recovery` covers a crashed run's lock; nothing covered two live writers. |
 
 `attested-rollback-checkpoint` originally carried both of those rules in one
@@ -131,6 +141,8 @@ them is on the out-of-scope list above.
 | App | Atomic claim | Enforcement | Fills the gap left by |
 |---|---|---|---|
 | `capability-gated-tool-invocation` | A tool call runs only if the calling persona's declared capability set contains that tool's exact required capability — and a denied call never enters the tool function at all. | deterministic | `persona-capability-catalog` declares who may do what but denies nothing; Tier 3 had the declaration half without the enforcement half. |
+| `authenticated-agent-message` | A message between agents is accepted only if it is signed by a known sender, addressed to that recipient, and carries a sequence strictly greater than the last accepted from that sender. | deterministic | ASI07 had no app because "multi-agent" was read as "orchestration". An envelope is not a bus. |
+| `delegation-scope-attenuation` | Authority can only shrink as it is delegated — each link may hold a subset of what the link before it held, never a capability its delegator did not have. | deterministic | Nothing stopped a sub-agent asking for more than its delegator could have asked for. |
 
 ### Tier 4 — Domain example
 *Inspired by: deterministic verification of a vendor API's exact request
@@ -152,6 +164,7 @@ v1.2.*
 | `grounded-claim-verification` | Every factual claim must name a ground-truth key that exists and quote its value exactly — uncited, invented-source, and altered-quote all fail closed. | deterministic | Nothing checked whether generated content stayed anchored to what the system actually holds. |
 | `memory-conflict-quarantine` | Two memory records asserting different values for one key are both retained and surfaced — the newer never silently overwrites the older. | deterministic | `governed-context-provenance` tags context going in; nothing governed contradiction in what is remembered. |
 | `tiered-model-escalation-gate` | A cheap tier's output is used only if it passes the declared deterministic check; otherwise it escalates, and the ledger records which tier answered. | hybrid | Nothing made "we asked the cheap model first" unable to become a reason output reaches a caller unchecked. |
+| `declared-objective-conformance` | Every action must cite an objective declared for the run, and the declared set cannot be widened from inside the run. | deterministic | Nothing made goal drift checkable: an agent goes off-mission one reasonable-looking action at a time. |
 
 **Deliberately not in this tier:** *instruction-adherence* drift — whether a
 model still follows the instructions it was given. That is the Instruction
@@ -164,7 +177,9 @@ corpus and a scorer, not a primitive.
 padding. Anything that doesn't reduce to one atomic claim gets split or cut.
 
 v1.1 adds 10 gap-closure apps and v1.2 adds Tier 5's 4 plus
-`generated-code-admission-gate`, for 33. v1.3 adds 10 more, for 43 in total.
+`generated-code-admission-gate`, for 33. v1.3 adds 10 more, for 43. v1.4 adds
+the last 4, for 47 in total — every risk in the OWASP Top 10 for Agentic
+Applications 2026 now has at least one app demonstrating a control for it.
 
 The v1.3 set was derived differently from the others: by reading an atomic
 instruction and test matrix for one real governed agent — 192 criteria bound to

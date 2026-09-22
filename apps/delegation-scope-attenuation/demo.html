@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>managed-block-confinement — demo</title>
+<title>delegation-scope-attenuation — demo</title>
 <style>
   :root {
     --bg: #fbfbfa; --panel: #ffffff; --ink: #1a1a18; --muted: #6b6b66;
@@ -118,87 +118,89 @@
 </div>
 
 <script id="trace" type="application/json">{
-  "app": "managed-block-confinement",
-  "claim": "A managed write replaces only the content between the exact markers \u2014 everything outside them survives byte for byte, and generated content carrying a marker of its own is refused rather than written.",
+  "app": "delegation-scope-attenuation",
+  "claim": "Authority can only shrink as it is delegated \u2014 each link in a chain may hold a subset of what the link before it held, never a capability its delegator did not have.",
   "enforcement": "deterministic",
-  "denial_type": "ManagedWriteDenied",
+  "denial_type": "DelegationDenied",
   "recorded_with": "CPython 3.10.11",
   "steps": [
     {
-      "label": "the agent rewrites its own block",
+      "label": "a chain that narrows at every link",
       "request": {
-        "document": "human text + managed block + human text",
-        "new content": "generated v2"
+        "orchestrator": "repo.read, repo.write, deploy.execute",
+        "planner-agent": "repo.read, repo.write",
+        "worker-agent": "repo.read"
       },
       "outcome": "allowed",
-      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\r\ngenerated v2\r\n<!-- END MANAGED BLOCK -->\r\n## Notes\r\n\tstill hand-written\r\n",
+      "result": "[\"repo.read\"]",
       "reason": "",
       "detail": "",
-      "evidence": "text above and below the markers is the original bytes, CRLF endings and trailing spaces included",
-      "note": "Rewriting the whole file is the usual approach, and it silently normalizes exactly this."
-    },
-    {
-      "label": "generated content carrying a start marker",
-      "request": {
-        "new content": "sneaky\n<!-- BEGIN MANAGED BLOCK -->\nsecond block"
-      },
-      "outcome": "denied",
-      "result": "",
-      "reason": "marker_injection",
-      "detail": "generated content carries a managed-block marker",
-      "evidence": "the file was never opened \u2014 the render is pure and refused first",
-      "note": "Two start markers means no single managed region, and every later edit would have to guess which one the agent owns."
-    },
-    {
-      "label": "generated content carrying an end marker",
-      "request": {
-        "new content": "<!-- END MANAGED BLOCK -->\nand then text pretending to be human"
-      },
-      "outcome": "denied",
-      "result": "",
-      "reason": "marker_injection",
-      "detail": "generated content carries a managed-block marker",
-      "evidence": "",
-      "note": "The inverse trick: escape the block and write below it."
-    },
-    {
-      "label": "a document that already contains two blocks",
-      "request": {
-        "document": "two managed blocks",
-        "new content": "which one is mine?"
-      },
-      "outcome": "denied",
-      "result": "",
-      "reason": "duplicate_markers",
-      "detail": "start=2 end=2",
-      "evidence": "",
-      "note": "Ambiguity fails closed. Absence does not \u2014 a document with no block yet is legal, and the block is created without moving anything."
-    },
-    {
-      "label": "creating the block for the first time",
-      "request": {
-        "document": "human text only, no markers",
-        "new content": "first generation"
-      },
-      "outcome": "allowed",
-      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\r\nfirst generation\r\n<!-- END MANAGED BLOCK -->\r\n",
-      "reason": "",
-      "detail": "",
-      "evidence": "exactly one block; temp files left behind: []",
+      "evidence": "may read: True; may write: False",
       "note": ""
     },
     {
-      "label": "writing the same content a second time",
+      "label": "a sub-agent claiming more than its delegator held",
       "request": {
-        "new content": "first generation",
-        "call": "2nd"
+        "planner-agent": "repo.read",
+        "worker-agent": "repo.read, deploy.execute"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "amplified_capability",
+      "detail": "worker-agent claims deploy.execute at depth 2",
+      "evidence": "",
+      "note": "Without this rule, delegation is a laundering step: the sub-agent asks for more than its delegator could have, and nothing downstream can tell the difference."
+    },
+    {
+      "label": "a capability re-acquired four links down",
+      "request": {
+        "chain": "orchestrator -> a -> b -> c -> d",
+        "d re-claims": "repo.write"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "amplified_capability",
+      "detail": "d claims repo.write at depth 4",
+      "evidence": "the denial names the capability and the depth",
+      "note": ""
+    },
+    {
+      "label": "a loop back to an earlier actor",
+      "request": {
+        "chain": "orchestrator -> planner-agent -> orchestrator"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "delegation_loop",
+      "detail": "orchestrator appears twice",
+      "evidence": "",
+      "note": "A loop lets authority be re-derived from a later link, which is amplification wearing a longer path."
+    },
+    {
+      "label": "a near-miss capability name",
+      "request": {
+        "root holds": "repo.read",
+        "sub claims": "repo.read_secrets"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "amplified_capability",
+      "detail": "sub claims repo.read_secrets at depth 1",
+      "evidence": "",
+      "note": "Names are compared exactly. A gate that read structure into them would turn every new capability name into a silent policy change."
+    },
+    {
+      "label": "delegating the work while delegating no authority",
+      "request": {
+        "orchestrator": "repo.read, repo.write, deploy.execute",
+        "planner-agent": "(nothing)"
       },
       "outcome": "allowed",
-      "result": "identical document, still exactly one block",
+      "result": "empty set",
       "reason": "",
       "detail": "",
       "evidence": "",
-      "note": "A re-run is a no-op, not a slow accumulation of blocks."
+      "note": "A correct answer, not an error: an agent may be asked to do something and given no authority to act on its own."
     }
   ]
 }</script>

@@ -1,0 +1,106 @@
+{
+  "app": "authenticated-agent-message",
+  "claim": "A message between agents is accepted only if it is signed by a sender the recipient knows, addressed to that recipient, and carries a sequence number strictly greater than the last one accepted from that sender.",
+  "enforcement": "deterministic",
+  "denial_type": "MessageRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "signed by a known sender, addressed here, sequence 1",
+      "request": {
+        "from": "planner-agent",
+        "to": "worker-agent",
+        "sequence": 1
+      },
+      "outcome": "allowed",
+      "result": "{\"task\": \"summarize svc-fake-a\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "signature covers sender, recipient, sequence and payload",
+      "note": ""
+    },
+    {
+      "label": "the same message delivered a second time",
+      "request": {
+        "from": "planner-agent",
+        "to": "worker-agent",
+        "sequence": 1,
+        "last accepted": 1
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "replayed",
+      "detail": "sequence 1 <= last accepted 1",
+      "evidence": "",
+      "note": "A replay is a message that was genuine once. A signature check alone cannot see it."
+    },
+    {
+      "label": "a payload edited after signing",
+      "request": {
+        "payload was": "summarize svc-fake-a",
+        "payload now": "delete svc-fake-a"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "signature_invalid",
+      "detail": "planner-agent",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a genuine message addressed to a different agent",
+      "request": {
+        "from": "planner-agent",
+        "to": "auditor-agent",
+        "I am": "worker-agent"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "misaddressed",
+      "detail": "addressed to auditor-agent, I am worker-agent",
+      "evidence": "",
+      "note": "Signed, genuine, and not for me. Acting on it is the agentic equivalent of opening someone else's post."
+    },
+    {
+      "label": "that intercepted message re-addressed to me",
+      "request": {
+        "was addressed to": "auditor-agent",
+        "now claims": "worker-agent",
+        "signature": "unchanged"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "signature_invalid",
+      "detail": "planner-agent",
+      "evidence": "fails as signature_invalid, because the recipient is signed too",
+      "note": "This is why the signature covers every field the recipient will act on, not just the payload."
+    },
+    {
+      "label": "a message from an agent whose key I do not hold",
+      "request": {
+        "from": "rogue-agent",
+        "keys held": "planner-agent, auditor-agent"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unknown_sender",
+      "detail": "rogue-agent",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a gap in the sequence, after a dropped message",
+      "request": {
+        "from": "planner-agent",
+        "sequence": 9,
+        "last accepted": 1
+      },
+      "outcome": "allowed",
+      "result": "{\"task\": \"summarize svc-fake-a\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "Refusing to move past a gap would let one lost message wedge the channel forever. What is refused is a sequence already seen."
+    }
+  ]
+}

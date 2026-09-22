@@ -84,6 +84,7 @@ supports the criterion without demonstrating it.
 | canonical-output-shape | ASI09 | SI-10 | A.6.2.4 | direct |
 | concurrent-append-integrity | — | AU-9, AU-12 | A.6.2.8 | direct |
 | deterministic-ledger-replay | ASI06 | AU-9, AU-10, SI-7 | A.6.2.8 | direct |
+| failure-bulkhead | ASI08 | SC-5, CP-10 | A.6.2.6 | direct |
 | forward-only-revert-journal | ASI08 | AU-9, AU-11, SR-9 | A.6.2.8 | direct |
 | non-overlapping-error-mapping | — | SI-10, SI-11 | A.6.2.4 | adjacent |
 | optional-input-does-not-block | — | SI-10, CP-2 | A.9.2 | adjacent |
@@ -98,7 +99,9 @@ supports the criterion without demonstrating it.
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
+| authenticated-agent-message | ASI07 | AU-10, SC-8, SI-10 | A.6.2.6 | direct |
 | capability-gated-tool-invocation | ASI02, ASI03 | AC-3, AC-6 | A.9.4 | direct |
+| delegation-scope-attenuation | ASI03, ASI07 | AC-3, AC-4, AC-6 | A.9.4 | direct |
 | governed-context-provenance | ASI01, ASI06 | AC-16, SI-10, SR-4 | A.6.2.6 | direct |
 | persona-capability-catalog | ASI03 | AC-2, AC-6 | A.3.2 | direct |
 | single-purpose-adversarial-reviewer | ASI09 | SA-11 | A.6.2.4 | adjacent |
@@ -116,6 +119,7 @@ supports the criterion without demonstrating it.
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
+| declared-objective-conformance | ASI10 | AC-3, AU-12 | A.9.4 | direct |
 | grounded-claim-verification | ASI06, ASI09 | SI-10, AC-16, SR-4 | A.6.2.4 | direct |
 | measured-token-accounting | ASI10 | AU-12, SC-5 | A.6.2.6 | direct |
 | memory-conflict-quarantine | ASI06 | SI-7, AU-9 | A.6.2.6 | direct |
@@ -135,17 +139,27 @@ it does not.
 | **ASI04** Agentic Supply Chain Compromise | covered | hash-pinned-identity, trusted-revision-anchor, deterministic-embedding-contract-check |
 | **ASI05** Unexpected Code Execution | covered | generated-code-admission-gate inspects model-generated code before it is compiled; argv-not-shell-invocation removes the shell from the launch; unproven-isolation-fails-closed refuses to treat an assertion of isolation as evidence of it. Admission and launch shape, not containment — that boundary is stated in each app's README. |
 | **ASI06** Memory & Context Poisoning | covered | governed-context-provenance, memory-conflict-quarantine, deterministic-ledger-replay |
-| **ASI07** Insecure Inter-Agent Communication | **not covered** | There is no inter-agent channel in this repo, by design. A message bus is orchestration, which PLAN.md places out of scope. This gap is a consequence of that decision, not an oversight. |
-| **ASI08** Cascading Agent Failures | **partial** | bounded-execution-budget, execution-lock-and-recovery, and the rollback pair limit blast radius within one run. Cascades *between* agents need more than one agent. |
+| **ASI07** Insecure Inter-Agent Communication | covered | authenticated-agent-message (signed, addressed, sequenced envelope), delegation-scope-attenuation (authority may only shrink as it is passed on). An envelope is a primitive; a message bus is orchestration and remains out of scope. |
+| **ASI08** Cascading Agent Failures | covered | failure-bulkhead cuts off a failing dependency so the retries stop, which is what actually carries a failure outward; bounded-execution-budget, execution-lock-and-recovery and the rollback pair limit blast radius within one run. |
 | **ASI09** Human-Agent Trust Exploitation | covered | exact-plan-approval-gate, grounded-claim-verification, bounded-review-epoch-escalation |
-| **ASI10** Rogue Agents | **partial** | Budgets, escalation caps, and ledgers detect drift from declared policy. "Rogue" presupposes a degree of autonomy this repo does not model. |
+| **ASI10** Rogue Agents | covered | declared-objective-conformance refuses any action that does not cite a declared objective, and the declaration cannot be widened from inside the run; budgets, escalation caps and ledgers bound and record the rest. It checks that an action *claims* a sanctioned goal, not that it genuinely serves one — that limit is stated in the app's README. |
 
-Three of the ten are partial or uncovered, and every one of them traces to the
-same root: this repo governs **one** agent's execution, while those risks are
-about **several** agents interacting. That is the honest boundary of a
-primitives catalog that deliberately excludes orchestration — and it is now the
-*only* reason for a gap, since ASI05, the one shortfall that was a genuinely
-missing primitive, is closed.
+All ten are now covered, which was not true two revisions ago and is worth
+saying plainly rather than quietly.
+
+The earlier gaps came from a conflation on this document's part, not from the
+scope rule. ASI07, ASI08 and ASI10 were called uncovered "by design" because
+they concern several agents, and multi-agent orchestration is out of scope. But
+those risks are about the *message*, the *dependency* and the *goal* — and a
+signed envelope, a circuit breaker and an objective check are each one atomic
+claim with no router, queue or loop anywhere near them. Building an envelope is
+not building a bus.
+
+The scope rule did not move; the reading of it was wrong. What remains out of
+scope is unchanged: a message bus, a scheduler, a lifecycle state machine, a
+second persona. Coverage of a risk also still means *one control demonstrated*,
+never *the risk handled* — the strength column and each app's README say where
+the edges are.
 
 ## Related work: Microsoft Agent Governance Toolkit
 
