@@ -70,6 +70,11 @@ them is on the out-of-scope list above.
 | `write-scope-confinement` | A write is denied before any bytes touch disk unless its fully resolved path lies inside the declared scope root — traversal, absolute paths, prefix siblings, and symlink escapes all fail closed. | deterministic | `workspace-attestation` detects a bad claim after the run; nothing prevented the write. |
 | `verified-secret-redaction` | No registered secret can appear in an emitted artifact — the emitter redacts, then re-reads its own serialized output and refuses to emit if any secret survived. | deterministic | `safe-failure-diagnostics` and `governed-preflight-denial-evidence` protect the failure path; nothing covered successful output. |
 | `generated-code-admission-gate` | Model-generated code is admitted only if every import, call, and attribute access in its parsed AST is permitted — a denied program is never compiled and never runs. | deterministic | The catalog pinned what binary runs and where it writes, but nothing inspected code the model itself produced. Closes the ASI05 primitive gap. |
+| `managed-block-confinement` | A managed write replaces only the content between the exact markers — everything outside them survives byte for byte, and generated content carrying a marker of its own is refused. | deterministic | Nothing governed an agent writing into a document humans also edit. |
+| `staged-input-allowlist` | Only files matching the declared policy enter the agent's view, every excluded file is recorded with a reason, and exceeding a cap stages nothing at all. | deterministic | `write-scope-confinement` governs where an agent may write; nothing governed what it may ever see. |
+| `unproven-isolation-fails-closed` | A run proceeds only when isolation is verified by a probe that actually ran — an operator assertion and a capability declaration are recorded and counted for nothing. | deterministic | The catalog trusted its own declarations; nothing separated a claim about the world from a measurement of it. |
+| `argv-not-shell-invocation` | A child process is launched from an absolute program path and a list of argument values, so a shell metacharacter inside an argument arrives as literal text. | deterministic | `hash-pinned-identity` pins which file runs; nothing pinned the shape of the launch. |
+| `reduced-child-environment` | A child process receives only the variables a declared policy passes through — everything else, including variables nobody anticipated, is absent rather than redacted. | deterministic | Nothing treated the process environment as an attack surface. |
 
 ### Tier 2 — Review & process governance
 *Inspired by: bounded human-escalation loops and deterministic,
@@ -95,6 +100,11 @@ them is on the out-of-scope list above.
 | `deterministic-ledger-replay` | Replaying a ledger from genesis reproduces its state byte-for-byte, and any state the replay cannot reproduce is rejected — with the first divergent event named. | deterministic | `authenticated-transition-ledger` proves the log is intact; nothing proved the state was derivable from it. |
 | `attested-rollback-checkpoint` | A rollback restores exactly a previously attested state digest, failing closed on an unattested target or a checkpoint whose bytes no longer hash to it. | deterministic | Nothing could return a run to a known-good state under the same evidence discipline. |
 | `forward-only-revert-journal` | A revert is recorded as a new forward record naming the state it left behind, so the abandoned state stays readable and a rewritten history is detected. | deterministic | Split from `attested-rollback-checkpoint`: restoring an attested state and never erasing history are two rules. |
+| `optional-input-does-not-block` | A run starts when every required input is present, even if every optional one is missing — a missing optional input is recorded and the run marked degraded, never escalated into a stop. | deterministic | Every other app teaches fail-closed; nothing taught what not to block on, and a catalog of refusals builds agents that cannot start. |
+| `producer-approver-separation` | Whoever produced an artifact cannot approve it, and an approval is bound to the exact digest it covers — a rename, a delegate, or a later edit all fail closed. | deterministic | `exact-plan-approval-gate` binds an approval to a plan; nothing checked who was giving it. |
+| `provable-dry-run` | A dry run performs no effect and still produces the complete plan, and that plan is the same plan the live run produces. | deterministic | Nothing demonstrated that a preview is a preview of the real thing. |
+| `canonical-output-shape` | Generated output is accepted only if its headings are canonical, in the declared order, with no wrapper fence, no empty section, and within the word bound — and the checker never repairs what it rejects. | deterministic | `single-purpose-adversarial-reviewer` checks a payload schema; nothing checked the shape of prose an agent produces. |
+| `validated-artifact-reuse` | An existing artifact is reused only when it is still valid for the inputs at hand, and every decision records which way it went and why. | deterministic | Nothing addressed reuse, where the dangerous failure is a fast confident answer from inputs that have since changed. |
 | `concurrent-append-integrity` | Under concurrent writers an append-only ledger admits exactly one entry per accepted append, with contiguous indices and an unbroken chain — a writer whose predecessor moved is rejected. | deterministic | `execution-lock-and-recovery` covers a crashed run's lock; nothing covered two live writers. |
 
 `attested-rollback-checkpoint` originally carried both of those rules in one
@@ -154,7 +164,12 @@ corpus and a scorer, not a primitive.
 padding. Anything that doesn't reduce to one atomic claim gets split or cut.
 
 v1.1 adds 10 gap-closure apps and v1.2 adds Tier 5's 4 plus
-`generated-code-admission-gate`, for 33 in total. They were not found by looking
+`generated-code-admission-gate`, for 33. v1.3 adds 10 more, for 43 in total.
+
+The v1.3 set was derived differently from the others: by reading an atomic
+instruction and test matrix for one real governed agent — 192 criteria bound to
+source lines — and asking which of its themes had no teaching app here. Most
+did. These ten did not. They were not found by looking
 at another system; they were found by asking what this catalog leaves open.
 The test each had to pass to be built: it reduces to one atomic claim, it is
 standalone, it is enforceable deterministically, and it is not on the
@@ -189,6 +204,12 @@ order. Four of them exist because a v1 app enforces half of a pair —
 confinement, `persona-capability-catalog` without enforcement,
 `authenticated-transition-ledger` without replay — which is the most reliable
 place to look for the next gap.
+
+**Phase 7 (v1.3 — matrix-derived):** the ten apps above marked v1.3. They are
+independent of every earlier phase. One of them, `optional-input-does-not-block`,
+exists to correct a bias rather than to close a gap: the catalog had become 33
+demonstrations of refusing, and a curriculum that only teaches fail-closed
+produces agents that cannot start.
 
 **Phase 6 (v1.2 — Tier 5):** the four model-behavior apps. They are
 independent of every earlier phase. This phase is where the catalog stops

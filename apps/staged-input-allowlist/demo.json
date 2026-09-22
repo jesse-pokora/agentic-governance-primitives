@@ -1,0 +1,59 @@
+{
+  "app": "staged-input-allowlist",
+  "claim": "Only files matching the declared policy enter the agent's view, every excluded file is recorded with a fixed-vocabulary reason, and exceeding a declared cap stages nothing at all.",
+  "enforcement": "deterministic",
+  "denial_type": "StagingRefused",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "staging a small repository",
+      "request": {
+        "source": "README.md, pkg/main.py, .env, id_rsa, logo.png, .git/config, huge.txt",
+        "policy": "suffixes .py .md .txt | denied .env id_rsa | 1 KiB/file"
+      },
+      "outcome": "allowed",
+      "result": "[\"README.md\", \"pkg/main.py\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "only two files entered the agent's view",
+      "note": ""
+    },
+    {
+      "label": "every excluded file carries a reason",
+      "request": {
+        "excluded": 5
+      },
+      "outcome": "allowed",
+      "result": "[\".env -> denied_name\", \".git/config -> vcs_metadata\", \"huge.txt -> too_large\", \"id_rsa -> denied_name\", \"logo.png -> suffix_not_allowed\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "staged set + excluded set == source set, exactly",
+      "note": "Nothing is dropped without a reason. That is what makes a staging policy reviewable: you can ask why any file is missing and get an answer."
+    },
+    {
+      "label": "the manifest lists exactly the staged set",
+      "request": {
+        "manifest": "README.md, pkg/main.py"
+      },
+      "outcome": "allowed",
+      "result": "no excluded path appears in the manifest",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a repository over the file-count cap",
+      "request": {
+        "admissible files": 14,
+        "max_files": 10
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "file_count_cap",
+      "detail": "14 > 10",
+      "evidence": "staging directory created: False",
+      "note": "Truncating to the cap would hand the agent a silently partial view \u2014 the worst outcome, because nothing would look wrong."
+    }
+  ]
+}

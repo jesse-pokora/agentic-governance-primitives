@@ -1,0 +1,72 @@
+{
+  "app": "argv-not-shell-invocation",
+  "claim": "A child process is launched from an absolute program path and a list of argument values, so a shell metacharacter inside an argument arrives as literal text \u2014 never as a second command.",
+  "enforcement": "deterministic",
+  "denial_type": "InvocationDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "ordinary arguments reach the child intact",
+      "request": {
+        "program": "<python>",
+        "argv": "[\"-c\", \"<echo argv>\", \"plain\", \"two words\"]"
+      },
+      "outcome": "allowed",
+      "result": "[\"plain\", \"two words\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "the child echoed its own argv back",
+      "note": ""
+    },
+    {
+      "label": "an argument full of shell metacharacters",
+      "request": {
+        "argument": "toy; rm -rf /tmp/nothing && echo pwned | cat > /tmp/out"
+      },
+      "outcome": "allowed",
+      "result": "[\"toy; rm -rf /tmp/nothing && echo pwned | cat > /tmp/out\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "one argument, unsplit \u2014 nothing parsed it",
+      "note": "The check is not 'does this look dangerous'. It is 'is this ever interpreted', and the answer is no, by construction."
+    },
+    {
+      "label": "a relative program name",
+      "request": {
+        "program": "python",
+        "argv": "[\"-c\", \"print(1)\"]"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "relative_program",
+      "detail": "python",
+      "evidence": "",
+      "note": "A bare name resolves through PATH, so it names a different file depending on where the process was started."
+    },
+    {
+      "label": "the whole command line as one string",
+      "request": {
+        "program": "<python>",
+        "arguments": "\"-c 'print(1)' && echo pwned\""
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "shell_string_argument",
+      "detail": "arguments must be a list of values, not one command line",
+      "evidence": "",
+      "note": "Something has to parse that back into a process, and that something is a shell."
+    },
+    {
+      "label": "a non-string argument",
+      "request": {
+        "argv": "[\"-c\", \"<echo argv>\", 42]"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "non_string_argument",
+      "detail": "argv[2]=42",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

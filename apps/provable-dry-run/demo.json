@@ -1,0 +1,73 @@
+{
+  "app": "provable-dry-run",
+  "claim": "A dry run performs no effect and still produces the complete plan \u2014 and the plan a dry run produces is the same plan the live run produces, because both execute the same routine.",
+  "enforcement": "deterministic",
+  "denial_type": "EffectDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a dry run over two writes",
+      "request": {
+        "mode": "dry_run=True",
+        "effects": "write AGENTS.md, write INDEX.md"
+      },
+      "outcome": "allowed",
+      "result": "[\"write <tmp>\\\\AGENTS.md: managed guide, 3 sections\", \"write <tmp>\\\\INDEX.md: index entry\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "files on disk: []; effects performed: 0",
+      "note": ""
+    },
+    {
+      "label": "the same routine, live",
+      "request": {
+        "mode": "dry_run=False",
+        "effects": "write AGENTS.md, write INDEX.md"
+      },
+      "outcome": "allowed",
+      "result": "[\"write <tmp>\\\\AGENTS.md: managed guide, 3 sections\", \"write <tmp>\\\\INDEX.md: index entry\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "files on disk: ['AGENTS.md', 'INDEX.md']; effects performed: 2",
+      "note": ""
+    },
+    {
+      "label": "the dry plan and the live plan are the same plan",
+      "request": {
+        "dry plan": "2 effects",
+        "live plan": "2 effects"
+      },
+      "outcome": "allowed",
+      "result": "identical",
+      "reason": "",
+      "detail": "",
+      "evidence": "both modes ran the same routine, with no dry-run branch inside it",
+      "note": "A dry run you cannot trust to describe the real run is worse than no dry run, because it is reassuring."
+    },
+    {
+      "label": "an effect with no target, in either mode",
+      "request": {
+        "effect": "kind=\"write\", target=\"\""
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unattributed_effect",
+      "detail": "'write'/''",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a write that bypassed the gate entirely",
+      "request": {
+        "call": "Path(...).write_text(...) directly",
+        "executor": "not consulted"
+      },
+      "outcome": "allowed",
+      "result": "planned effects recorded: 0",
+      "reason": "",
+      "detail": "",
+      "evidence": "the executor neither knows nor reports it",
+      "note": "Stated as a step so the limitation is on the record: this proves effects routed through the gate are suppressed, not that nothing else in a codebase writes directly."
+    }
+  ]
+}

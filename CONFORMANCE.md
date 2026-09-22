@@ -65,6 +65,11 @@ supports the criterion without demonstrating it.
 | write-scope-confinement | ASI02, ASI05 | AC-3, AC-6, SC-7 | A.6.2.6 | direct |
 | verified-secret-redaction | — | AC-4, SC-28, AU-9 | A.6.2.6 | direct |
 | generated-code-admission-gate | ASI05 | SI-7, SI-10, CM-7 | A.6.2.4 | direct |
+| managed-block-confinement | ASI02 | AC-3, CM-5, SI-7 | A.6.2.6 | direct |
+| staged-input-allowlist | ASI04, ASI06 | AC-4, SC-7, SI-10 | A.6.2.6 | direct |
+| unproven-isolation-fails-closed | ASI05 | CM-7, SA-11, AU-10 | A.6.2.4 | direct |
+| argv-not-shell-invocation | ASI05 | SI-10, CM-7 | A.6.2.5 | direct |
+| reduced-child-environment | — | AC-6, SC-28, CM-7 | A.6.2.5 | direct |
 
 ### Tier 2 — Review & process governance
 
@@ -80,6 +85,11 @@ supports the criterion without demonstrating it.
 | attested-rollback-checkpoint | ASI08 | CP-10, SI-7 | A.6.2.6 | direct |
 | forward-only-revert-journal | ASI08 | AU-9, AU-11, SR-9 | A.6.2.8 | direct |
 | concurrent-append-integrity | — | AU-9, AU-12 | A.6.2.8 | direct |
+| optional-input-does-not-block | — | SI-10, CP-2 | A.9.2 | adjacent |
+| producer-approver-separation | ASI03, ASI09 | AC-5, AU-10, CM-3 | A.9.2 | direct |
+| provable-dry-run | ASI02 | CM-3, AU-12 | A.6.2.4 | direct |
+| canonical-output-shape | ASI09 | SI-10 | A.6.2.4 | direct |
+| validated-artifact-reuse | ASI04 | SI-7, CM-3 | A.6.2.6 | direct |
 
 ### Tier 3 — Persona & agent architecture
 
@@ -117,7 +127,7 @@ it does not.
 | **ASI02** Tool Misuse & Exploitation | covered | capability-gated-tool-invocation, pinned-egress-allowlist, write-scope-confinement |
 | **ASI03** Agent Identity & Privilege Abuse | covered | persona-capability-catalog, capability-gated-tool-invocation, hash-pinned-identity |
 | **ASI04** Agentic Supply Chain Compromise | covered | hash-pinned-identity, trusted-revision-anchor, deterministic-embedding-contract-check |
-| **ASI05** Unexpected Code Execution | covered | generated-code-admission-gate inspects model-generated code before it is compiled; hash-pinned-identity and write-scope-confinement bound what runs and where it writes. Admission, not isolation — that boundary is stated in the app's README. |
+| **ASI05** Unexpected Code Execution | covered | generated-code-admission-gate inspects model-generated code before it is compiled; argv-not-shell-invocation removes the shell from the launch; unproven-isolation-fails-closed refuses to treat an assertion of isolation as evidence of it. Admission and launch shape, not containment — that boundary is stated in each app's README. |
 | **ASI06** Memory & Context Poisoning | covered | governed-context-provenance, memory-conflict-quarantine, deterministic-ledger-replay |
 | **ASI07** Insecure Inter-Agent Communication | **not covered** | There is no inter-agent channel in this repo, by design. A message bus is orchestration, which PLAN.md places out of scope. This gap is a consequence of that decision, not an oversight. |
 | **ASI08** Cascading Agent Failures | **partial** | bounded-execution-budget, execution-lock-and-recovery, and the rollback pair limit blast radius within one run. Cascades *between* agents need more than one agent. |
@@ -195,6 +205,27 @@ cover them.
 
 *Assessed September 2026 against the repository's README, charter, ASI mapping,
 independence and limitations documents. The source was not reviewed.*
+
+## Where the v1.3 apps came from
+
+The v1.1 and v1.2 apps were found by reasoning about the catalog. The v1.3 set
+was found differently: by reading an atomic instruction and test matrix for one
+real governed agent — 192 criteria, each bound to a source file and line range,
+each with a named unit test, an enforcement class and a criticality tier — and
+asking which of its themes had no teaching app here.
+
+Most did. Untrusted-evidence handling, approval for irreversible actions,
+capability denial, claims supported by inspected evidence, reported-versus-
+actual reconciliation, token counting exactly once: all already had one. Ten
+themes did not, and those became the v1.3 apps.
+
+That exercise is worth repeating against any real matrix, because it finds a
+different class of gap than reasoning does. Reasoning about a catalog surfaces
+what is *missing from a pattern*; reading a real matrix surfaces what a real
+system had to say out loud — including
+[optional-input-does-not-block](../apps/optional-input-does-not-block), whose
+lesson is the one a catalog of governance primitives is structurally least
+likely to reach on its own.
 
 ## Relationship to the Instruction Adherence Bench
 

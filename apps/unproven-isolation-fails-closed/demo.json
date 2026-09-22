@@ -1,0 +1,101 @@
+{
+  "app": "unproven-isolation-fails-closed",
+  "claim": "A run proceeds only when isolation is verified by a probe that actually ran \u2014 an operator assertion and a child's capability declaration are recorded for audit and contribute nothing to the verdict.",
+  "enforcement": "deterministic",
+  "denial_type": "IsolationUnproven",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "two probes ran and both passed",
+      "request": {
+        "probes": "network_blocked=pass, filesystem_readonly=pass",
+        "assertions": "none"
+      },
+      "outcome": "allowed",
+      "result": "True",
+      "reason": "",
+      "detail": "",
+      "evidence": "the verdict is a function of probe results only",
+      "note": ""
+    },
+    {
+      "label": "the operator asserts a sandbox is in place",
+      "request": {
+        "probes": "none",
+        "assertion": "--external-sandbox (operator claim)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_isolation_evidence",
+      "detail": "1 assertion(s), 0 declaration(s), 0 probes",
+      "evidence": "the denial names what was offered instead of evidence",
+      "note": "A claim about the world and a measurement of the world are different objects. Storing them in the same field loses the argument."
+    },
+    {
+      "label": "the child advertises that it denies writes and terminals",
+      "request": {
+        "probes": "none",
+        "declaration": "denies_write=True, denies_terminal=True"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_isolation_evidence",
+      "detail": "0 assertion(s), 1 declaration(s), 0 probes",
+      "evidence": "",
+      "note": "The child is describing its own protocol, not the operating system it runs on. An honest child tells the truth about something that does not constrain a dishonest one."
+    },
+    {
+      "label": "an assertion cannot rescue a probe that failed",
+      "request": {
+        "probes": "network_blocked=FAIL",
+        "assertion": "--external-sandbox"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "probe_failed",
+      "detail": "network_blocked",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "assertions are still carried into the record",
+      "request": {
+        "probes": "both pass",
+        "assertion": "--external-sandbox",
+        "declaration": "yes"
+      },
+      "outcome": "allowed",
+      "result": "--external-sandbox",
+      "reason": "",
+      "detail": "",
+      "evidence": "recorded for audit, counted for nothing",
+      "note": ""
+    },
+    {
+      "label": "the local-development bypass flag, passed on its own",
+      "request": {
+        "allow_unisolated": true,
+        "proof": "none"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "bypass_not_verifiable",
+      "detail": "allow_unisolated requires a verifiable local-development context",
+      "evidence": "",
+      "note": "A flag that works because it was passed is a flag that works in production."
+    },
+    {
+      "label": "the bypass with a proof that actually returns True",
+      "request": {
+        "allow_unisolated": true,
+        "proof": "returns True"
+      },
+      "outcome": "allowed",
+      "result": "allowed, verified=False",
+      "reason": "",
+      "detail": "",
+      "evidence": "allowed and honestly labelled unverified",
+      "note": "The audit trail is the one artifact that has to survive the convenience."
+    }
+  ]
+}

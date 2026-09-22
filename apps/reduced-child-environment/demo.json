@@ -1,0 +1,72 @@
+{
+  "app": "reduced-child-environment",
+  "claim": "A child process receives only the variables a declared policy passes through \u2014 every other variable in the parent's environment, including ones nobody anticipated, is absent rather than redacted.",
+  "enforcement": "deterministic",
+  "denial_type": "EnvironmentDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "building the child environment from an allowlist",
+      "request": {
+        "parent holds": "AWS_SECRET_ACCESS_KEY, GITHUB_TOKEN, MODEL_ENDPOINT, OPERATOR_SSH_KEY, PATH, SOME_FUTURE_SECRET, SYSTEMROOT",
+        "passthrough": "MODEL_ENDPOINT"
+      },
+      "outcome": "allowed",
+      "result": "[\"MODEL_ENDPOINT\", \"PATH\", \"SYSTEMROOT\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "built up from {} rather than filtered down from the parent",
+      "note": ""
+    },
+    {
+      "label": "a secret nobody wrote a rule for",
+      "request": {
+        "variable": "SOME_FUTURE_SECRET",
+        "policy mentions it": "no"
+      },
+      "outcome": "allowed",
+      "result": "False",
+      "reason": "",
+      "detail": "",
+      "evidence": "absent anyway",
+      "note": "The property an allowlist has and a denylist cannot: it covers the variables that did not exist when the policy was written."
+    },
+    {
+      "label": "a real child process dumping its own environment",
+      "request": {
+        "launched": "<python> -c '<dump env>'"
+      },
+      "outcome": "allowed",
+      "result": "[\"MODEL_ENDPOINT\", \"PATH\", \"SYSTEMROOT\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "no AWS_SECRET_ACCESS_KEY, no GITHUB_TOKEN, no SSH key",
+      "note": "Absent, not redacted: a variable that is not there cannot be read by anything the child runs later."
+    },
+    {
+      "label": "declining the platform essentials too",
+      "request": {
+        "include_platform_essentials": false
+      },
+      "outcome": "allowed",
+      "result": "[\"MODEL_ENDPOINT\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "the default is written down and can be declined",
+      "note": ""
+    },
+    {
+      "label": "an injected value colliding with a passthrough",
+      "request": {
+        "passthrough": "MODEL_ENDPOINT",
+        "injected": "MODEL_ENDPOINT=https://other.test"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "injection_collides_with_passthrough",
+      "detail": "MODEL_ENDPOINT is both passed through and injected",
+      "evidence": "",
+      "note": "Silently choosing one would make the child's environment depend on evaluation order."
+    }
+  ]
+}

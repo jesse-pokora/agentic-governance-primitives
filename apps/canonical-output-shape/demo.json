@@ -1,0 +1,109 @@
+{
+  "app": "canonical-output-shape",
+  "claim": "Generated output is accepted only if its headings are canonical, spelled exactly and in the declared order, with no wrapper fence, no empty section, and no more than the declared word bound \u2014 and the checker never repairs what it rejects.",
+  "enforcement": "deterministic",
+  "denial_type": "OutputShapeRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a conforming document that omits two optional sections",
+      "request": {
+        "headings": "# Repository Guide, ## Purpose, ## Key Paths",
+        "omitted": "## Architecture, ## Build and Test"
+      },
+      "outcome": "allowed",
+      "result": "[\"# Repository Guide\", \"## Purpose\", \"## Key Paths\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "omitting a section the evidence did not support is correct",
+      "note": ""
+    },
+    {
+      "label": "a heading with nothing under it",
+      "request": {
+        "added": "## Build and Test (empty)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "empty_section",
+      "detail": "## Build and Test",
+      "evidence": "",
+      "note": "An empty heading reads as an answer and is not one."
+    },
+    {
+      "label": "a canonical heading spelled slightly wrong",
+      "request": {
+        "emitted": "## Key paths",
+        "canonical": "## Key Paths"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "non_canonical_heading",
+      "detail": "## Key paths",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a heading with no space after the hashes",
+      "request": {
+        "emitted": "##Key Paths"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "malformed_heading",
+      "detail": "##Key Paths",
+      "evidence": "",
+      "note": "Not an ATX heading at all \u2014 Markdown renders it as body text. It would sail past a canonical-heading check while looking to a human like a section that is present."
+    },
+    {
+      "label": "canonical sections in the wrong order",
+      "request": {
+        "emitted": "# Repository Guide, ## Key Paths, ## Purpose"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "headings_out_of_order",
+      "detail": "# Repository Guide | ## Key Paths | ## Purpose",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "the whole document wrapped in a code fence",
+      "request": {
+        "emitted": "```markdown ... ```"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "wrapped_in_fence",
+      "detail": "the whole document is inside a code fence",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a fenced block inside a section",
+      "request": {
+        "section": "## Build and Test",
+        "contains": "```bash ... ```"
+      },
+      "outcome": "allowed",
+      "result": "[\"# Repository Guide\", \"## Purpose\", \"## Key Paths\", \"## Build and Test\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "A fence inside a section is content; a fence around the document is a wrapper. Only the second is rejected."
+    },
+    {
+      "label": "output over the declared word bound",
+      "request": {
+        "words": "over 200",
+        "max_words": 50
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "too_long",
+      "detail": "225 > 50 words",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

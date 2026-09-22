@@ -72,8 +72,9 @@ agentic-governance-primitives/
 
 ## Status
 
-All 33 apps built — 18 in v1, 11 in v1.1 that close gaps the v1 catalog left
-open, and 4 in v1.2 that constrain model behavior rather than secure it. Each
+All 43 apps built — 18 in v1, 11 in v1.1 closing gaps the v1 catalog left open,
+4 in v1.2 constraining model behavior rather than securing it, and 10 in v1.3
+derived from a real agent's atomic instruction and test matrix. Each
 is still one atomic claim, standalone, and off the out-of-scope list. See
 [PLAN.md](PLAN.md) for the full catalog, phasing, and source mapping, and
 [CONFORMANCE.md](CONFORMANCE.md) for how each app maps to published
@@ -119,6 +120,24 @@ system: each closes a gap the v1 apps leave open.
 | [forward-only-revert-journal](apps/forward-only-revert-journal) | deterministic | built |
 | [generated-code-admission-gate](apps/generated-code-admission-gate) | deterministic | built |
 
+### v1.3 — derived from an atomic instruction and test matrix
+
+Found by reading a 192-criterion instruction-adherence matrix for one real
+governed agent and asking which of its themes had no teaching app here.
+
+| App | Enforcement | Status |
+|---|---|---|
+| [managed-block-confinement](apps/managed-block-confinement) | deterministic | built |
+| [staged-input-allowlist](apps/staged-input-allowlist) | deterministic | built |
+| [unproven-isolation-fails-closed](apps/unproven-isolation-fails-closed) | deterministic | built |
+| [argv-not-shell-invocation](apps/argv-not-shell-invocation) | deterministic | built |
+| [reduced-child-environment](apps/reduced-child-environment) | deterministic | built |
+| [optional-input-does-not-block](apps/optional-input-does-not-block) | deterministic | built |
+| [producer-approver-separation](apps/producer-approver-separation) | deterministic | built |
+| [provable-dry-run](apps/provable-dry-run) | deterministic | built |
+| [canonical-output-shape](apps/canonical-output-shape) | deterministic | built |
+| [validated-artifact-reuse](apps/validated-artifact-reuse) | deterministic | built |
+
 ### v1.2 — model-behavior constraint & drift detection
 
 Reliability rather than security: the deterministic gates a nondeterministic
@@ -144,6 +163,14 @@ half they don't, in a form you can put in front of an agent you already have.
 Two halves of the same job: Tiers 1–4 constrain what an agent is *permitted*
 to do, and Tier 5 constrains how far its output may drift from what the system
 knows. A governed agent that is unpredictable is not governed.
+
+v1.3 adds a third thing the catalog was missing: restraint about refusing.
+[optional-input-does-not-block](apps/optional-input-does-not-block) is the only
+app here whose lesson is when *not* to fail closed. It exists because 33
+demonstrations of refusing is a curriculum that produces agents nobody can
+start, and knowing what not to block on is the harder half — the failure is
+invisible in review, since nobody files a bug saying that something refused
+correctly but should not have.
 
 What the catalog therefore does *not* contain, and will not by accident: an
 agent loop, an inter-agent channel, a router, shared working memory, or a

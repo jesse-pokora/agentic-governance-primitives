@@ -1,0 +1,97 @@
+{
+  "app": "validated-artifact-reuse",
+  "claim": "An existing artifact is reused only when it is still valid for the inputs at hand \u2014 same input digest and same producer version \u2014 and every decision records which way it went and why.",
+  "enforcement": "deterministic",
+  "denial_type": "n/a \u2014 this app returns a Decision, it does not raise",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "the inputs and producer version are unchanged",
+      "request": {
+        "input digest": "0c91c7f32fc9cf466cc2...",
+        "producer": "summarizer-2.1.0"
+      },
+      "outcome": "allowed",
+      "result": "valid_for_these_inputs",
+      "reason": "",
+      "detail": "",
+      "evidence": "producer invoked 0 time(s); generation 3",
+      "note": "Validity is checked against what the artifact was made from, never against when it was made."
+    },
+    {
+      "label": "one file was added to the inputs",
+      "request": {
+        "was": "a.py, b.py",
+        "now": "a.py, b.py, c.py"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "inputs_changed",
+      "detail": "",
+      "evidence": "producer invoked 1 time(s); generation 4",
+      "note": "The failure that matters is not a slow rebuild. It is a fast, confident answer computed from inputs that have since changed."
+    },
+    {
+      "label": "the producer was upgraded",
+      "request": {
+        "artifact built by": "summarizer-2.1.0",
+        "producer now": "summarizer-3.0.0"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "producer_version_changed",
+      "detail": "",
+      "evidence": "producer invoked 1 time(s); generation 4",
+      "note": ""
+    },
+    {
+      "label": "no artifact exists yet",
+      "request": {
+        "existing": "none"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_existing_artifact",
+      "detail": "",
+      "evidence": "producer invoked 1 time(s); generation 1",
+      "note": ""
+    },
+    {
+      "label": "the stored digest is not a well-formed SHA-256",
+      "request": {
+        "stored digest": "not-a-digest"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "artifact_corrupt",
+      "detail": "",
+      "evidence": "producer invoked 1 time(s); generation 2",
+      "note": "An untrustworthy record is not a reason to skip work."
+    },
+    {
+      "label": "the same inputs, built as a dict in a different order",
+      "request": {
+        "inputs": "{\"files\": [...], \"repo\": \"toy-repo\"}"
+      },
+      "outcome": "allowed",
+      "result": "valid_for_these_inputs",
+      "reason": "",
+      "detail": "",
+      "evidence": "producer invoked 0 time(s); generation 3",
+      "note": "Digests are taken over canonical JSON, so key order is not a change."
+    },
+    {
+      "label": "the same files, listed in a different order",
+      "request": {
+        "was": "[\"a.py\", \"b.py\"]",
+        "now": "[\"b.py\", \"a.py\"]"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "inputs_changed",
+      "detail": "",
+      "evidence": "producer invoked 1 time(s); generation 4",
+      "note": "A list is ordered data, not a set. Treating the two as equal would be a guess about what the list means."
+    }
+  ]
+}

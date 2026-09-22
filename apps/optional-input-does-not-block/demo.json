@@ -1,0 +1,85 @@
+{
+  "app": "optional-input-does-not-block",
+  "claim": "A run starts when every required input is present, even if every optional one is missing \u2014 a missing optional input is recorded and the run marked degraded, never escalated into a stop.",
+  "enforcement": "deterministic",
+  "denial_type": "StartupRefused",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a bare prompt, with every optional input absent",
+      "request": {
+        "supplied": "prompt only",
+        "spec": "required: prompt | optional: run_id, head_commit, evidence_packet, approval_record"
+      },
+      "outcome": "allowed",
+      "result": "[\"approval_record\", \"evidence_packet\", \"head_commit\", \"run_id\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "started, degraded, and the missing inputs are recorded",
+      "note": "This is the case the rest of this catalog would be tempted to refuse. An agent that cannot start without context it never needed is governed and useless."
+    },
+    {
+      "label": "a full envelope",
+      "request": {
+        "supplied": "prompt, run_id, head_commit, evidence_packet, approval_record"
+      },
+      "outcome": "allowed",
+      "result": "False",
+      "reason": "",
+      "detail": "",
+      "evidence": "degraded=False \u2014 nothing missing",
+      "note": ""
+    },
+    {
+      "label": "a field nobody declared",
+      "request": {
+        "supplied": "prompt, workspace_hint",
+        "spec": "required: prompt | optional: run_id, head_commit, evidence_packet, approval_record"
+      },
+      "outcome": "allowed",
+      "result": "[\"workspace_hint\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "carried as context, not refused",
+      "note": "Strictness belongs where extra data would otherwise be acted on. At intake nobody reads it; in a closed output schema it might be an instruction the caller expects honoured."
+    },
+    {
+      "label": "the one required input is missing",
+      "request": {
+        "supplied": "run_id only",
+        "required": "prompt"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_required_input",
+      "detail": "prompt",
+      "evidence": "",
+      "note": "Fail-closed still applies \u2014 to required inputs."
+    },
+    {
+      "label": "two required inputs missing, both named at once",
+      "request": {
+        "supplied": "nothing",
+        "required": "prompt, target"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_required_input",
+      "detail": "prompt, target",
+      "evidence": "every missing required input in one round",
+      "note": "The other apps here report the first violation. This one is answering 'what do you need from me', so it reports the whole list."
+    },
+    {
+      "label": "a required input supplied as an empty string",
+      "request": {
+        "supplied": "prompt=\"\""
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_required_input",
+      "detail": "prompt",
+      "evidence": "",
+      "note": "Present-but-empty is missing wearing a costume."
+    }
+  ]
+}

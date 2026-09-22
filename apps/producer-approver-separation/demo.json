@@ -1,0 +1,101 @@
+{
+  "app": "producer-approver-separation",
+  "claim": "Whoever produced an artifact cannot approve it, and an approval is bound to the exact digest it covers \u2014 a rename, a delegate, or a later edit all fail closed.",
+  "enforcement": "deterministic",
+  "denial_type": "ApprovalDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "an independent approver naming the exact digest",
+      "request": {
+        "produced_by": "toy-writer-agent",
+        "approved_by": "toy-human-reviewer",
+        "digest": "ef6122862928f9f47bd0..."
+      },
+      "outcome": "allowed",
+      "result": "toy-human-reviewer",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "the producer approving its own artifact",
+      "request": {
+        "produced_by": "toy-writer-agent",
+        "approved_by": "toy-writer-agent"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "self_approval",
+      "detail": "toy-writer-agent produced this artifact",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "the same actor, respelled",
+      "request": {
+        "produced_by": "toy-writer-agent",
+        "approved_by": "  TOY-Writer-Agent  "
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "self_approval",
+      "detail": "toy-writer-agent produced this artifact",
+      "evidence": "",
+      "note": "An independence check that a respelling defeats is decorative."
+    },
+    {
+      "label": "the producer approving through a service account",
+      "request": {
+        "approved_by": "ci-service-account",
+        "delegates": "ci-service-account -> toy-writer-agent"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "self_approval",
+      "detail": "ci-service-account produced this artifact",
+      "evidence": "",
+      "note": "The realistic shape: nobody types their own name in the approver field, they configure CI to do it."
+    },
+    {
+      "label": "an approval that named a different artifact",
+      "request": {
+        "approves": "6c9bfcd026bdedc17e40...",
+        "artifact": "ef6122862928f9f47bd0..."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "approval_not_bound",
+      "detail": "approves=6c9bfcd026bdedc1... artifact=ef6122862928f9f4...",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "the artifact edited after it was approved",
+      "request": {
+        "approved digest": "ef6122862928f9f47bd0...",
+        "artifact now": "6c9bfcd026bdedc17e40..."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "approval_not_bound",
+      "detail": "approves=ef6122862928f9f4... artifact=6c9bfcd026bdedc1...",
+      "evidence": "",
+      "note": "An approval that survives an edit is a signature on a document nobody read."
+    },
+    {
+      "label": "a delegate acting for someone genuinely independent",
+      "request": {
+        "approved_by": "ci-service-account",
+        "delegates": "ci-service-account -> toy-human-reviewer"
+      },
+      "outcome": "allowed",
+      "result": "ci-service-account",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}
