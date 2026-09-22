@@ -69,6 +69,7 @@ them is on the out-of-scope list above.
 | `pinned-egress-allowlist` | An outbound request is allowed only if its scheme, host, and port all match an allowlist entry exactly — and every hop of a redirect chain is checked, not just the first. | deterministic | `hash-pinned-identity` pins what binary runs; nothing pinned where it may talk. |
 | `write-scope-confinement` | A write is denied before any bytes touch disk unless its fully resolved path lies inside the declared scope root — traversal, absolute paths, prefix siblings, and symlink escapes all fail closed. | deterministic | `workspace-attestation` detects a bad claim after the run; nothing prevented the write. |
 | `verified-secret-redaction` | No registered secret can appear in an emitted artifact — the emitter redacts, then re-reads its own serialized output and refuses to emit if any secret survived. | deterministic | `safe-failure-diagnostics` and `governed-preflight-denial-evidence` protect the failure path; nothing covered successful output. |
+| `generated-code-admission-gate` | Model-generated code is admitted only if every import, call, and attribute access in its parsed AST is permitted — a denied program is never compiled and never runs. | deterministic | The catalog pinned what binary runs and where it writes, but nothing inspected code the model itself produced. Closes the ASI05 primitive gap. |
 
 ### Tier 2 — Review & process governance
 *Inspired by: bounded human-escalation loops and deterministic,
@@ -152,7 +153,8 @@ corpus and a scorer, not a primitive.
 18 apps is the target size for v1 — enough to cover every tier without
 padding. Anything that doesn't reduce to one atomic claim gets split or cut.
 
-v1.1 adds 10 gap-closure apps and v1.2 adds Tier 5's 4, for 32 in total. They were not found by looking
+v1.1 adds 10 gap-closure apps and v1.2 adds Tier 5's 4 plus
+`generated-code-admission-gate`, for 33 in total. They were not found by looking
 at another system; they were found by asking what this catalog leaves open.
 The test each had to pass to be built: it reduces to one atomic claim, it is
 standalone, it is enforceable deterministically, and it is not on the
@@ -216,6 +218,7 @@ flowchart LR
         A10[pinned-egress-allowlist]
         A11[write-scope-confinement]
         A12[verified-secret-redaction]
+        A13[generated-code-admission-gate]
     end
 
     subgraph T2["Tier 2 — Review & process governance"]
@@ -265,6 +268,7 @@ flowchart LR
     style A10 fill:#e8e0f0
     style A11 fill:#e8e0f0
     style A12 fill:#e8e0f0
+    style A13 fill:#fde9d9
     style B6 fill:#e8e0f0
     style B7 fill:#e8e0f0
     style B8 fill:#e8e0f0

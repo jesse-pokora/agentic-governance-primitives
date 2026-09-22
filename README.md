@@ -63,7 +63,7 @@ agentic-governance-primitives/
 
 ## Status
 
-All 32 apps built — 18 in v1, 10 in v1.1 that close gaps the v1 catalog left
+All 33 apps built — 18 in v1, 11 in v1.1 that close gaps the v1 catalog left
 open, and 4 in v1.2 that constrain model behavior rather than secure it. Each
 is still one atomic claim, standalone, and off the out-of-scope list. See
 [PLAN.md](PLAN.md) for the full catalog, phasing, and source mapping, and
@@ -108,6 +108,7 @@ system: each closes a gap the v1 apps leave open.
 | [attested-rollback-checkpoint](apps/attested-rollback-checkpoint) | deterministic | built |
 | [concurrent-append-integrity](apps/concurrent-append-integrity) | deterministic | built |
 | [forward-only-revert-journal](apps/forward-only-revert-journal) | deterministic | built |
+| [generated-code-admission-gate](apps/generated-code-admission-gate) | deterministic | built |
 
 ### v1.2 — model-behavior constraint & drift detection
 

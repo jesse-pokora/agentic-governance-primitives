@@ -64,6 +64,7 @@ supports the criterion without demonstrating it.
 | pinned-egress-allowlist | ASI02, ASI04 | SC-7, AC-4 | A.6.2.6 | direct |
 | write-scope-confinement | ASI02, ASI05 | AC-3, AC-6, SC-7 | A.6.2.6 | direct |
 | verified-secret-redaction | — | AC-4, SC-28, AU-9 | A.6.2.6 | direct |
+| generated-code-admission-gate | ASI05 | SI-7, SI-10, CM-7 | A.6.2.4 | direct |
 
 ### Tier 2 — Review & process governance
 
@@ -116,17 +117,19 @@ it does not.
 | **ASI02** Tool Misuse & Exploitation | covered | capability-gated-tool-invocation, pinned-egress-allowlist, write-scope-confinement |
 | **ASI03** Agent Identity & Privilege Abuse | covered | persona-capability-catalog, capability-gated-tool-invocation, hash-pinned-identity |
 | **ASI04** Agentic Supply Chain Compromise | covered | hash-pinned-identity, trusted-revision-anchor, deterministic-embedding-contract-check |
-| **ASI05** Unexpected Code Execution | **partial** | What runs is pinned and where it writes is confined, but nothing here sandboxes execution of model-generated code. |
+| **ASI05** Unexpected Code Execution | covered | generated-code-admission-gate inspects model-generated code before it is compiled; hash-pinned-identity and write-scope-confinement bound what runs and where it writes. Admission, not isolation — that boundary is stated in the app's README. |
 | **ASI06** Memory & Context Poisoning | covered | governed-context-provenance, memory-conflict-quarantine, deterministic-ledger-replay |
 | **ASI07** Insecure Inter-Agent Communication | **not covered** | There is no inter-agent channel in this repo, by design. A message bus is orchestration, which PLAN.md places out of scope. This gap is a consequence of that decision, not an oversight. |
 | **ASI08** Cascading Agent Failures | **partial** | bounded-execution-budget, execution-lock-and-recovery, and the rollback pair limit blast radius within one run. Cascades *between* agents need more than one agent. |
 | **ASI09** Human-Agent Trust Exploitation | covered | exact-plan-approval-gate, grounded-claim-verification, bounded-review-epoch-escalation |
 | **ASI10** Rogue Agents | **partial** | Budgets, escalation caps, and ledgers detect drift from declared policy. "Rogue" presupposes a degree of autonomy this repo does not model. |
 
-Four of the ten are partial or uncovered, and three of those four trace to the
+Three of the ten are partial or uncovered, and every one of them traces to the
 same root: this repo governs **one** agent's execution, while those risks are
 about **several** agents interacting. That is the honest boundary of a
-primitives catalog that deliberately excludes orchestration.
+primitives catalog that deliberately excludes orchestration — and it is now the
+*only* reason for a gap, since ASI05, the one shortfall that was a genuinely
+missing primitive, is closed.
 
 ## Related work: Microsoft Agent Governance Toolkit
 
