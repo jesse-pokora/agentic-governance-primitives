@@ -50,15 +50,31 @@ def rerecord(app: Path) -> tuple[bool, str]:
     if not (app / "demo.py").exists():
         return True, ""
     trace = app / "demo.json"
-    before = hashlib.sha256(trace.read_bytes()).hexdigest() if trace.exists() else None
+    before = trace.read_text(encoding="utf-8").splitlines() if trace.exists() else None
     result = subprocess.run([sys.executable, "demo.py"], cwd=app,
                             capture_output=True, text=True)
     if result.returncode != 0:
         return False, (result.stderr.strip().splitlines() or ["demo.py failed"])[-1]
-    after = hashlib.sha256(trace.read_bytes()).hexdigest()
-    if before is not None and before != after:
-        return False, "recording changed on re-run"
-    return True, ""
+    if before is None:
+        return True, ""
+
+    after = trace.read_text(encoding="utf-8").splitlines()
+    if before == after:
+        return True, ""
+
+    # Say what changed. "Recording changed on re-run" with no detail is
+    # unhelpful precisely when it fires — on someone else's operating system,
+    # where you cannot reproduce it by hand.
+    for number, (was, now) in enumerate(zip(before, after), start=1):
+        if was != now:
+            return False, (
+                f"recording changed on re-run, first at line {number}\n"
+                f"    was: {was.strip()[:160]}\n"
+                f"    now: {now.strip()[:160]}"
+            )
+    return False, (
+        f"recording changed on re-run: {len(before)} lines became {len(after)}"
+    )
 
 
 def main(argv: list[str]) -> int:

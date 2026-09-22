@@ -134,16 +134,21 @@ class Trace:
 
     def _scrub(self, value: Any) -> Any:
         if isinstance(value, str):
+            # Separators first, then redaction. A recording is a committed
+            # artifact that CI regenerates on a different operating system, so
+            # the same code must produce the same file on Windows and on Linux
+            # or the byte-stability check is really testing where it ran.
+            #
+            # Order matters, and getting it wrong is subtle: details built with
+            # repr() carry doubled backslashes, so redacting first turned
+            # "<tmp>\\dir" into "<tmp>//dir" on Windows against "<tmp>/dir" on
+            # Linux. Normalizing both the value and the redaction keys up front
+            # removes the difference instead of papering over it.
+            value = _forward_slashes(value)
             for volatile, placeholder in self.redactions.items():
                 if volatile:
-                    value = value.replace(volatile, placeholder)
-            # Render path separators the same way everywhere. A recording is a
-            # committed artifact that CI regenerates on a different operating
-            # system; without this, the same code produces a different file on
-            # Windows and on Linux, and the byte-stability check becomes a test
-            # of where it ran. The apps themselves are untouched — only how a
-            # recorded string is displayed.
-            return value.replace("\\", "/")
+                    value = value.replace(_forward_slashes(volatile), placeholder)
+            return value
         if isinstance(value, dict):
             return {self._scrub(k): self._scrub(v) for k, v in value.items()}
         if isinstance(value, list):
@@ -169,6 +174,11 @@ class Trace:
         with open(out, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(payload, indent=2) + "\n")
         return out
+
+
+def _forward_slashes(text: str) -> str:
+    """Render any path separator as "/", including repr()'s doubled form."""
+    return text.replace("\\\\", "/").replace("\\", "/")
 
 
 def _reason_of(denial: Exception) -> tuple[str, str]:

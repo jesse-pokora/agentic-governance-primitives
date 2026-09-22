@@ -28,7 +28,7 @@
       "outcome": "denied",
       "result": "",
       "reason": "path_mismatch",
-      "detail": "name='deploy-tool' resolved='<tmp>//attacker_bin//deploy-tool' pinned='<tmp>//trusted_bin//deploy-tool'",
+      "detail": "name='deploy-tool' resolved='<tmp>/attacker_bin/deploy-tool' pinned='<tmp>/trusted_bin/deploy-tool'",
       "evidence": "",
       "note": "Identical bytes are not enough. The pin is path AND hash, so a same-named file in another directory is a different identity."
     },
@@ -42,7 +42,7 @@
       "outcome": "denied",
       "result": "",
       "reason": "hash_mismatch",
-      "detail": "name='deploy-tool' path='<tmp>//trusted_bin//deploy-tool' expected=6a0e49c03f83f6d9d8bd4041da85e407695e6eb455d5fde9a9d5c2aa61d97985 actual=568fdb876ceb13b2aa5605d496b7fbedde61691104060d3073fa89c222ebec4c",
+      "detail": "name='deploy-tool' path='<tmp>/trusted_bin/deploy-tool' expected=6a0e49c03f83f6d9d8bd4041da85e407695e6eb455d5fde9a9d5c2aa61d97985 actual=568fdb876ceb13b2aa5605d496b7fbedde61691104060d3073fa89c222ebec4c",
       "evidence": "",
       "note": "The correct location is not enough either."
     },

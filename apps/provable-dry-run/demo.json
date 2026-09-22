@@ -11,7 +11,7 @@
         "effects": "write AGENTS.md, write INDEX.md"
       },
       "outcome": "allowed",
-      "result": "[\"write <tmp>//AGENTS.md: managed guide, 3 sections\", \"write <tmp>//INDEX.md: index entry\"]",
+      "result": "[\"write <tmp>/AGENTS.md: managed guide, 3 sections\", \"write <tmp>/INDEX.md: index entry\"]",
       "reason": "",
       "detail": "",
       "evidence": "files on disk: []; effects performed: 0",
@@ -24,7 +24,7 @@
         "effects": "write AGENTS.md, write INDEX.md"
       },
       "outcome": "allowed",
-      "result": "[\"write <tmp>//AGENTS.md: managed guide, 3 sections\", \"write <tmp>//INDEX.md: index entry\"]",
+      "result": "[\"write <tmp>/AGENTS.md: managed guide, 3 sections\", \"write <tmp>/INDEX.md: index entry\"]",
       "reason": "",
       "detail": "",
       "evidence": "files on disk: ['AGENTS.md', 'INDEX.md']; effects performed: 2",
