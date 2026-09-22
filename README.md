@@ -63,8 +63,12 @@ agentic-governance-primitives/
 
 ## Status
 
-All 18 apps built. See [PLAN.md](PLAN.md) for the full catalog, phasing,
-and source mapping.
+All 32 apps built — 18 in v1, 10 in v1.1 that close gaps the v1 catalog left
+open, and 4 in v1.2 that constrain model behavior rather than secure it. Each
+is still one atomic claim, standalone, and off the out-of-scope list. See
+[PLAN.md](PLAN.md) for the full catalog, phasing, and source mapping, and
+[CONFORMANCE.md](CONFORMANCE.md) for how each app maps to published
+standards.
 
 | App | Enforcement | Status |
 |---|---|---|
@@ -86,6 +90,55 @@ and source mapping.
 | [governed-context-provenance](apps/governed-context-provenance) | deterministic | built |
 | [deterministic-embedding-contract-check](apps/deterministic-embedding-contract-check) | deterministic | built |
 | [prompt-injection-scanner-mcp](apps/prompt-injection-scanner-mcp) | hybrid | built |
+
+### v1.1 — gap closure
+
+Derived from this catalog's own criteria rather than observed in a source
+system: each closes a gap the v1 apps leave open.
+
+| App | Enforcement | Status |
+|---|---|---|
+| [hash-pinned-instruction-set](apps/hash-pinned-instruction-set) | deterministic | built |
+| [capability-gated-tool-invocation](apps/capability-gated-tool-invocation) | deterministic | built |
+| [bounded-execution-budget](apps/bounded-execution-budget) | deterministic | built |
+| [pinned-egress-allowlist](apps/pinned-egress-allowlist) | deterministic | built |
+| [write-scope-confinement](apps/write-scope-confinement) | deterministic | built |
+| [verified-secret-redaction](apps/verified-secret-redaction) | deterministic | built |
+| [deterministic-ledger-replay](apps/deterministic-ledger-replay) | deterministic | built |
+| [attested-rollback-checkpoint](apps/attested-rollback-checkpoint) | deterministic | built |
+| [concurrent-append-integrity](apps/concurrent-append-integrity) | deterministic | built |
+| [forward-only-revert-journal](apps/forward-only-revert-journal) | deterministic | built |
+
+### v1.2 — model-behavior constraint & drift detection
+
+Reliability rather than security: the deterministic gates a nondeterministic
+model is wrapped in, so its output becomes predictable.
+
+| App | Enforcement | Status |
+|---|---|---|
+| [measured-token-accounting](apps/measured-token-accounting) | deterministic | built |
+| [grounded-claim-verification](apps/grounded-claim-verification) | deterministic | built |
+| [memory-conflict-quarantine](apps/memory-conflict-quarantine) | deterministic | built |
+| [tiered-model-escalation-gate](apps/tiered-model-escalation-gate) | hybrid | built |
+
+## What the catalog adds up to
+
+Sorted by function rather than by tier, the apps converge on a **control
+plane**, not an agent architecture: identity and integrity, authorization,
+audit and evidence, containment and recovery, input trust, contract
+verification, and — since v1.2 — measurement and drift detection around the
+model itself. That is deliberate. Agent frameworks ship the loop, the
+messages, and the state graph and almost none of this; this repo ships the
+half they don't, in a form you can put in front of an agent you already have.
+
+Two halves of the same job: Tiers 1–4 constrain what an agent is *permitted*
+to do, and Tier 5 constrains how far its output may drift from what the system
+knows. A governed agent that is unpredictable is not governed.
+
+What the catalog therefore does *not* contain, and will not by accident: an
+agent loop, an inter-agent channel, a router, shared working memory, or a
+second persona. Those are the defining pieces of a multi-agent architecture,
+and four of the five are already on PLAN.md's out-of-scope list.
 
 Composing a few of these into a minimal pipeline is a possible future step
 (see PLAN.md's "Relationship to future IAB work"), not a default.

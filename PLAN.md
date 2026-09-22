@@ -58,6 +58,18 @@ launchers.*
 | `deterministic-primitives-kit` | The same input byte-for-byte always produces the same canonical JSON, the same hash, and the same safe-ID validation — across restarts, across machines. | deterministic | canonical-JSON / safe-ID / atomic-write primitives |
 | `workspace-attestation` | A governed run's *claimed* file changes are diffed against a real git-worktree snapshot taken immediately before and after — a claim that doesn't match the diff fails closed. | deterministic | workspace attestation around agent-driven test runs |
 
+**v1.1 — gap closure.** The apps below were not observed in any source system.
+They were derived from this catalog's own criteria: each closes a gap that the
+v1 catalog leaves open while still reducing to one atomic claim, and none of
+them is on the out-of-scope list above.
+
+| App | Atomic claim | Enforcement | Fills the gap left by |
+|---|---|---|---|
+| `hash-pinned-instruction-set` | A run executes only under the exact instruction set it pinned — a single edited byte, an added file, a removed file, or two files swapping contents all fail closed before the run starts. | deterministic | `deterministic-embedding-contract-check` pins a model *request*; nothing pinned the *instructions*. |
+| `pinned-egress-allowlist` | An outbound request is allowed only if its scheme, host, and port all match an allowlist entry exactly — and every hop of a redirect chain is checked, not just the first. | deterministic | `hash-pinned-identity` pins what binary runs; nothing pinned where it may talk. |
+| `write-scope-confinement` | A write is denied before any bytes touch disk unless its fully resolved path lies inside the declared scope root — traversal, absolute paths, prefix siblings, and symlink escapes all fail closed. | deterministic | `workspace-attestation` detects a bad claim after the run; nothing prevented the write. |
+| `verified-secret-redaction` | No registered secret can appear in an emitted artifact — the emitter redacts, then re-reads its own serialized output and refuses to emit if any secret survived. | deterministic | `safe-failure-diagnostics` and `governed-preflight-denial-evidence` protect the failure path; nothing covered successful output. |
+
 ### Tier 2 — Review & process governance
 *Inspired by: bounded human-escalation loops and deterministic,
 non-overlapping validation/reconciliation contracts seen in governed
@@ -71,6 +83,25 @@ story-review pipelines.*
 | `trusted-revision-anchor` | The "current" commit is selected only from a ledger slot position, never from caller-supplied input; "fresh" means "at the ledger head," not "recent by clock time." | deterministic | trusted revision/freshness contracts |
 | `typed-ledger-slot-supersession` | A later record can only replace an earlier one by naming that exact slot key *and* the exact digest of the record it's replacing — a fork or missing predecessor fails closed. | deterministic | typed ledger-slot approval/retention authority |
 
+**v1.1 — gap closure.** The apps below were not observed in any source system.
+They were derived from this catalog's own criteria: each closes a gap that the
+v1 catalog leaves open while still reducing to one atomic claim, and none of
+them is on the out-of-scope list above.
+
+| App | Atomic claim | Enforcement | Fills the gap left by |
+|---|---|---|---|
+| `bounded-execution-budget` | A run halts at the first action that would exceed a declared budget — the over-budget action never executes, nothing is partially charged, and the budget cannot be extended from inside the run. | deterministic | `bounded-review-epoch-escalation` caps one loop; nothing capped tool calls, cost, or time. |
+| `deterministic-ledger-replay` | Replaying a ledger from genesis reproduces its state byte-for-byte, and any state the replay cannot reproduce is rejected — with the first divergent event named. | deterministic | `authenticated-transition-ledger` proves the log is intact; nothing proved the state was derivable from it. |
+| `attested-rollback-checkpoint` | A rollback restores exactly a previously attested state digest, failing closed on an unattested target or a checkpoint whose bytes no longer hash to it. | deterministic | Nothing could return a run to a known-good state under the same evidence discipline. |
+| `forward-only-revert-journal` | A revert is recorded as a new forward record naming the state it left behind, so the abandoned state stays readable and a rewritten history is detected. | deterministic | Split from `attested-rollback-checkpoint`: restoring an attested state and never erasing history are two rules. |
+| `concurrent-append-integrity` | Under concurrent writers an append-only ledger admits exactly one entry per accepted append, with contiguous indices and an unbroken chain — a writer whose predecessor moved is rejected. | deterministic | `execution-lock-and-recovery` covers a crashed run's lock; nothing covered two live writers. |
+
+`attested-rollback-checkpoint` originally carried both of those rules in one
+app, and its claim needed an "and" to state them — the tell this catalog uses
+for a mis-scoped app. It was split: restoring only an attested digest and never
+erasing history are separable rules, and each now has its own claim, its own
+module, and its own tests.
+
 ### Tier 3 — Persona & agent architecture
 *Inspired by: declarative persona/capability catalogs and provenance-tagged
 context assembly for governed agents.*
@@ -81,6 +112,15 @@ context assembly for governed agents.*
 | `single-purpose-adversarial-reviewer` | One adversarial-review agent, schema-in/findings-out, callable with zero pipeline, zero orchestrator, and no state carried between calls. | hybrid | single-purpose adversarial-review agents |
 | `governed-context-provenance` | Every piece of context handed to a model carries its source and an explicit `injection_disposition` ("clear" vs. untrusted) *before* assembly — the model never has to guess what it can trust. | deterministic | provenance-tagged, request-scoped context assembly |
 
+**v1.1 — gap closure.** The apps below were not observed in any source system.
+They were derived from this catalog's own criteria: each closes a gap that the
+v1 catalog leaves open while still reducing to one atomic claim, and none of
+them is on the out-of-scope list above.
+
+| App | Atomic claim | Enforcement | Fills the gap left by |
+|---|---|---|---|
+| `capability-gated-tool-invocation` | A tool call runs only if the calling persona's declared capability set contains that tool's exact required capability — and a denied call never enters the tool function at all. | deterministic | `persona-capability-catalog` declares who may do what but denies nothing; Tier 3 had the declaration half without the enforcement half. |
+
 ### Tier 4 — Domain example
 *Inspired by: deterministic verification of a vendor API's exact request
 contract, and single-purpose MCP servers.*
@@ -90,8 +130,35 @@ contract, and single-purpose MCP servers.*
 | `deterministic-embedding-contract-check` | An embedding call's provider, model ID, version, and dimensions can be verified byte-for-byte against a captured request — with no live AWS call. | deterministic | deterministic embedding-request contract verification |
 | `prompt-injection-scanner-mcp` | A single-purpose MCP server that does exactly one thing (flag likely prompt injection in a text blob) and nothing else. | hybrid | single-purpose prompt-injection-scanning MCP servers |
 
+### Tier 5 — Model-behavior constraint & drift detection
+*The deterministic gates a nondeterministic model is wrapped in, so its output
+becomes predictable. Not security controls: reliability controls. Added in
+v1.2.*
+
+| App | Atomic claim | Enforcement | Fills the gap left by |
+|---|---|---|---|
+| `measured-token-accounting` | An unmeasured model call is refused rather than counted as zero, and the recorded per-call parts must reconcile exactly with the provider's reported total. | deterministic | `bounded-execution-budget` enforces a cap; nothing established that the number being capped was real. |
+| `grounded-claim-verification` | Every factual claim must name a ground-truth key that exists and quote its value exactly — uncited, invented-source, and altered-quote all fail closed. | deterministic | Nothing checked whether generated content stayed anchored to what the system actually holds. |
+| `memory-conflict-quarantine` | Two memory records asserting different values for one key are both retained and surfaced — the newer never silently overwrites the older. | deterministic | `governed-context-provenance` tags context going in; nothing governed contradiction in what is remembered. |
+| `tiered-model-escalation-gate` | A cheap tier's output is used only if it passes the declared deterministic check; otherwise it escalates, and the ledger records which tier answered. | hybrid | Nothing made "we asked the cheap model first" unable to become a reason output reaches a caller unchecked. |
+
+**Deliberately not in this tier:** *instruction-adherence* drift — whether a
+model still follows the instructions it was given. That is the Instruction
+Adherence Bench's question, and this repo is not IAB (see below).
+`hash-pinned-instruction-set` covers the half that is deterministic — did the
+instruction text change — and the other half genuinely needs a bench with a
+corpus and a scorer, not a primitive.
+
 18 apps is the target size for v1 — enough to cover every tier without
 padding. Anything that doesn't reduce to one atomic claim gets split or cut.
+
+v1.1 adds 10 gap-closure apps and v1.2 adds Tier 5's 4, for 32 in total. They were not found by looking
+at another system; they were found by asking what this catalog leaves open.
+The test each had to pass to be built: it reduces to one atomic claim, it is
+standalone, it is enforceable deterministically, and it is not on the
+out-of-scope list. Patterns that failed that test — a message bus, a router, a
+lifecycle state machine — stayed out, because they are orchestration however
+small you make them.
 
 ## Build phasing
 
@@ -113,6 +180,23 @@ repo to exist first.
 **Phase 4:** Tier 3 and Tier 4 in any order — they're independent of each
 other and of Tiers 1–2.
 
+**Phase 5 (v1.1 — gap closure):** the nine apps marked *v1.1* above. They are
+independent of each other and of Phases 1–4, so they can be built in any
+order. Four of them exist because a v1 app enforces half of a pair —
+`hash-pinned-identity` without egress, `workspace-attestation` without write
+confinement, `persona-capability-catalog` without enforcement,
+`authenticated-transition-ledger` without replay — which is the most reliable
+place to look for the next gap.
+
+**Phase 6 (v1.2 — Tier 5):** the four model-behavior apps. They are
+independent of every earlier phase. This phase is where the catalog stops
+being purely a security control plane: measuring usage, checking generated
+claims against held records, quarantining contradictory memory, and gating a
+cheap model behind a deterministic check are reliability controls, not
+security ones. They belong here because they meet the same test — one atomic
+claim, standalone, deterministically enforceable — and because a governed
+agent that is unpredictable is not governed.
+
 ## Map
 
 ```mermaid
@@ -128,6 +212,10 @@ flowchart LR
         A6[execution-lock-and-recovery]
         A7[deterministic-primitives-kit]
         A8[workspace-attestation]
+        A9[hash-pinned-instruction-set]
+        A10[pinned-egress-allowlist]
+        A11[write-scope-confinement]
+        A12[verified-secret-redaction]
     end
 
     subgraph T2["Tier 2 — Review & process governance"]
@@ -136,12 +224,18 @@ flowchart LR
         B3[canonical-outcome-reconciliation]
         B4[trusted-revision-anchor]
         B5[typed-ledger-slot-supersession]
+        B6[bounded-execution-budget]
+        B7[deterministic-ledger-replay]
+        B8[attested-rollback-checkpoint]
+        B9[concurrent-append-integrity]
+        B10[forward-only-revert-journal]
     end
 
     subgraph T3["Tier 3 — Persona & agent architecture"]
         C1[persona-capability-catalog]
         C2[single-purpose-adversarial-reviewer]
         C3[governed-context-provenance]
+        C4[capability-gated-tool-invocation]
     end
 
     subgraph T4["Tier 4 — Domain example"]
@@ -149,18 +243,43 @@ flowchart LR
         D2[prompt-injection-scanner-mcp]
     end
 
+    subgraph T5["Tier 5 — Model-behavior constraint & drift detection"]
+        E1[measured-token-accounting]
+        E2[grounded-claim-verification]
+        E3[memory-conflict-quarantine]
+        E4[tiered-model-escalation-gate]
+    end
+
     SRC --> T1
     SRC --> T2
     SRC --> T3
     SRC --> T4
+    SRC --> T5
 
     style A1 fill:#dff0d8
     style A2 fill:#dff0d8
     style A3 fill:#dff0d8
     style B1 fill:#dff0d8
+
+    style A9 fill:#e8e0f0
+    style A10 fill:#e8e0f0
+    style A11 fill:#e8e0f0
+    style A12 fill:#e8e0f0
+    style B6 fill:#e8e0f0
+    style B7 fill:#e8e0f0
+    style B8 fill:#e8e0f0
+    style B9 fill:#e8e0f0
+    style C4 fill:#e8e0f0
+    style B10 fill:#e8e0f0
+
+    style E1 fill:#fde9d9
+    style E2 fill:#fde9d9
+    style E3 fill:#fde9d9
+    style E4 fill:#fde9d9
 ```
 
-*(Green = Phase 1, build first.)*
+*(Green = Phase 1, build first. Violet = Phase 5, v1.1 gap closure.
+Amber = Phase 6, v1.2 model-behavior tier.)*
 
 ## Relationship to future IAB work
 
