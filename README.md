@@ -140,5 +140,11 @@ agent loop, an inter-agent channel, a router, shared working memory, or a
 second persona. Those are the defining pieces of a multi-agent architecture,
 and four of the five are already on PLAN.md's out-of-scope list.
 
+[CONFORMANCE.md](CONFORMANCE.md) also compares this catalog to
+[microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit),
+the largest project in this space: a framework where the governance properties
+live inside it, against a catalog where each property is one claim with one
+runnable test. Their coverage profiles turn out to be close to complementary.
+
 Composing a few of these into a minimal pipeline is a possible future step
 (see PLAN.md's "Relationship to future IAB work"), not a default.

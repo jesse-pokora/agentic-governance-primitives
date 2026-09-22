@@ -128,6 +128,71 @@ same root: this repo governs **one** agent's execution, while those risks are
 about **several** agents interacting. That is the honest boundary of a
 primitives catalog that deliberately excludes orchestration.
 
+## Related work: Microsoft Agent Governance Toolkit
+
+The largest project in this space is
+[microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit)
+(AGT) — a runtime governance toolkit with a policy engine, SDKs for Python,
+TypeScript, .NET, Go and Rust, and packages on PyPI, npm and NuGet, governed by
+a technical steering committee and currently in public preview. It maps itself
+to the same ASI 2026 taxonomy used above.
+
+Naming it here is deliberate. A conformance document that ignores the biggest
+implementation of what it describes is less useful, not more.
+
+### How the two differ
+
+AGT is a **framework**: you install it, and the governance properties are
+enforced inside it. This repo is an **executable assurance case**: each property
+is isolated as one claim with one runnable test, so a property can be understood
+and checked without adopting anything.
+
+The difference shows up in what each offers as evidence. AGT's ASI mapping cites
+links to source files. This repo's rows cite a test you can run in seconds that
+fails if the claim is false. Neither is better in general — they answer different
+questions. "How do I govern my agent in production" is AGT's question. "What
+exactly does this control guarantee, and how would I know if it stopped holding"
+is this repo's.
+
+### Complementary coverage
+
+AGT's self-assessment reports **7 of 10 ASI risks Full, 3 Partial, 0 gaps** (its
+repository description states 10/10; this comparison uses the project's own
+mapping document, which is the more conservative and more recent figure). Set
+against the coverage table above, the two profiles are close to complementary:
+
+| Risk | AGT | This repo |
+|---|---|---|
+| ASI07 Inter-agent communication | Full — DID trust gate | not covered — orchestration is out of scope |
+| ASI08 Cascading failures | Full — circuit breaker, rate limiter | partial |
+| ASI04 Agentic supply chain | Partial — "no SBOM" | covered — three apps |
+| ASI06 Memory & context poisoning | Partial — "integration is opt-in" | covered — three apps |
+| ASI09 Human-agent trust | Partial — "no universal UI integration" | covered — three apps |
+
+AGT is strongest where this repo is weakest (anything involving more than one
+agent), and partial in three places where this repo has direct coverage.
+
+### The gap Tier 5 sits in
+
+AGT's `LIMITATIONS.md` states its boundary plainly, and the statement is worth
+quoting because it is unusually candid for a project of its size:
+
+> AGT governs **what agents do** (tool calls, resource access, inter-agent
+> messages). It does **not** govern what agents *think* or *say*. [...] AGT does
+> **not** detect if the *content* passed to an allowed tool is a hallucination.
+
+That is the boundary between action governance and content fidelity, and Tier 5
+of this catalog sits entirely on the far side of it.
+`grounded-claim-verification` checks whether an assertion is anchored to a held
+record; `memory-conflict-quarantine` refuses to let a later assertion silently
+replace an earlier one; `tiered-model-escalation-gate` refuses output that fails
+a declared check regardless of which tier produced it. None of those is a
+security control, and the largest toolkit in the field states that it does not
+cover them.
+
+*Assessed September 2026 against the repository's README, charter, ASI mapping,
+independence and limitations documents. The source was not reviewed.*
+
 ## Relationship to the Instruction Adherence Bench
 
 IAB's registry needs, per instruction, a stable criterion ID traceable to an
@@ -145,5 +210,8 @@ row is therefore a complete registry record: claim, criterion, test.
 - [NIST SP 800-53 Rev 5 control families and titles — CSF Tools](https://csf.tools/reference/nist-sp-800-53/r5/)
 - [ISO 42001 Annex A controls — ISMS.online](https://www.isms.online/iso-42001/annex-a-controls/)
 - [ISO 42001 Annex A control A.9, Use of AI systems — ISMS.online](https://www.isms.online/iso-42001/annex-a-controls/a-9-use-of-ai-systems/)
+- [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit)
+- [AGT — OWASP Agentic Security Initiative reference architecture (its ASI 2026 self-assessment)](https://github.com/microsoft/agent-governance-toolkit/blob/main/docs/compliance/owasp-agentic-top10-architecture.md)
+- [AGT — Known Limitations & Design Boundaries](https://github.com/microsoft/agent-governance-toolkit/blob/main/docs/LIMITATIONS.md)
 
 Identifiers verified September 2026.
