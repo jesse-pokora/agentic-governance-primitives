@@ -1,0 +1,48 @@
+{
+  "app": "authenticated-transition-ledger",
+  "claim": "An append-only, SHA-256-chained, HMAC-signed event log detects a single edited byte anywhere in its history, not just at the tampered row.",
+  "enforcement": "deterministic",
+  "denial_type": "VerificationResult(valid=False)",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "three appended entries, nothing touched",
+      "request": {
+        "entries": 3,
+        "check": "verify()"
+      },
+      "outcome": "allowed",
+      "result": "chain intact",
+      "reason": "",
+      "detail": "",
+      "evidence": "every link, hash and signature recomputed from genesis",
+      "note": ""
+    },
+    {
+      "label": "one byte edited in entry 0, the oldest row",
+      "request": {
+        "edited": "entries[0].payload.target",
+        "check": "verify()"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "hash_mismatch at entry 0",
+      "detail": "",
+      "evidence": "detected at entry 0, not merely at the tail",
+      "note": "Verification walks the whole chain, so age is no protection."
+    },
+    {
+      "label": "a careful attacker recomputes the hash but cannot forge the HMAC",
+      "request": {
+        "edited": "entries[1].payload.action",
+        "entry_hash": "recomputed to match"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "hmac_mismatch at entry 1",
+      "detail": "",
+      "evidence": "hash check passes; signature check does not",
+      "note": "Recomputing the hash is free. Signing it requires the secret."
+    }
+  ]
+}

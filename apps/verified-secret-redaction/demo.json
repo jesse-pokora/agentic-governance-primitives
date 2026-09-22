@@ -1,0 +1,59 @@
+{
+  "app": "verified-secret-redaction",
+  "claim": "No registered secret can appear in an emitted artifact \u2014 the emitter redacts, then re-reads its own serialized output and refuses to emit if any secret survived.",
+  "enforcement": "deterministic",
+  "denial_type": "RedactionFailure",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a secret nested inside an artifact",
+      "request": {
+        "artifact": "{\"run\": {\"auth\": {\"token\": \"toy-token-AAAA1111\"}}}"
+      },
+      "outcome": "allowed",
+      "result": "{\"run\":{\"auth\":{\"token\":\"[redacted:91856b77a58f]\"}}}",
+      "reason": "",
+      "detail": "",
+      "evidence": "placeholder is stable: [redacted:91856b77a58f]",
+      "note": ""
+    },
+    {
+      "label": "a secret embedded in a log line keeps its surroundings",
+      "request": {
+        "line": "GET /v1/toy Authorization: Bearer toy-token-AAAA1111 -> 200"
+      },
+      "outcome": "allowed",
+      "result": "GET /v1/toy Authorization: Bearer [redacted:91856b77a58f] -> 200",
+      "reason": "",
+      "detail": "",
+      "evidence": "only the secret was replaced",
+      "note": ""
+    },
+    {
+      "label": "one secret containing another leaves no fragment",
+      "request": {
+        "text": "header toy-token-AAAA1111-BBBB2222 footer",
+        "registered": "both, longest first"
+      },
+      "outcome": "allowed",
+      "result": "header [redacted:f9d248002ebb] footer",
+      "reason": "",
+      "detail": "",
+      "evidence": "no '-BBBB2222' tail survives",
+      "note": "Replacing the shorter secret first would shred the longer one and leave half of it in the output."
+    },
+    {
+      "label": "output that reached the emitter already containing a secret",
+      "request": {
+        "serialized": "{\"leaked\": \"toy-token-AAAA1111\"}",
+        "check": "assert_clean()"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "secret_survived_redaction",
+      "detail": "[redacted:91856b77a58f]",
+      "evidence": "the failure names only the placeholder, never the secret",
+      "note": "The emitter does not trust its own redactor; it re-reads the finished bytes."
+    }
+  ]
+}

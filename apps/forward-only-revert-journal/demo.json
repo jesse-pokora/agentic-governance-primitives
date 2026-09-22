@@ -1,0 +1,62 @@
+{
+  "app": "forward-only-revert-journal",
+  "claim": "A revert is recorded as a new forward record naming the state it left behind, so the abandoned state stays readable and a rewritten history is detected.",
+  "enforcement": "deterministic",
+  "denial_type": "JournalRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "reverting to a state that previously held",
+      "request": {
+        "in effect": "b\u2026 (v2)",
+        "revert to": "a\u2026 (v1)",
+        "history": "set v1, set v2"
+      },
+      "outcome": "allowed",
+      "result": "recorded as record 2",
+      "reason": "",
+      "detail": "",
+      "evidence": "records: ['set', 'set', 'revert']; abandoned state still in history: True",
+      "note": "A destructive revert deletes exactly the evidence an auditor came for \u2014 that the system was once in that state, and someone left it."
+    },
+    {
+      "label": "reverting to a state the system was never in",
+      "request": {
+        "in effect": "a\u2026 (v1)",
+        "revert to": "c\u2026 (never held)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "never_held",
+      "detail": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "evidence": "",
+      "note": "A revert to something that never held is a new state wearing the word revert."
+    },
+    {
+      "label": "a record deleted from the middle of the history",
+      "request": {
+        "records": "3 written, 1 removed",
+        "check": "verify()"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "index_not_contiguous",
+      "detail": "record.index=2",
+      "evidence": "index contiguity breaks at the removal point",
+      "note": ""
+    },
+    {
+      "label": "a record rewritten in place, indices left contiguous",
+      "request": {
+        "edited": "records[1].digest",
+        "indices": "still 0, 1, 2"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "history_rewritten",
+      "detail": "from_digest=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb in_effect=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "evidence": "each record names what was in effect before it, so the linkage to the next record no longer holds",
+      "note": ""
+    }
+  ]
+}

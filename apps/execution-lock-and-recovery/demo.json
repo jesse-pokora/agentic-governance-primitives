@@ -1,0 +1,60 @@
+{
+  "app": "execution-lock-and-recovery",
+  "claim": "A crashed run leaves a lock that only an explicit, challenge-authenticated operator attestation can clear \u2014 the system never infers liveness on its own.",
+  "enforcement": "deterministic",
+  "denial_type": "LockHeld / RecoveryDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a second run tries to take a lock that is already held",
+      "request": {
+        "run_id": "run-toy-1",
+        "state": "held since the first acquire"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "lock_held",
+      "detail": "run_id=run-toy-1",
+      "evidence": "locked: True",
+      "note": "The first holder may have crashed. The lock manager has no way to know that, and does not guess."
+    },
+    {
+      "label": "clearing the lock with the wrong challenge",
+      "request": {
+        "run_id": "run-toy-1",
+        "attested": "0000...0000"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "challenge_mismatch",
+      "detail": "",
+      "evidence": "locked: True",
+      "note": "No timeout, no heartbeat, no 'probably dead by now'. Inferring liveness is how two runs end up writing at once."
+    },
+    {
+      "label": "an operator attests the exact challenge",
+      "request": {
+        "run_id": "run-toy-1",
+        "attested": "<challenge issued at acquire>"
+      },
+      "outcome": "allowed",
+      "result": "lock cleared",
+      "reason": "",
+      "detail": "",
+      "evidence": "locked: False",
+      "note": ""
+    },
+    {
+      "label": "the next run can now acquire it",
+      "request": {
+        "run_id": "run-toy-1"
+      },
+      "outcome": "allowed",
+      "result": "<a fresh challenge>",
+      "reason": "",
+      "detail": "",
+      "evidence": "a fresh challenge is issued for this holder",
+      "note": ""
+    }
+  ]
+}

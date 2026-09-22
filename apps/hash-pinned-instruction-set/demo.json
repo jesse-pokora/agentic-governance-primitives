@@ -1,0 +1,60 @@
+{
+  "app": "hash-pinned-instruction-set",
+  "claim": "A run executes only under the exact instruction set it pinned \u2014 a single edited byte, an added file, a removed file, or two files swapping contents all fail closed before the run starts.",
+  "enforcement": "deterministic",
+  "denial_type": "InstructionDrift",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "the instruction set is byte-for-byte the pinned one",
+      "request": {
+        "files": "AGENTS.md, REVIEW.md",
+        "manifest": "e674caf78d383694..."
+      },
+      "outcome": "allowed",
+      "result": "executed",
+      "reason": "",
+      "detail": "",
+      "evidence": "run executed: 1 time",
+      "note": ""
+    },
+    {
+      "label": "one word changed in one instruction file",
+      "request": {
+        "files": "AGENTS.md (edited), REVIEW.md",
+        "manifest": "f22857ce37981ec7..."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "content_drift",
+      "detail": "AGENTS.md pinned=67e91f8272e5701ed505fb6ecd531fff1046646bb1e77c4c634273c924b748c6 actual=6a53f2a9950f76318e284b0edeaf4f8bc397ae8fb5594620ee3e1fbd1800b7a1",
+      "evidence": "run executed: 1 time \u2014 unchanged",
+      "note": "Drift is caught before the run starts, not noticed in the audit after."
+    },
+    {
+      "label": "an extra instruction file the pinned run never saw",
+      "request": {
+        "files": "AGENTS.md, REVIEW.md, SHADOW.md"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "instruction_added",
+      "detail": "SHADOW.md",
+      "evidence": "",
+      "note": "Re-hashing only known files would accept an injected one silently."
+    },
+    {
+      "label": "the same two files, contents swapped between them",
+      "request": {
+        "AGENTS.md": "now holds REVIEW.md's bytes",
+        "REVIEW.md": "now holds AGENTS.md's bytes"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "content_drift",
+      "detail": "AGENTS.md pinned=67e91f8272e5701ed505fb6ecd531fff1046646bb1e77c4c634273c924b748c6 actual=eb41b983350be3dd49736790155416cd5a037833cf444b26b1ef2c77f14f0ebd",
+      "evidence": "",
+      "note": "The multiset of hashes is identical. Only the name-to-hash binding moved, and that is what the manifest binds."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "app": "tiered-model-escalation-gate",
+  "claim": "A cheap tier's output is used only if it passes the declared deterministic check \u2014 otherwise the call escalates to the next tier, and the ledger records which tier actually answered.",
+  "enforcement": "hybrid",
+  "denial_type": "NoTierPassed",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "the cheap tier returns output that passes the check",
+      "request": {
+        "tiers": "cheap, strong",
+        "check": "output cites a source_key"
+      },
+      "outcome": "allowed",
+      "result": "cheap",
+      "reason": "",
+      "detail": "",
+      "evidence": "cheap called 1x, strong called 0x",
+      "note": ""
+    },
+    {
+      "label": "the cheap tier fails the check, so the call escalates",
+      "request": {
+        "cheap returns": "no source_key",
+        "check": "output cites a source_key"
+      },
+      "outcome": "allowed",
+      "result": "strong",
+      "reason": "",
+      "detail": "",
+      "evidence": "cheap called 1x, strong called 1x; ledger records answered_by=strong",
+      "note": ""
+    },
+    {
+      "label": "the cheap tier raises, and the call escalates past it",
+      "request": {
+        "cheap": "raises RuntimeError",
+        "strong": "returns grounded output"
+      },
+      "outcome": "allowed",
+      "result": "strong",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "A cheap tier having a bad day should cost latency, not availability."
+    },
+    {
+      "label": "the expensive tier's output fails the same check",
+      "request": {
+        "tier": "strong",
+        "returns": "no source_key"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_tier_passed",
+      "detail": "",
+      "evidence": "ledger entries: 0 \u2014 nothing accepted",
+      "note": "Cost does not buy trust. There is no degraded mode that returns the least bad failing output."
+    }
+  ]
+}

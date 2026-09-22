@@ -1,0 +1,87 @@
+{
+  "app": "pinned-egress-allowlist",
+  "claim": "An outbound request is allowed only if its scheme, host, and port all match an allowlist entry exactly \u2014 and every hop of a redirect chain is checked, not just the first.",
+  "enforcement": "deterministic",
+  "denial_type": "EgressDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "an allowlisted host on its default port",
+      "request": {
+        "url": "https://api.example.test/v1/toy",
+        "allowlist": "https://api.example.test, https://mirror.example.test:8443"
+      },
+      "outcome": "allowed",
+      "result": "\"EgressTarget(scheme='https', host='api.example.test', port=443)\"",
+      "reason": "",
+      "detail": "",
+      "evidence": "scheme, host and port all matched one entry",
+      "note": ""
+    },
+    {
+      "label": "a host that merely starts with the allowlisted name",
+      "request": {
+        "url": "https://api.example.test.evil.test/v1/toy",
+        "allowlist": "https://api.example.test, https://mirror.example.test:8443"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "host_not_allowed",
+      "detail": "api.example.test.evil.test",
+      "evidence": "",
+      "note": "Matching is on the whole hostname, never a prefix or suffix test."
+    },
+    {
+      "label": "the allowlisted name used as userinfo before an @",
+      "request": {
+        "url": "https://api.example.test@evil.test/v1/toy",
+        "real host": "evil.test"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "userinfo_not_allowed",
+      "detail": "https://api.example.test@evil.test/v1/toy",
+      "evidence": "",
+      "note": "The name a reader's eye lands on first is not the host."
+    },
+    {
+      "label": "an unlisted port on an allowlisted host",
+      "request": {
+        "url": "https://api.example.test:8443/v1/toy",
+        "allowlist": "https://api.example.test, https://mirror.example.test:8443"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "port_not_allowed",
+      "detail": "api.example.test:8443",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a redirect chain where every hop is allowlisted",
+      "request": {
+        "hop 0": "https://api.example.test/v1/toy",
+        "hop 1": "https://mirror.example.test:8443/v1/toy"
+      },
+      "outcome": "allowed",
+      "result": "\"EgressTarget(scheme='https', host='mirror.example.test', port=8443)\"",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a 302 from an allowlisted host into an unlisted one",
+      "request": {
+        "hop 0": "https://api.example.test/v1/toy (allowed)",
+        "hop 1": "https://exfil.evil.test/collect"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "host_not_allowed",
+      "detail": "hop=1 url=https://exfil.evil.test/collect (exfil.evil.test)",
+      "evidence": "",
+      "note": "Checking only the first hop makes the allowlist a suggestion."
+    }
+  ]
+}

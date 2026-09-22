@@ -1,0 +1,79 @@
+{
+  "app": "memory-conflict-quarantine",
+  "claim": "When two memory records assert different values for the same key, both are retained and the conflict is surfaced \u2014 the newer one never silently overwrites the older, and the key has no answer until someone resolves it.",
+  "enforcement": "deterministic",
+  "denial_type": "MemoryRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "run-1 writes a key nobody has claimed",
+      "request": {
+        "key": "svc-fake-a.owner",
+        "value": "toy-team-alpha",
+        "source": "run-1"
+      },
+      "outcome": "allowed",
+      "result": "settled",
+      "reason": "",
+      "detail": "",
+      "evidence": "quarantine holds 0 conflicts",
+      "note": ""
+    },
+    {
+      "label": "run-2 asserts the same value from a different source",
+      "request": {
+        "key": "svc-fake-a.owner",
+        "value": "toy-team-alpha",
+        "source": "run-2"
+      },
+      "outcome": "allowed",
+      "result": "settled \u2014 corroboration, not conflict",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "run-3 asserts a different value for the same key",
+      "request": {
+        "key": "svc-fake-a.owner",
+        "value": "toy-team-beta",
+        "source": "run-3",
+        "held": "toy-team-alpha (run-1)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "quarantined \u2014 both records retained",
+      "detail": "",
+      "evidence": "quarantine holds 1 conflict; both sources still attributable",
+      "note": "Under last-write-wins the drift becomes the memory and the record it replaced is gone. A model that drifts writes its drift last."
+    },
+    {
+      "label": "reading a key that is under conflict",
+      "request": {
+        "key": "svc-fake-a.owner",
+        "candidates": "toy-team-alpha, toy-team-beta"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "key_in_conflict",
+      "detail": "svc-fake-a.owner",
+      "evidence": "",
+      "note": "Returning either side would be the silent choice the store exists to prevent. Returning the older one is last-write-wins with extra steps."
+    },
+    {
+      "label": "resolving the conflict to a value nobody asserted",
+      "request": {
+        "key": "svc-fake-a.owner",
+        "chosen": "toy-team-gamma",
+        "asserted": "toy-team-alpha, toy-team-beta"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "value_never_asserted",
+      "detail": "toy-team-gamma",
+      "evidence": "",
+      "note": "Resolution is a decision between what was asserted."
+    }
+  ]
+}

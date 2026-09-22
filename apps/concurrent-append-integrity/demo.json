@@ -1,0 +1,50 @@
+{
+  "app": "concurrent-append-integrity",
+  "claim": "Under concurrent writers an append-only ledger admits exactly one entry per accepted append, with contiguous indices and an unbroken hash chain \u2014 a writer whose predecessor moved is rejected.",
+  "enforcement": "deterministic",
+  "denial_type": "ConcurrentAppendRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "two uncoordinated writers that both read the same head",
+      "request": {
+        "writer a": "prev_hash = genesis",
+        "writer b": "prev_hash = genesis (stale)",
+        "coordination": "none"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "chain_broken at entry 1",
+      "detail": "",
+      "evidence": "the hazard, staged as an explicit interleaving rather than a race, so it is deterministic",
+      "note": "Both entries claim the same predecessor. The chain no longer describes an order."
+    },
+    {
+      "label": "8 threads racing, each naming the head it built on",
+      "request": {
+        "writers": 8,
+        "discipline": "compare-and-swap",
+        "all read head": "before the barrier released"
+      },
+      "outcome": "allowed",
+      "result": "chain intact",
+      "reason": "",
+      "detail": "",
+      "evidence": "1 accepted, 7 rejected as head_moved; ledger holds 1 entry",
+      "note": "Exactly one wins. The assertion holds under every possible scheduling, so the test is not timing-dependent."
+    },
+    {
+      "label": "8 threads serialized through one lock",
+      "request": {
+        "writers": 8,
+        "discipline": "read head and extend under a lock"
+      },
+      "outcome": "allowed",
+      "result": "chain intact",
+      "reason": "",
+      "detail": "",
+      "evidence": "8 accepted, 0 rejected; indices [0, 1, 2, 3, 4, 5, 6, 7]",
+      "note": "No gaps, no duplicates, nothing lost \u2014 the other legitimate discipline."
+    }
+  ]
+}

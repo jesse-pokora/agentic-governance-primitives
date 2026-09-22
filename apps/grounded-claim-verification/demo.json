@@ -1,0 +1,80 @@
+{
+  "app": "grounded-claim-verification",
+  "claim": "Every factual claim a model emits must name a ground-truth key that exists and quote that record's value exactly \u2014 an uncited claim, an invented source, or an altered quote fails closed.",
+  "enforcement": "deterministic",
+  "denial_type": "GroundingRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "claims that cite held records and quote them exactly",
+      "request": {
+        "claim": "svc-fake-a runs 4 replicas",
+        "cites": "svc-fake-a.replicas",
+        "quotes": "4",
+        "held": "svc-fake-a.owner=toy-team-alpha, svc-fake-a.replicas=4, svc-fake-b.owner=toy-team-beta"
+      },
+      "outcome": "allowed",
+      "result": "2 claims grounded",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a claim with no citation at all",
+      "request": {
+        "claim": "svc-fake-a is probably fine",
+        "cites": "nothing"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "uncited_claim",
+      "detail": "svc-fake-a is probably fine",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a citation to a key that does not exist",
+      "request": {
+        "claim": "svc-fake-c is owned by toy-team-gamma",
+        "cites": "svc-fake-c.owner",
+        "held": "svc-fake-a.owner=toy-team-alpha, svc-fake-a.replicas=4, svc-fake-b.owner=toy-team-beta"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unknown_source",
+      "detail": "svc-fake-c.owner",
+      "evidence": "",
+      "note": "The most convincing drift, because it looks cited. A check that only asks 'is there a citation?' passes it."
+    },
+    {
+      "label": "the right key, quoting a value that drifted",
+      "request": {
+        "claim": "svc-fake-a runs 8 replicas",
+        "cites": "svc-fake-a.replicas",
+        "quotes": "8",
+        "record holds": "4"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "quote_mismatch",
+      "detail": "key=svc-fake-a.replicas quoted='8' actual='4'",
+      "evidence": "",
+      "note": "The characteristic shape of a cheaper or degraded model: the structure survives, the content slips."
+    },
+    {
+      "label": "a near-miss quote differing only in case",
+      "request": {
+        "cites": "svc-fake-a.owner",
+        "quotes": "toy-team-Alpha",
+        "record holds": "toy-team-alpha"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "quote_mismatch",
+      "detail": "key=svc-fake-a.owner quoted='toy-team-Alpha' actual='toy-team-alpha'",
+      "evidence": "",
+      "note": "Comparison is exact. An exact gate can be loosened deliberately; a fuzzy one can never be tightened back with confidence."
+    }
+  ]
+}

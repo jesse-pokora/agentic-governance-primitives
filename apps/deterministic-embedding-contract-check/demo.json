@@ -1,0 +1,69 @@
+{
+  "app": "deterministic-embedding-contract-check",
+  "claim": "An embedding call's provider, model ID, version, and dimensions can be verified byte-for-byte against a captured request \u2014 with no live AWS call.",
+  "enforcement": "deterministic",
+  "denial_type": "ContractMismatch",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a captured request matching the contract in every field",
+      "request": {
+        "provider": "toy-bedrock",
+        "model_id": "toy-embed-v2",
+        "version": "2026-01-01",
+        "dimensions": 1024
+      },
+      "outcome": "allowed",
+      "result": "contract holds",
+      "reason": "",
+      "detail": "",
+      "evidence": "a pure dict comparison \u2014 the module makes no network imports at all",
+      "note": ""
+    },
+    {
+      "label": "a silently upgraded model id",
+      "request": {
+        "provider": "toy-bedrock",
+        "model_id": "toy-embed-v3",
+        "version": "2026-01-01",
+        "dimensions": 1024
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "contract_mismatch",
+      "detail": "{'model_id': {'expected': 'toy-embed-v2', 'actual': 'toy-embed-v3'}}",
+      "evidence": "",
+      "note": "The call still succeeds against the provider. The vectors it returns are simply not the ones the index was built with."
+    },
+    {
+      "label": "a dimension count that no longer matches the index",
+      "request": {
+        "provider": "toy-bedrock",
+        "model_id": "toy-embed-v2",
+        "version": "2026-01-01",
+        "dimensions": 1536
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "contract_mismatch",
+      "detail": "{'dimensions': {'expected': 1024, 'actual': 1536}}",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "several fields drifting at once",
+      "request": {
+        "provider": "other-provider",
+        "model_id": "toy-embed-v2",
+        "version": "2026-06-01",
+        "dimensions": 1024
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "contract_mismatch",
+      "detail": "{'provider': {'expected': 'toy-bedrock', 'actual': 'other-provider'}, 'version': {'expected': '2026-01-01', 'actual': '2026-06-01'}}",
+      "evidence": "every mismatched field is listed, not just the first",
+      "note": "Reporting one field at a time turns one fix into several rounds."
+    }
+  ]
+}

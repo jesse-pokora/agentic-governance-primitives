@@ -1,0 +1,75 @@
+{
+  "app": "bounded-review-epoch-escalation",
+  "claim": "After 3 review rounds with open findings, the loop stops and requires a new, hash-bound human reauthorization naming the exact terminal evidence \u2014 it cannot self-extend.",
+  "enforcement": "deterministic",
+  "denial_type": "EscalationRequired / ReauthorizationDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "review round 1 of 3, findings still open",
+      "request": {
+        "round": 1,
+        "open findings": "F-001, F-002"
+      },
+      "outcome": "allowed",
+      "result": "\"RoundResult(round_number=1, status='continue', terminal_evidence_hash=None)\"",
+      "reason": "",
+      "detail": "",
+      "evidence": "rounds completed: 1",
+      "note": ""
+    },
+    {
+      "label": "review round 2 of 3, findings still open",
+      "request": {
+        "round": 2,
+        "open findings": "F-001, F-002"
+      },
+      "outcome": "allowed",
+      "result": "\"RoundResult(round_number=2, status='continue', terminal_evidence_hash=None)\"",
+      "reason": "",
+      "detail": "",
+      "evidence": "rounds completed: 2",
+      "note": ""
+    },
+    {
+      "label": "review round 3 of 3, findings still open",
+      "request": {
+        "round": 3,
+        "open findings": "F-001, F-002"
+      },
+      "outcome": "allowed",
+      "result": "\"RoundResult(round_number=3, status='escalation_required', terminal_evidence_hash='565db4ea67671df255943b3fa681d95e3c7200601e6a5978107101a131be1ec6')\"",
+      "reason": "",
+      "detail": "",
+      "evidence": "rounds completed: 3",
+      "note": ""
+    },
+    {
+      "label": "round 4 \u2014 the loop has reached its cap",
+      "request": {
+        "round": 4,
+        "open findings": "F-001, F-002",
+        "cap": 3
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "escalation_required",
+      "detail": "reauthorize with hash 565db4ea67671df255943b3fa681d95e3c7200601e6a5978107101a131be1ec6",
+      "evidence": "rounds completed: 3",
+      "note": "A loop that could grant itself another round is not capped."
+    },
+    {
+      "label": "reauthorizing with the wrong evidence hash",
+      "request": {
+        "provided": "0000...0000",
+        "required": "hash of the exact terminal evidence"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "evidence_hash_mismatch",
+      "detail": "",
+      "evidence": "",
+      "note": "Reauthorization names what is being reauthorized, or it is just a button that says continue."
+    }
+  ]
+}

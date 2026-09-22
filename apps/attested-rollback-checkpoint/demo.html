@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>attested-rollback-checkpoint — demo</title>
+<style>
+  :root {
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1a1a18; --muted: #6b6b66;
+    --line: #e4e4e0; --allow: #1d7a4c; --allow-bg: #e8f5ee;
+    --deny: #b3341f; --deny-bg: #fbeae6; --accent: #3b5bdb; --mono-bg: #f4f4f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16171a; --panel: #1e2024; --ink: #e9e9e6; --muted: #9a9a94;
+      --line: #32343a; --allow: #56c98c; --allow-bg: #163024;
+      --deny: #f0836a; --deny-bg: #331a15; --accent: #8fa6f5; --mono-bg: #24262b;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16171a; --panel: #1e2024; --ink: #e9e9e6; --muted: #9a9a94;
+    --line: #32343a; --allow: #56c98c; --allow-bg: #163024;
+    --deny: #f0836a; --deny-bg: #331a15; --accent: #8fa6f5; --mono-bg: #24262b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 32px 16px 64px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.35rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .meta { color: var(--muted); font-size: 0.82rem; margin-bottom: 20px; }
+  .claim {
+    border-left: 3px solid var(--accent); padding: 12px 16px; margin: 0 0 28px;
+    background: var(--panel); border-radius: 0 8px 8px 0; font-size: 0.95rem;
+  }
+  .claim b { display: block; font-size: 0.72rem; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+  .stage { border: 1px solid var(--line); border-radius: 12px;
+    background: var(--panel); padding: 20px; min-height: 260px; }
+  .steplabel { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px;
+    letter-spacing: 0.04em; text-transform: uppercase; }
+  .request {
+    background: var(--mono-bg); border-radius: 8px; padding: 12px 14px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.83rem; white-space: pre-wrap; word-break: break-word;
+    opacity: 0; transform: translateY(-8px);
+    animation: enter .32s ease forwards;
+  }
+  .gate {
+    margin: 14px 0; text-align: center; font-size: 0.75rem; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    opacity: 0; animation: enter .3s ease .22s forwards;
+  }
+  .verdict {
+    border-radius: 8px; padding: 14px 16px; border: 1px solid;
+    opacity: 0; transform: scale(.97);
+    animation: stamp .34s cubic-bezier(.2,.9,.3,1.2) .46s forwards;
+  }
+  .verdict.allowed { border-color: var(--allow); background: var(--allow-bg); }
+  .verdict.denied  { border-color: var(--deny);  background: var(--deny-bg); }
+  .tag { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.09em; }
+  .verdict.allowed .tag { color: var(--allow); }
+  .verdict.denied  .tag { color: var(--deny); }
+  .reason {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.85rem; margin-top: 6px; word-break: break-word;
+  }
+  .detail { color: var(--muted); font-size: 0.8rem; margin-top: 6px;
+    font-family: ui-monospace, Menlo, Consolas, monospace; word-break: break-word; }
+  .evidence {
+    margin-top: 12px; font-size: 0.82rem; color: var(--muted);
+    opacity: 0; animation: enter .3s ease .76s forwards;
+  }
+  .evidence b { color: var(--ink); font-weight: 600; }
+  .note { margin-top: 10px; font-size: 0.85rem; color: var(--muted); font-style: italic;
+    opacity: 0; animation: enter .3s ease .86s forwards; }
+  @keyframes enter { to { opacity: 1; transform: none; } }
+  @keyframes stamp { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .request, .gate, .verdict, .evidence, .note { animation-duration: .01ms; }
+  }
+  .controls { display: flex; gap: 8px; align-items: center; margin-top: 18px; flex-wrap: wrap; }
+  button {
+    font: inherit; font-size: 0.85rem; padding: 7px 14px; border-radius: 7px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+    cursor: pointer;
+  }
+  button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  button:disabled { opacity: .4; cursor: default; }
+  .dots { display: flex; gap: 6px; margin-left: auto; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+  .dot.on { background: var(--accent); }
+  .dot.done.allowed { background: var(--allow); }
+  .dot.done.denied { background: var(--deny); }
+  footer { margin-top: 22px; font-size: 0.76rem; color: var(--muted); }
+  code { background: var(--mono-bg); padding: 1px 5px; border-radius: 4px;
+    font-size: 0.85em; font-family: ui-monospace, Menlo, Consolas, monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="app"></h1>
+  <div class="meta" id="meta"></div>
+  <div class="claim"><b>Atomic claim</b><span id="claim"></span></div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="controls">
+    <button id="prev">Back</button>
+    <button id="next">Next</button>
+    <button id="replay">Replay</button>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script id="trace" type="application/json">{
+  "app": "attested-rollback-checkpoint",
+  "claim": "A rollback restores exactly a previously attested state digest, failing closed on an unattested target or a checkpoint whose bytes no longer hash to it.",
+  "enforcement": "deterministic",
+  "denial_type": "RollbackDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "rolling back to a state that was attested here",
+      "request": {
+        "target": "e16147f30b2d5eb3c302...",
+        "attested": "toy-v1, toy-v2"
+      },
+      "outcome": "allowed",
+      "result": "{\"config\": {\"replicas\": 1}, \"release\": \"toy-v1\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "restored digest re-hashes to the target: True",
+      "note": ""
+    },
+    {
+      "label": "a correct digest for a state that was never attested here",
+      "request": {
+        "target": "51f1da1f493b5b29145d...",
+        "state": "toy-v3 exists elsewhere",
+        "attested": "toy-v1, toy-v2"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unattested_target",
+      "detail": "51f1da1f493b5b29145db6862ab187d381c5105def780f03bf6013f34e3a96de",
+      "evidence": "",
+      "note": "'Restore whatever the caller names' is an unaudited write with a friendly name."
+    },
+    {
+      "label": "the index still says toy-v1, but the stored bytes were substituted",
+      "request": {
+        "target": "e16147f30b2d5eb3c302...",
+        "filed under": "toy-v1",
+        "bytes now hash to": "something else"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "restored_digest_mismatch",
+      "detail": "filed=e16147f30b2d5eb3c3025da6a4f48efa7f45375c386b5bcdcd02c3e4409a8366 actual=d9f448e0bb7037ea1dddfa7bf79af6d799b67f4a17323492caec40e433bebeed",
+      "evidence": "the store does not trust its own index",
+      "note": "Trusting the index alone hands back the wrong state under a trusted name, which is worse than failing."
+    },
+    {
+      "label": "rolling back before anything has been attested",
+      "request": {
+        "store": "empty",
+        "target": "e16147f30b2d5eb3c302..."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_checkpoints",
+      "detail": "nothing has been attested",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}</script>
+<script>
+  const data = JSON.parse(document.getElementById("trace").textContent);
+  const stage = document.getElementById("stage");
+  const dots = document.getElementById("dots");
+  let i = 0;
+
+  document.getElementById("app").textContent = data.app;
+  document.getElementById("claim").textContent = data.claim;
+  document.getElementById("meta").textContent =
+    data.enforcement + " · denials raise " + data.denial_type +
+    " · " + data.steps.length + " steps";
+  document.getElementById("foot").innerHTML =
+    "Every step on this page was produced by running the app's real module — " +
+    "recorded with " + data.recorded_with + ", not reimplemented in JavaScript. " +
+    "Regenerate with <code>python demo.py</code>.";
+
+  const esc = s => String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  function render(n) {
+    const s = data.steps[n];
+    const req = Object.entries(s.request)
+      .map(([k, v]) => k + ": " + (typeof v === "string" ? v : JSON.stringify(v)))
+      .join("\n");
+
+    let verdict = '<div class="verdict ' + s.outcome + '" data-outcome="' + s.outcome + '">' +
+      '<div class="tag">' + (s.outcome === "allowed" ? "ALLOWED" : "DENIED") + "</div>";
+    if (s.outcome === "denied") {
+      verdict += '<div class="reason" data-reason="' + esc(s.reason) + '">' + esc(s.reason) + "</div>";
+      if (s.detail) verdict += '<div class="detail">' + esc(s.detail) + "</div>";
+    } else if (s.result) {
+      verdict += '<div class="reason">' + esc(s.result) + "</div>";
+    }
+    verdict += "</div>";
+
+    stage.innerHTML =
+      '<div class="steplabel">Step ' + (n + 1) + " of " + data.steps.length +
+        " — " + esc(s.label) + "</div>" +
+      '<div class="request">' + esc(req) + "</div>" +
+      '<div class="gate">&darr; gate &darr;</div>' +
+      verdict +
+      (s.evidence ? '<div class="evidence"><b>Evidence:</b> ' + esc(s.evidence) + "</div>" : "") +
+      (s.note ? '<div class="note">' + esc(s.note) + "</div>" : "");
+
+    dots.innerHTML = data.steps.map((st, k) =>
+      '<div class="dot ' + (k === n ? "on" : k < n ? "done " + st.outcome : "") + '"></div>'
+    ).join("");
+
+    document.getElementById("prev").disabled = n === 0;
+    document.getElementById("next").disabled = n === data.steps.length - 1;
+    stage.dataset.step = String(n);
+  }
+
+  document.getElementById("next").onclick = () => render(++i);
+  document.getElementById("prev").onclick = () => render(--i);
+  document.getElementById("replay").onclick = () => render(i = 0);
+  render(0);
+</script>
+</body>
+</html>

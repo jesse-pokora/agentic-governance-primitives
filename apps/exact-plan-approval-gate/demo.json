@@ -1,0 +1,48 @@
+{
+  "app": "exact-plan-approval-gate",
+  "claim": "A destructive action can only be approved by echoing back the exact SHA-256 of the plan that was shown \u2014 a \"yes\" with no hash is rejected.",
+  "enforcement": "deterministic",
+  "denial_type": "ApprovalDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "the operator echoes the exact hash of the plan shown",
+      "request": {
+        "plan": "DROP TABLE toy_customers; ...",
+        "provided": "4e0d4e01a7ddd97e20fb295f..."
+      },
+      "outcome": "allowed",
+      "result": "executed: DROP TABLE toy_customers;\nDELETE FROM toy_orders WHERE 1=1;",
+      "reason": "",
+      "detail": "",
+      "evidence": "provided value equals the shown plan's SHA-256",
+      "note": ""
+    },
+    {
+      "label": "a bare \"yes\" carries no evidence of what was approved",
+      "request": {
+        "plan": "DROP TABLE toy_customers; ...",
+        "provided": "yes"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "approval_rejected",
+      "detail": "provided value does not match the exact SHA-256 of the current plan (expected=4e0d4e01a7ddd97e20fb295f248d1f85857f053d726536302c14271d786d3f32)",
+      "evidence": "",
+      "note": "Consent has to name what was consented to."
+    },
+    {
+      "label": "the plan changed after it was shown",
+      "request": {
+        "plan": "...plus DROP TABLE toy_audit_log;",
+        "provided": "4e0d4e01a7ddd97e20fb295f..."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "approval_rejected",
+      "detail": "provided value does not match the exact SHA-256 of the current plan (expected=00aafe4eb3d5c4e56271f8a62b4d42e91f1333c331117b6410bc9b07861ba2d5)",
+      "evidence": "hash now 00aafe4eb3d5c4e5..., approval names 4e0d4e01a7ddd97e...",
+      "note": "The approval is bound to bytes, so an edit after approval invalidates it."
+    }
+  ]
+}

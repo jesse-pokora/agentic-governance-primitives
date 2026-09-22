@@ -1,0 +1,71 @@
+{
+  "app": "deterministic-ledger-replay",
+  "claim": "Replaying a ledger from genesis reproduces its state byte-for-byte, and any state the replay cannot reproduce is rejected \u2014 with the first divergent event named.",
+  "enforcement": "deterministic",
+  "denial_type": "ReplayRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "four events, replayed from genesis",
+      "request": {
+        "events": "assign_reviewer, open F-002, open F-001, resolve F-002"
+      },
+      "outcome": "allowed",
+      "result": "1d8a855483eded3c1087f509...",
+      "reason": "",
+      "detail": "",
+      "evidence": "replayed state equals live state, byte for byte",
+      "note": ""
+    },
+    {
+      "label": "the same events in a different order are a different state",
+      "request": {
+        "order A": "reviewer=toy-reviewer",
+        "order B": "reviewer=other"
+      },
+      "outcome": "allowed",
+      "result": "cdfc3a19498d... vs 90a595ed95b6...",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "Order is part of the state, so 'same events' never implies 'same state'."
+    },
+    {
+      "label": "a write that bypassed the log entirely",
+      "request": {
+        "mutation": "state['open_findings'] += ['F-999']",
+        "events": "unchanged"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "state_not_derivable",
+      "detail": "current=d665f69d3c15b215bf7ed88557e6bea7ec57b9249213e1fa58a869f5af38f216 replayed=1d8a855483eded3c1087f50947b96431e5e8c6317e9c030efc8593289455c51e",
+      "evidence": "",
+      "note": "Nothing in the log is wrong, because the change was never in the log. A tamper-evident log cannot see this; a replay can."
+    },
+    {
+      "label": "a recorded checkpoint the replay disagrees with",
+      "request": {
+        "edited": "entries[1].state_digest_after"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "checkpoint_divergence",
+      "detail": "recorded=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff replayed=702a762af5294ecea776dedc46461f1dd21347bc3ddecd2387db0b86b762e50f",
+      "evidence": "pinpointed to the first divergent index, not just 'invalid'",
+      "note": ""
+    },
+    {
+      "label": "an event type no reducer recognizes",
+      "request": {
+        "events": "assign_reviewer, quietly_close_everything"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unknown_event_type",
+      "detail": "quietly_close_everything",
+      "evidence": "",
+      "note": "Skipping unrecognized events forks state away from the log that is supposed to explain it, and the fork grows every schema change."
+    }
+  ]
+}

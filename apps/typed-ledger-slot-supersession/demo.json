@@ -1,0 +1,77 @@
+{
+  "app": "typed-ledger-slot-supersession",
+  "claim": "A later record can only replace an earlier one by naming that exact slot key and the exact digest of the record it's replacing \u2014 a fork or missing predecessor fails closed.",
+  "enforcement": "deterministic",
+  "denial_type": "SupersessionDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "superseding while naming the exact predecessor digest",
+      "request": {
+        "slot": "approval/svc-fake-a",
+        "predecessor": "50c960cf69786e71ba41...",
+        "new value": "generation 2"
+      },
+      "outcome": "allowed",
+      "result": "\"SlotRecord(slot_key='approval/svc-fake-a', value={'decision': 'approved', 'by': 'toy-reviewer', 'generation': 2}, digest='3105e791c9b2022324785f410c02abbca311b267e4e566f3f1bcda4e74ee87a4')\"",
+      "reason": "",
+      "detail": "",
+      "evidence": "the chain of custody for this slot is unbroken",
+      "note": ""
+    },
+    {
+      "label": "superseding with a digest that never held the slot",
+      "request": {
+        "slot": "approval/svc-fake-a",
+        "predecessor named": "8a8371f8c74930d4ec98...",
+        "actually holds": "generation 2"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "predecessor_digest_mismatch",
+      "detail": "",
+      "evidence": "",
+      "note": "Naming the wrong predecessor is a fork: two records claiming to replace the same thing."
+    },
+    {
+      "label": "re-using the original digest after it was already superseded",
+      "request": {
+        "slot": "approval/svc-fake-a",
+        "predecessor named": "50c960cf69786e71ba41...",
+        "generation": "stale by one"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "predecessor_digest_mismatch",
+      "detail": "",
+      "evidence": "",
+      "note": "A stale digest is how a superseded decision gets quietly reinstated."
+    },
+    {
+      "label": "superseding a slot that was never created",
+      "request": {
+        "slot": "approval/svc-never-seen",
+        "predecessor": "50c960cf69786e71ba41..."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_predecessor",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "creating a slot key that already exists",
+      "request": {
+        "slot": "approval/svc-fake-a",
+        "exists since": "the first create"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "slot_already_exists",
+      "detail": "",
+      "evidence": "slot still holds generation 2",
+      "note": "Create is not an alias for overwrite."
+    }
+  ]
+}

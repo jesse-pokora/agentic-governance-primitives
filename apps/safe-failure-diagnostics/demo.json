@@ -1,0 +1,70 @@
+{
+  "app": "safe-failure-diagnostics",
+  "claim": "A child-process failure is classified into one of a fixed vocabulary of categories from at most 8,192 observed bytes, and only the category \u2014 never the bytes \u2014 is ever persisted.",
+  "enforcement": "deterministic",
+  "denial_type": "n/a \u2014 this app persists a category, it does not raise",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a timeout is classified from its output",
+      "request": {
+        "raw output": "error: operation timed out after 30s"
+      },
+      "outcome": "allowed",
+      "result": "{\"category\": \"unknown\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "the record holds a category, not the bytes",
+      "note": ""
+    },
+    {
+      "label": "a permissions failure is classified from its output",
+      "request": {
+        "raw output": "sh: cannot open file: Permission denied"
+      },
+      "outcome": "allowed",
+      "result": "{\"category\": \"permission_denied\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "the record holds a category, not the bytes",
+      "note": ""
+    },
+    {
+      "label": "output matching no known marker is classified from its output",
+      "request": {
+        "raw output": "\u0000\u0001 gibberish \ufffd"
+      },
+      "outcome": "allowed",
+      "result": "{\"category\": \"unknown\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "the record holds a category, not the bytes",
+      "note": ""
+    },
+    {
+      "label": "output carrying a token and a private key path",
+      "request": {
+        "raw output": "token=toy-secret-AAAA1111 ... /home/toy/.ssh/id_rsa"
+      },
+      "outcome": "allowed",
+      "result": "{\"category\": \"permission_denied\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "neither the token nor the path appears in what is kept",
+      "note": "Raw stderr is where secrets leak into audit logs. The category is the only thing that survives."
+    },
+    {
+      "label": "output far larger than the inspection bound",
+      "request": {
+        "raw output": "32787 bytes",
+        "inspected": "8192 bytes"
+      },
+      "outcome": "allowed",
+      "result": "{\"category\": \"unknown\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "classification reads a bounded prefix, so a huge failure cannot exhaust the classifier",
+      "note": "The marker past the bound is not found \u2014 a bound that is honest about what it did not read."
+    }
+  ]
+}

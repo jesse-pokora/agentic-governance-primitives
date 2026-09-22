@@ -38,6 +38,12 @@ class Trace:
     enforcement: str
     denial_type: str  # the exception class name the app raises
     steps: list[Step] = field(default_factory=list)
+    # Volatile substrings -> stable placeholders, applied when the trace is
+    # written. A temp directory and a freshly minted challenge differ on every
+    # run, so a recording containing them churns and cannot be diffed in
+    # review. This normalizes how a value is *shown*; it never changes an
+    # outcome, a reason, or whether a call was allowed.
+    redactions: dict[str, str] = field(default_factory=dict)
 
     def allow(
         self,
@@ -77,13 +83,14 @@ class Trace:
         try:
             value = action()
         except Exception as denial:  # the app's own denial exception
+            reason, detail = _reason_of(denial)
             self.steps.append(
                 Step(
                     label=label,
                     request=request,
                     outcome="denied",
-                    reason=getattr(denial, "reason", type(denial).__name__),
-                    detail=str(getattr(denial, "detail", "") or ""),
+                    reason=reason,
+                    detail=detail,
                     evidence=evidence() if evidence else "",
                     note=note,
                 )
@@ -126,6 +133,18 @@ class Trace:
         )
         return value
 
+    def _scrub(self, value: Any) -> Any:
+        if isinstance(value, str):
+            for volatile, placeholder in self.redactions.items():
+                if volatile:
+                    value = value.replace(volatile, placeholder)
+            return value
+        if isinstance(value, dict):
+            return {self._scrub(k): self._scrub(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [self._scrub(v) for v in value]
+        return value
+
     def write(self, demo_file: str) -> Path:
         out = Path(demo_file).resolve().parent / "demo.json"
         payload = {
@@ -134,10 +153,30 @@ class Trace:
             "enforcement": self.enforcement,
             "denial_type": self.denial_type,
             "recorded_with": f"CPython {platform.python_version()}",
-            "steps": [asdict(step) for step in self.steps],
+            "steps": [self._scrub(asdict(step)) for step in self.steps],
         }
         out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         return out
+
+
+def _reason_of(denial: Exception) -> tuple[str, str]:
+    """Pull a fixed-vocabulary reason out of whichever shape the app uses.
+
+    Three shapes appear across the catalog: `.reason` plus `.detail`, a
+    `.reason` that carries its detail inline, and a plain message. All three
+    are read here rather than normalized in the apps, because changing an app
+    to suit its demo would be the demo driving the code instead of recording
+    it.
+    """
+    reason = str(getattr(denial, "reason", None) or denial)
+    detail = str(getattr(denial, "detail", "") or "")
+
+    if not detail:
+        head, sep, tail = reason.partition(": ")
+        if sep and " " not in head:
+            reason, detail = head, tail
+
+    return reason, detail
 
 
 def _render(value: Any) -> str:

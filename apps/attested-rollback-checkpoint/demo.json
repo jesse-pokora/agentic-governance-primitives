@@ -1,0 +1,63 @@
+{
+  "app": "attested-rollback-checkpoint",
+  "claim": "A rollback restores exactly a previously attested state digest, failing closed on an unattested target or a checkpoint whose bytes no longer hash to it.",
+  "enforcement": "deterministic",
+  "denial_type": "RollbackDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "rolling back to a state that was attested here",
+      "request": {
+        "target": "e16147f30b2d5eb3c302...",
+        "attested": "toy-v1, toy-v2"
+      },
+      "outcome": "allowed",
+      "result": "{\"config\": {\"replicas\": 1}, \"release\": \"toy-v1\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "restored digest re-hashes to the target: True",
+      "note": ""
+    },
+    {
+      "label": "a correct digest for a state that was never attested here",
+      "request": {
+        "target": "51f1da1f493b5b29145d...",
+        "state": "toy-v3 exists elsewhere",
+        "attested": "toy-v1, toy-v2"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unattested_target",
+      "detail": "51f1da1f493b5b29145db6862ab187d381c5105def780f03bf6013f34e3a96de",
+      "evidence": "",
+      "note": "'Restore whatever the caller names' is an unaudited write with a friendly name."
+    },
+    {
+      "label": "the index still says toy-v1, but the stored bytes were substituted",
+      "request": {
+        "target": "e16147f30b2d5eb3c302...",
+        "filed under": "toy-v1",
+        "bytes now hash to": "something else"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "restored_digest_mismatch",
+      "detail": "filed=e16147f30b2d5eb3c3025da6a4f48efa7f45375c386b5bcdcd02c3e4409a8366 actual=d9f448e0bb7037ea1dddfa7bf79af6d799b67f4a17323492caec40e433bebeed",
+      "evidence": "the store does not trust its own index",
+      "note": "Trusting the index alone hands back the wrong state under a trusted name, which is worse than failing."
+    },
+    {
+      "label": "rolling back before anything has been attested",
+      "request": {
+        "store": "empty",
+        "target": "e16147f30b2d5eb3c302..."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_checkpoints",
+      "detail": "nothing has been attested",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

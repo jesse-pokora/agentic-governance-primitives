@@ -1,0 +1,75 @@
+{
+  "app": "trusted-revision-anchor",
+  "claim": "The \"current\" commit is selected only from a ledger slot position, never from caller-supplied input; \"fresh\" means \"at the ledger head,\" not \"recent by clock time.\"",
+  "enforcement": "deterministic",
+  "denial_type": "NoRevisionsRecorded",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "asking for the current commit before anything was recorded",
+      "request": {
+        "ledger": "empty",
+        "call": "current()"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_revisions_recorded",
+      "detail": "",
+      "evidence": "",
+      "note": "No default, no 'HEAD', no guess."
+    },
+    {
+      "label": "the current commit comes from the ledger head",
+      "request": {
+        "recorded": "aaa1111, bbb2222, ccc3333",
+        "call": "current()"
+      },
+      "outcome": "allowed",
+      "result": "ccc3333",
+      "reason": "",
+      "detail": "",
+      "evidence": "current() takes no argument at all, so a caller cannot suggest an answer",
+      "note": ""
+    },
+    {
+      "label": "the head commit is fresh",
+      "request": {
+        "commit": "ccc3333",
+        "slot position": 2
+      },
+      "outcome": "allowed",
+      "result": "True",
+      "reason": "",
+      "detail": "",
+      "evidence": "freshness is position in the ledger, not wall-clock age",
+      "note": ""
+    },
+    {
+      "label": "an earlier commit is not fresh, however recently it arrived",
+      "request": {
+        "commit": "aaa1111",
+        "slot position": 0,
+        "head position": 2
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "not fresh \u2014 behind the head",
+      "detail": "",
+      "evidence": "",
+      "note": "'Recent by clock' and 'at the head' are different questions, and only one of them is safe to act on."
+    },
+    {
+      "label": "a commit the ledger never recorded is never fresh",
+      "request": {
+        "commit": "zzz9999",
+        "slot position": "none"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "not fresh \u2014 unknown to the ledger",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

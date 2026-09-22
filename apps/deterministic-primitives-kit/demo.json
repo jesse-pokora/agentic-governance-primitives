@@ -1,0 +1,83 @@
+{
+  "app": "deterministic-primitives-kit",
+  "claim": "The same input byte-for-byte always produces the same canonical JSON, the same hash, and the same safe-ID validation \u2014 across restarts, across machines.",
+  "enforcement": "deterministic",
+  "denial_type": "n/a \u2014 these are pure functions returning values",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "two dicts built in different key orders",
+      "request": {
+        "dict A": "{\"b\":2,\"a\":1,\"nested\":{\"z\":26,\"y\":25}}",
+        "dict B": "{\"nested\":{\"y\":25,\"z\":26},\"a\":1,\"b\":2}"
+      },
+      "outcome": "allowed",
+      "result": "{\"a\":1,\"b\":2,\"nested\":{\"y\":25,\"z\":26}}",
+      "reason": "",
+      "detail": "",
+      "evidence": "same hash: 2945bba321b1874ea5e7c223...",
+      "note": "Insertion order is an accident of how a value was built. A canonical form is what makes two values comparable at all."
+    },
+    {
+      "label": "hashing the same value twice in the same process",
+      "request": {
+        "value": "dict A",
+        "calls": 2
+      },
+      "outcome": "allowed",
+      "result": "2945bba321b1874ea5e7c223d1dfccdf...",
+      "reason": "",
+      "detail": "",
+      "evidence": "no clock, no randomness, no locale, no environment",
+      "note": ""
+    },
+    {
+      "label": "a well-formed id",
+      "request": {
+        "value": "toy-run-01"
+      },
+      "outcome": "allowed",
+      "result": "accepted",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "an id with an uppercase letter",
+      "request": {
+        "value": "Toy-Run-01"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "rejected",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "an id starting with a hyphen",
+      "request": {
+        "value": "-toy-run"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "rejected",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "an id of 80 characters",
+      "request": {
+        "value": "tttttttttttttttttttt... (80 chars)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "rejected",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

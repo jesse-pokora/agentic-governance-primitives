@@ -1,0 +1,77 @@
+{
+  "app": "measured-token-accounting",
+  "claim": "An unmeasured model call is refused rather than counted as zero, and the recorded per-call parts must reconcile exactly with the provider's own reported total.",
+  "enforcement": "deterministic",
+  "denial_type": "AccountingRejected",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a call whose usage the provider reported",
+      "request": {
+        "call_id": "call-1",
+        "prompt_tokens": 100,
+        "completion_tokens": 20
+      },
+      "outcome": "allowed",
+      "result": "recorded",
+      "reason": "",
+      "detail": "",
+      "evidence": "running total: 120 tokens",
+      "note": ""
+    },
+    {
+      "label": "a call that genuinely consumed nothing",
+      "request": {
+        "call_id": "call-2",
+        "prompt_tokens": 0,
+        "completion_tokens": 0
+      },
+      "outcome": "allowed",
+      "result": "recorded",
+      "reason": "",
+      "detail": "",
+      "evidence": "calls recorded: 2",
+      "note": "Zero is a measurement. It is recorded, and it is not the same thing as the next step."
+    },
+    {
+      "label": "a call whose usage never arrived",
+      "request": {
+        "call_id": "call-3",
+        "usage": "None \u2014 provider reported nothing"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unmeasured_call",
+      "detail": "call-3",
+      "evidence": "calls recorded: 2 \u2014 unchanged",
+      "note": "Treating unknown as zero is how a budget drifts away from reality while every number in it stays defensible."
+    },
+    {
+      "label": "the same call recorded twice",
+      "request": {
+        "call_id": "call-1",
+        "prompt_tokens": 100,
+        "completion_tokens": 20
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "duplicate_call",
+      "detail": "call-1",
+      "evidence": "running total: 120 tokens",
+      "note": "The other direction a total can drift."
+    },
+    {
+      "label": "the provider bills for a call this account never saw",
+      "request": {
+        "measured here": "120 tokens",
+        "provider reports": "180 tokens"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "reconciliation_mismatch",
+      "detail": "measured=120 reported=180",
+      "evidence": "sum of the parts must equal the whole",
+      "note": "A single running counter cannot detect this. A per-call ledger can."
+    }
+  ]
+}

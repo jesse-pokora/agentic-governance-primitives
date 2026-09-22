@@ -37,6 +37,15 @@ with a one-sentence **atomic claim** — the single testable thing it proves —
 and a note on which real-world pattern inspired it. An app that can't state
 its atomic claim in one sentence is scoped wrong.
 
+## Demo pages
+
+Every app ships an animated page demonstrating its atomic claim — open
+`apps/<app>/demo.html` in a browser. The pages contain no app logic: each one
+animates a trace recorded by running that app's real Python module, so a page
+cannot show an outcome the code does not produce. A Playwright suite checks
+every page against its recording, including the exact denial reason each
+module raised. See [demos/](demos) for the workflow.
+
 ## Reference documents
 
 The [Docs/](Docs) folder holds the source documents this repo's discipline is

@@ -1,0 +1,74 @@
+{
+  "app": "single-purpose-adversarial-reviewer",
+  "claim": "One adversarial-review agent, schema-in/findings-out, callable with zero pipeline, zero orchestrator, and no state carried between calls.",
+  "enforcement": "hybrid",
+  "denial_type": "InvalidReviewPayload",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "content containing an eval call",
+      "request": {
+        "artifact_id": "toy-1",
+        "content": "def run(expr): /     return eval(expr) / "
+      },
+      "outcome": "allowed",
+      "result": "{\"artifact_id\": \"toy-1\", \"findings\": [{\"severity\": \"high\", \"description\": \"possible arbitrary code execution via eval()\"}]}",
+      "reason": "",
+      "detail": "",
+      "evidence": "one call, no orchestrator, no prior state",
+      "note": ""
+    },
+    {
+      "label": "content with nothing to flag",
+      "request": {
+        "artifact_id": "toy-2",
+        "content": "def add(a, b): /     return a + b / "
+      },
+      "outcome": "allowed",
+      "result": "{\"artifact_id\": \"toy-2\", \"findings\": []}",
+      "reason": "",
+      "detail": "",
+      "evidence": "findings is empty, and the output shape is unchanged",
+      "note": "A reviewer that only ever returns findings is a reviewer nobody can calibrate."
+    },
+    {
+      "label": "the same input reviewed twice",
+      "request": {
+        "artifact_id": "toy-1",
+        "calls": 2
+      },
+      "outcome": "allowed",
+      "result": "identical",
+      "reason": "",
+      "detail": "",
+      "evidence": "pure: no state is carried between calls",
+      "note": ""
+    },
+    {
+      "label": "an input missing a required field",
+      "request": {
+        "payload": "{\"content\": \"...\"}",
+        "missing": "artifact_id"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "input_shape_mismatch",
+      "detail": "",
+      "evidence": "",
+      "note": "Schema in, schema out. The envelope is deterministic even where the content is not."
+    },
+    {
+      "label": "an input carrying a field outside the schema",
+      "request": {
+        "payload": "{\"artifact_id\": ..., \"content\": ..., \"priority\": \"high\"}",
+        "unexpected": "priority"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "input_shape_mismatch",
+      "detail": "",
+      "evidence": "",
+      "note": "Extra fields are how a single-purpose agent quietly grows a second purpose."
+    }
+  ]
+}

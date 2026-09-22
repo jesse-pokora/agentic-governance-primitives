@@ -1,0 +1,61 @@
+{
+  "app": "governed-context-provenance",
+  "claim": "Every piece of context handed to a model carries its source and an explicit injection_disposition (\"clear\" vs. untrusted) before assembly \u2014 the model never has to guess what it can trust.",
+  "enforcement": "deterministic",
+  "denial_type": "ProvenanceMissing",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "every item declares a source and a disposition",
+      "request": {
+        "item 1": "internal-runbook / clear",
+        "item 2": "scraped-web-page / untrusted"
+      },
+      "outcome": "allowed",
+      "result": "[source=internal-runbook disposition=clear]\n\n\n[source=scraped-web-page disposition=untrusted]\n",
+      "reason": "",
+      "detail": "",
+      "evidence": "the untrusted item is still included \u2014 labelled, not removed",
+      "note": "The job is not to decide what is safe. It is to make sure nothing arrives unlabelled."
+    },
+    {
+      "label": "an item with text but no source",
+      "request": {
+        "item": "{injection_disposition: clear, text: ...}",
+        "missing": "source"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_source",
+      "detail": "",
+      "evidence": "",
+      "note": "Context with no provenance is context the model has to guess about."
+    },
+    {
+      "label": "an item with no disposition",
+      "request": {
+        "item": "{source: scraped-web-page, text: ...}",
+        "missing": "injection_disposition"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_or_invalid_injection_disposition",
+      "detail": "",
+      "evidence": "",
+      "note": "Absent is not the same as clear. Defaulting it would make the dangerous case the quiet one."
+    },
+    {
+      "label": "a disposition outside the allowed vocabulary",
+      "request": {
+        "injection_disposition": "probably-fine",
+        "allowed": "clear, untrusted"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_or_invalid_injection_disposition",
+      "detail": "",
+      "evidence": "",
+      "note": "A free-text trust label is a trust label nobody can enforce."
+    }
+  ]
+}

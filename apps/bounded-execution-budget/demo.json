@@ -1,0 +1,94 @@
+{
+  "app": "bounded-execution-budget",
+  "claim": "A run halts at the first action that would exceed a declared budget \u2014 the over-budget action never executes, nothing is partially charged, and the budget cannot be extended from inside the run.",
+  "enforcement": "deterministic",
+  "denial_type": "BudgetDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "tool call 1 of a 3-call budget",
+      "request": {
+        "resource": "tool_calls",
+        "amount": 1,
+        "remaining_before": 3
+      },
+      "outcome": "allowed",
+      "result": "toy-action-result",
+      "reason": "",
+      "detail": "",
+      "evidence": "actions executed: 1",
+      "note": ""
+    },
+    {
+      "label": "tool call 2 of a 3-call budget",
+      "request": {
+        "resource": "tool_calls",
+        "amount": 1,
+        "remaining_before": 2
+      },
+      "outcome": "allowed",
+      "result": "toy-action-result",
+      "reason": "",
+      "detail": "",
+      "evidence": "actions executed: 2",
+      "note": ""
+    },
+    {
+      "label": "tool call 3 of a 3-call budget",
+      "request": {
+        "resource": "tool_calls",
+        "amount": 1,
+        "remaining_before": 1
+      },
+      "outcome": "allowed",
+      "result": "toy-action-result",
+      "reason": "",
+      "detail": "",
+      "evidence": "actions executed: 3",
+      "note": ""
+    },
+    {
+      "label": "the fourth call would cross the cap",
+      "request": {
+        "resource": "tool_calls",
+        "amount": 1,
+        "limit": 3,
+        "spent": 3
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "budget_exhausted",
+      "detail": "resource=tool_calls limit=3 spent=3 requested=1",
+      "evidence": "actions executed: 3 \u2014 unchanged",
+      "note": "Checked before charging, charged before running."
+    },
+    {
+      "label": "an affordable charge against a different resource, after the halt",
+      "request": {
+        "resource": "cost_units",
+        "amount": 5,
+        "remaining": 100
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "run_halted",
+      "detail": "budget_exhausted",
+      "evidence": "actions executed: 3",
+      "note": "A meter that keeps serving whatever still fits lets a run route around its own cap."
+    },
+    {
+      "label": "a resource nobody declared",
+      "request": {
+        "resource": "gpu_seconds",
+        "amount": 1,
+        "declared": "tool_calls only"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unknown_resource",
+      "detail": "gpu_seconds",
+      "evidence": "",
+      "note": "Undeclared is refused, never free."
+    }
+  ]
+}

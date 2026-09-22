@@ -1,0 +1,85 @@
+{
+  "app": "generated-code-admission-gate",
+  "claim": "Model-generated code is admitted only if every import, call, and attribute access in its parsed AST is permitted by the declared policy \u2014 a denied program is never compiled and never runs.",
+  "enforcement": "deterministic",
+  "denial_type": "AdmissionDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "generated code using only permitted names",
+      "request": {
+        "source": "total = len([1, 2, 3])\nrecord(total)",
+        "policy": "imports: math | calls: record, len, math.sqrt"
+      },
+      "outcome": "allowed",
+      "result": "{\"total\": 3}",
+      "reason": "",
+      "detail": "",
+      "evidence": "record() entered 1 time",
+      "note": ""
+    },
+    {
+      "label": "an undeclared import, two lines after a permitted call",
+      "request": {
+        "source": "record('side effect')\nimport os",
+        "policy": "imports: math | calls: record, len, math.sqrt"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "import_not_allowed",
+      "detail": "os",
+      "evidence": "record() entered 1 time \u2014 unchanged",
+      "note": "Admission is whole-program. Line 1 does not run because line 2 is inadmissible."
+    },
+    {
+      "label": "the dunder import bypass",
+      "request": {
+        "source": "os = __import__('os')",
+        "policy": "imports: math | calls: record, len, math.sqrt"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "forbidden_name",
+      "detail": "__import__",
+      "evidence": "",
+      "note": "A denylist matching the word 'import' at line start misses this entirely."
+    },
+    {
+      "label": "the class-hierarchy escape, which imports nothing at all",
+      "request": {
+        "source": "leaked = ().__class__.__bases__[0].__subclasses__()"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "dunder_access",
+      "detail": "__subclasses__",
+      "evidence": "",
+      "note": "Reaches every loaded class without an import. Dunder access is refused as a shape."
+    },
+    {
+      "label": "eval, against a policy that explicitly allowlists eval",
+      "request": {
+        "source": "record(eval('1+1'))",
+        "policy": "calls: eval, record"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "forbidden_name",
+      "detail": "eval",
+      "evidence": "",
+      "note": "A policy that could re-enable the escape hatches would be a policy that can disable itself."
+    },
+    {
+      "label": "a forbidden name inside a string is not a call",
+      "request": {
+        "source": "banner = \"import os and eval() are not allowed\"\nrecord(banner)"
+      },
+      "outcome": "allowed",
+      "result": "{\"banner\": \"import os and eval() are not allowed\"}",
+      "reason": "",
+      "detail": "",
+      "evidence": "record() entered 2 times total",
+      "note": "This is the step that separates parsing from pattern matching: a denylist rejects this admissible program."
+    }
+  ]
+}
