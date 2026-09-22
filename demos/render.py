@@ -39,7 +39,13 @@ def main(argv: list[str]) -> int:
     targets = (
         [Path(argv[0]).resolve()]
         if argv
-        else sorted(p for p in (ROOT / "apps").iterdir() if p.is_dir())
+        else sorted(
+            p
+            for parent in ("apps", "compositions")
+            if (ROOT / parent).exists()
+            for p in (ROOT / parent).iterdir()
+            if p.is_dir()
+        )
     )
     rendered = [out for target in targets if (out := render_one(target))]
     for out in rendered:

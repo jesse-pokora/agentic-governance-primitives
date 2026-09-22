@@ -1,0 +1,89 @@
+{
+  "app": "governed-call-path",
+  "claim": "One request passes through every declared gate in a fixed order, and the first gate that refuses stops it \u2014 no later gate is entered, no effect occurs, and the ledger records which gate refused.",
+  "enforcement": "composition",
+  "denial_type": "RequestRefused",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "a request that satisfies every gate",
+      "request": {
+        "gates": "instruction-set -> intake -> objective -> budget -> capability -> egress -> write-scope",
+        "intake": "prompt",
+        "objective": "summarize-repository",
+        "url": "https://api.example.test/v1/toy",
+        "write": "AGENTS.md"
+      },
+      "outcome": "allowed",
+      "result": "[\"instruction-set\", \"intake\", \"objective\", \"budget\", \"capability\", \"egress\", \"write-scope\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "ledger entries: 7; verifies: True",
+      "note": "Seven gates, one effect. There is no router and no loop \u2014 the order is a constant."
+    },
+    {
+      "label": "the instruction set drifted since it was pinned",
+      "request": {
+        "stops at": "instruction-set (gate 1 of 7)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "content_drift",
+      "detail": "AGENTS.md pinned=67e91f8272e5701ed505fb6ecd531fff1046646bb1e77c4c634273c924b748c6 actual=6a53f2a9950f76318e284b0edeaf4f8bc397ae8fb5594620ee3e1fbd1800b7a1",
+      "evidence": "gates entered: ['instruction-set']",
+      "note": "Nothing after gate 1 is even entered."
+    },
+    {
+      "label": "the action serves a goal nobody declared",
+      "request": {
+        "stops at": "objective (gate 3 of 7)",
+        "serves": "ship-it"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "undeclared_objective",
+      "detail": "write_guide cites ship-it",
+      "evidence": "gates entered: ['instruction-set', 'intake', 'objective']",
+      "note": ""
+    },
+    {
+      "label": "the persona may read but not write",
+      "request": {
+        "stops at": "capability (gate 5 of 7)",
+        "holds": "repo.read",
+        "requires": "repo.write"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "capability_not_granted",
+      "detail": "persona=writer-agent tool=write_guide requires=repo.write",
+      "evidence": "gates entered: ['instruction-set', 'intake', 'objective', 'budget', 'capability']",
+      "note": ""
+    },
+    {
+      "label": "the tool tries to reach an unlisted host",
+      "request": {
+        "stops at": "egress (gate 6 of 7)",
+        "url": "https://exfil.evil.test/collect"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "host_not_allowed",
+      "detail": "exfil.evil.test",
+      "evidence": "gates entered: ['instruction-set', 'intake', 'objective', 'budget', 'capability', 'egress']; file written: True",
+      "note": "Five gates passed and the sixth refused, so the write never happened. Passing most of the gates is not passing."
+    },
+    {
+      "label": "what the ledger holds after that refusal",
+      "request": {
+        "run": "refused at egress"
+      },
+      "outcome": "allowed",
+      "result": "[\"instruction-set: passed\", \"intake: passed\", \"egress: refused\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "tamper-evident: True",
+      "note": "A gate that logged only what it allowed would be useless exactly when it mattered."
+    }
+  ]
+}

@@ -24,7 +24,8 @@
       "iso": [
         "A.6.2.5"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "attested-rollback-checkpoint",
@@ -50,7 +51,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "authenticated-agent-message",
@@ -77,7 +79,8 @@
       "tests": [
         "test_agent_message.py"
       ],
-      "demo_steps": 7
+      "demo_steps": 7,
+      "criticality": "C0"
     },
     {
       "name": "authenticated-transition-ledger",
@@ -104,7 +107,8 @@
       "iso": [
         "A.6.2.8"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "bounded-execution-budget",
@@ -130,7 +134,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "bounded-review-epoch-escalation",
@@ -157,7 +162,8 @@
       "iso": [
         "A.9.2"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "canonical-outcome-reconciliation",
@@ -181,7 +187,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "adjacent"
+      "strength": "adjacent",
+      "criticality": "C2"
     },
     {
       "name": "canonical-output-shape",
@@ -206,7 +213,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C2"
     },
     {
       "name": "capability-gated-tool-invocation",
@@ -233,7 +241,8 @@
       "iso": [
         "A.9.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "concurrent-append-integrity",
@@ -257,7 +266,8 @@
       "iso": [
         "A.6.2.8"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "declared-objective-conformance",
@@ -283,7 +293,8 @@
       "tests": [
         "test_objectives.py"
       ],
-      "demo_steps": 7
+      "demo_steps": 7,
+      "criticality": "C0"
     },
     {
       "name": "delegation-scope-attenuation",
@@ -311,7 +322,8 @@
       "tests": [
         "test_delegation.py"
       ],
-      "demo_steps": 6
+      "demo_steps": 6,
+      "criticality": "C0"
     },
     {
       "name": "deterministic-embedding-contract-check",
@@ -337,7 +349,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C2"
     },
     {
       "name": "deterministic-ledger-replay",
@@ -364,7 +377,8 @@
       "iso": [
         "A.6.2.8"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "deterministic-primitives-kit",
@@ -387,7 +401,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "adjacent"
+      "strength": "adjacent",
+      "criticality": "C2"
     },
     {
       "name": "exact-plan-approval-gate",
@@ -415,7 +430,8 @@
         "A.9.2",
         "A.9.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "execution-lock-and-recovery",
@@ -441,7 +457,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "partial"
+      "strength": "partial",
+      "criticality": "C0"
     },
     {
       "name": "failure-bulkhead",
@@ -467,7 +484,8 @@
       "tests": [
         "test_bulkhead.py"
       ],
-      "demo_steps": 8
+      "demo_steps": 8,
+      "criticality": "C1"
     },
     {
       "name": "forward-only-revert-journal",
@@ -494,7 +512,8 @@
       "iso": [
         "A.6.2.8"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "generated-code-admission-gate",
@@ -521,7 +540,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "governed-context-provenance",
@@ -549,7 +569,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "governed-preflight-denial-evidence",
@@ -573,7 +594,8 @@
       "iso": [
         "A.6.2.8"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "grounded-claim-verification",
@@ -601,7 +623,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "hash-pinned-identity",
@@ -630,7 +653,8 @@
       "iso": [
         "A.6.2.5"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "hash-pinned-instruction-set",
@@ -658,7 +682,8 @@
       "iso": [
         "A.6.2.7"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "managed-block-confinement",
@@ -685,7 +710,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "measured-token-accounting",
@@ -711,7 +737,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "memory-conflict-quarantine",
@@ -737,7 +764,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "non-overlapping-error-mapping",
@@ -761,7 +789,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "adjacent"
+      "strength": "adjacent",
+      "criticality": "C2"
     },
     {
       "name": "optional-input-does-not-block",
@@ -785,7 +814,8 @@
       "iso": [
         "A.9.2"
       ],
-      "strength": "adjacent"
+      "strength": "adjacent",
+      "criticality": "C2"
     },
     {
       "name": "persona-capability-catalog",
@@ -812,7 +842,8 @@
       "iso": [
         "A.3.2"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C3"
     },
     {
       "name": "pinned-egress-allowlist",
@@ -839,7 +870,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "producer-approver-separation",
@@ -867,7 +899,8 @@
       "iso": [
         "A.9.2"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "prompt-injection-scanner-mcp",
@@ -892,7 +925,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "partial"
+      "strength": "partial",
+      "criticality": "C1"
     },
     {
       "name": "provable-dry-run",
@@ -918,7 +952,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "reduced-child-environment",
@@ -943,7 +978,8 @@
       "iso": [
         "A.6.2.5"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "safe-failure-diagnostics",
@@ -967,7 +1003,8 @@
       "iso": [
         "A.6.2.8"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "single-purpose-adversarial-reviewer",
@@ -992,7 +1029,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "adjacent"
+      "strength": "adjacent",
+      "criticality": "C3"
     },
     {
       "name": "staged-input-allowlist",
@@ -1020,7 +1058,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "tiered-model-escalation-gate",
@@ -1047,7 +1086,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C2"
     },
     {
       "name": "trusted-revision-anchor",
@@ -1074,7 +1114,8 @@
       "iso": [
         "A.6.2.5"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "typed-ledger-slot-supersession",
@@ -1101,7 +1142,8 @@
       "iso": [
         "A.6.2.8"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "unproven-isolation-fails-closed",
@@ -1128,7 +1170,8 @@
       "iso": [
         "A.6.2.4"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "validated-artifact-reuse",
@@ -1154,7 +1197,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C2"
     },
     {
       "name": "verified-secret-redaction",
@@ -1179,7 +1223,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     },
     {
       "name": "workspace-attestation",
@@ -1206,7 +1251,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C1"
     },
     {
       "name": "write-scope-confinement",
@@ -1234,7 +1280,8 @@
       "iso": [
         "A.6.2.6"
       ],
-      "strength": "direct"
+      "strength": "direct",
+      "criticality": "C0"
     }
   ]
 }

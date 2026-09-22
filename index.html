@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentic Governance Primitives</title>
+<style>
+  :root {
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1a1a18; --muted: #6b6b66;
+    --line: #e4e4e0; --accent: #3b5bdb; --mono-bg: #f4f4f1;
+    --c0: #b3341f; --c1: #b5761a; --c2: #3b5bdb; --c3: #6b6b66;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16171a; --panel: #1e2024; --ink: #e9e9e6; --muted: #9a9a94;
+      --line: #32343a; --accent: #8fa6f5; --mono-bg: #24262b;
+      --c0: #f0836a; --c1: #e0a75c; --c2: #8fa6f5; --c3: #9a9a94;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16171a; --panel: #1e2024; --ink: #e9e9e6; --muted: #9a9a94;
+    --line: #32343a; --accent: #8fa6f5; --mono-bg: #24262b;
+    --c0: #f0836a; --c1: #e0a75c; --c2: #8fa6f5; --c3: #9a9a94;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 40px 16px 80px;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .tagline { color: var(--muted); margin: 0 0 8px; }
+  .lede { margin: 0 0 28px; }
+  h2 { font-size: 1.1rem; margin: 40px 0 6px; letter-spacing: -0.01em; }
+  h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 0.92rem; }
+  h3 {
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--muted); margin: 28px 0 10px; font-weight: 600;
+  }
+  .count {
+    background: var(--mono-bg); color: var(--muted); border-radius: 20px;
+    padding: 1px 8px; font-size: 0.82em; margin-left: 4px;
+  }
+  .app {
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+    padding: 14px 16px; margin-bottom: 10px;
+  }
+  .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .name {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.92rem; font-weight: 600; color: var(--accent);
+    text-decoration: none;
+  }
+  .name:hover { text-decoration: underline; }
+  .chip {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+    border: 1px solid currentColor; border-radius: 4px; padding: 0 5px; cursor: help;
+  }
+  .chip.C0 { color: var(--c0); } .chip.C1 { color: var(--c1); }
+  .chip.C2 { color: var(--c2); } .chip.C3 { color: var(--c3); }
+  .enf { font-size: 0.76rem; color: var(--muted); margin-left: auto; }
+  .claim { margin: 8px 0 0; font-size: 0.92rem; }
+  .why {
+    margin: 8px 0 0; font-size: 0.9rem; color: var(--muted);
+    border-left: 2px solid var(--line); padding-left: 12px;
+  }
+  .links { margin-top: 10px; display: flex; gap: 14px; }
+  .links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+  .links a:hover { color: var(--accent); text-decoration: underline; }
+  .legend {
+    display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem;
+    color: var(--muted); margin: 0 0 20px;
+  }
+  .legend b { font-weight: 700; }
+  .callout {
+    border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0; background: var(--panel);
+    padding: 14px 16px; margin: 0 0 10px;
+  }
+  footer {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 0.84rem; color: var(--muted);
+  }
+  footer a { color: var(--accent); }
+  code {
+    background: var(--mono-bg); padding: 1px 5px; border-radius: 4px;
+    font-size: 0.86em; font-family: ui-monospace, Menlo, Consolas, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Agentic Governance Primitives</h1>
+  <p class="tagline">47 primitives. Each one is a single claim with a test that fails if the claim stops being true.</p>
+  <p class="lede">
+    Every app here demonstrates exactly one governed-agent-execution property,
+    standalone, with no orchestrator and no dependency on any other codebase.
+    Each page below animates a trace recorded by running that app&rsquo;s real
+    Python module, so a demo cannot show an outcome the code does not produce.
+  </p>
+
+  <h2>Start here</h2>
+  <p>Five apps in the order they teach best. Roughly twenty minutes.</p>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/hash-pinned-identity/demo.html">hash-pinned-identity</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A launcher refuses to run any executable whose resolved absolute path and SHA-256 don&#x27;t both match a policy pinned outside the workspace — even if the name on PATH is identical.</p>
+        <p class="why">The whole idea in its simplest form: name exactly what may run, refuse everything else. A byte-identical impostor in another directory is still refused.</p>
+        <div class="links">
+          <a href="apps/hash-pinned-identity/demo.html">run the demo</a>
+          <a href="apps/hash-pinned-identity/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/exact-plan-approval-gate/demo.html">exact-plan-approval-gate</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A destructive action can only be approved by echoing back the exact SHA-256 of the plan that was shown — a &quot;yes&quot; with no hash is rejected.</p>
+        <p class="why">Consent has to name what it consents to. A “yes” with no hash is not an approval, and an approval does not survive an edit to the plan.</p>
+        <div class="links">
+          <a href="apps/exact-plan-approval-gate/demo.html">run the demo</a>
+          <a href="apps/exact-plan-approval-gate/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/authenticated-transition-ledger/demo.html">authenticated-transition-ledger</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An append-only, SHA-256-chained, HMAC-signed event log detects a single edited byte anywhere in its history, not just at the tampered row.</p>
+        <p class="why">Evidence that cannot be quietly corrected. One edited byte anywhere in history is detected — and a careful attacker who recomputes the hash still cannot forge the signature.</p>
+        <div class="links">
+          <a href="apps/authenticated-transition-ledger/demo.html">run the demo</a>
+          <a href="apps/authenticated-transition-ledger/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/capability-gated-tool-invocation/demo.html">capability-gated-tool-invocation</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A tool call runs only if the calling persona&#x27;s declared capability set contains that tool&#x27;s exact required capability — and a denied call never enters the tool function at all.</p>
+        <p class="why">Authorization at the call site, not in the audit afterwards. The denied tool’s body is never entered, and the test proves it by counting.</p>
+        <div class="links">
+          <a href="apps/capability-gated-tool-invocation/demo.html">run the demo</a>
+          <a href="apps/capability-gated-tool-invocation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/optional-input-does-not-block/demo.html">optional-input-does-not-block</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A run starts when every required input is present, even if every optional one is missing — a missing optional input is recorded and the run marked degraded, never escalated into a stop.</p>
+        <p class="why">The counterweight, and the one most catalogs never teach. After four refusals, the discipline of not refusing: a run starts on a bare prompt, because blocking on context you never needed is its own failure.</p>
+        <div class="links">
+          <a href="apps/optional-input-does-not-block/demo.html">run the demo</a>
+          <a href="apps/optional-input-does-not-block/README.md">read the claim</a>
+        </div>
+      </article>
+
+  <h2>Then watch them compose</h2>
+  <p>Forty-seven primitives side by side still leave the load-bearing claim untested.</p>
+  <div class="callout">
+    <div class="head">
+      <a class="name" href="compositions/governed-call-path/demo.html">governed-call-path</a>
+      <span class="enf">composition</span>
+    </div>
+    <p class="claim">
+      One request through seven gates in a fixed order. The first gate that
+      refuses stops it: no later gate is entered, no effect occurs, and the
+      ledger records which gate refused.
+    </p>
+    <p class="why">
+      A control plane that nothing routes through is documentation. This is the
+      smallest artifact that shows the primitives actually fitting together
+      &mdash; and it is still not an orchestrator: no router, no scheduler, no
+      second agent, no loop.
+    </p>
+    <div class="links">
+      <a href="compositions/governed-call-path/demo.html">run the demo</a>
+      <a href="compositions/governed-call-path/README.md">read the claim</a>
+    </div>
+  </div>
+
+  <h2>The whole catalog</h2>
+  <p>By tier, most critical first within each.</p>
+  <div class="legend">
+    <span><b class="chip C0">C0</b> unauthorized action becomes possible, or its evidence is destroyed</span>
+    <span><b class="chip C1">C1</b> governance degrades, or a fact an auditor needs is hidden</span>
+    <span><b class="chip C2">C2</b> correctness suffers; authority is intact</span>
+    <span><b class="chip C3">C3</b> a convention whose violation costs clarity</span>
+  </div>
+    <section>
+      <h3>Tier 1 &middot; Deterministic security primitives <span class="count">18</span></h3>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/argv-not-shell-invocation/demo.html">argv-not-shell-invocation</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A child process is launched from an absolute program path and a list of argument values, so a shell metacharacter inside an argument arrives as literal text — never as a second command.</p>
+        
+        <div class="links">
+          <a href="apps/argv-not-shell-invocation/demo.html">run the demo</a>
+          <a href="apps/argv-not-shell-invocation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/authenticated-transition-ledger/demo.html">authenticated-transition-ledger</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An append-only, SHA-256-chained, HMAC-signed event log detects a single edited byte anywhere in its history, not just at the tampered row.</p>
+        
+        <div class="links">
+          <a href="apps/authenticated-transition-ledger/demo.html">run the demo</a>
+          <a href="apps/authenticated-transition-ledger/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/exact-plan-approval-gate/demo.html">exact-plan-approval-gate</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A destructive action can only be approved by echoing back the exact SHA-256 of the plan that was shown — a &quot;yes&quot; with no hash is rejected.</p>
+        
+        <div class="links">
+          <a href="apps/exact-plan-approval-gate/demo.html">run the demo</a>
+          <a href="apps/exact-plan-approval-gate/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/execution-lock-and-recovery/demo.html">execution-lock-and-recovery</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A crashed run leaves a lock that only an explicit, challenge-authenticated operator attestation can clear — the system never infers liveness on its own.</p>
+        
+        <div class="links">
+          <a href="apps/execution-lock-and-recovery/demo.html">run the demo</a>
+          <a href="apps/execution-lock-and-recovery/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/generated-code-admission-gate/demo.html">generated-code-admission-gate</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Model-generated code is admitted only if every import, call, and attribute access in its parsed AST is permitted by the declared policy — a denied program is never compiled and never runs.</p>
+        
+        <div class="links">
+          <a href="apps/generated-code-admission-gate/demo.html">run the demo</a>
+          <a href="apps/generated-code-admission-gate/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/hash-pinned-identity/demo.html">hash-pinned-identity</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A launcher refuses to run any executable whose resolved absolute path and SHA-256 don&#x27;t both match a policy pinned outside the workspace — even if the name on PATH is identical.</p>
+        
+        <div class="links">
+          <a href="apps/hash-pinned-identity/demo.html">run the demo</a>
+          <a href="apps/hash-pinned-identity/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/hash-pinned-instruction-set/demo.html">hash-pinned-instruction-set</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A run executes only under the exact instruction set it pinned — a single edited byte, an added file, a removed file, or two files swapping contents all fail closed before the run starts.</p>
+        
+        <div class="links">
+          <a href="apps/hash-pinned-instruction-set/demo.html">run the demo</a>
+          <a href="apps/hash-pinned-instruction-set/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/managed-block-confinement/demo.html">managed-block-confinement</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A managed write replaces only the content between the exact markers — everything outside them survives byte for byte, and generated content carrying a marker of its own is refused rather than written.</p>
+        
+        <div class="links">
+          <a href="apps/managed-block-confinement/demo.html">run the demo</a>
+          <a href="apps/managed-block-confinement/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/pinned-egress-allowlist/demo.html">pinned-egress-allowlist</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An outbound request is allowed only if its scheme, host, and port all match an allowlist entry exactly — and every hop of a redirect chain is checked, not just the first.</p>
+        
+        <div class="links">
+          <a href="apps/pinned-egress-allowlist/demo.html">run the demo</a>
+          <a href="apps/pinned-egress-allowlist/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/reduced-child-environment/demo.html">reduced-child-environment</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A child process receives only the variables a declared policy passes through — every other variable in the parent&#x27;s environment, including ones nobody anticipated, is absent rather than redacted.</p>
+        
+        <div class="links">
+          <a href="apps/reduced-child-environment/demo.html">run the demo</a>
+          <a href="apps/reduced-child-environment/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/staged-input-allowlist/demo.html">staged-input-allowlist</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Only files matching the declared policy enter the agent&#x27;s view, every excluded file is recorded with a fixed-vocabulary reason, and exceeding a declared cap stages nothing at all.</p>
+        
+        <div class="links">
+          <a href="apps/staged-input-allowlist/demo.html">run the demo</a>
+          <a href="apps/staged-input-allowlist/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/unproven-isolation-fails-closed/demo.html">unproven-isolation-fails-closed</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A run proceeds only when isolation is verified by a probe that actually ran — an operator assertion and a child&#x27;s capability declaration are recorded for audit and contribute nothing to the verdict.</p>
+        
+        <div class="links">
+          <a href="apps/unproven-isolation-fails-closed/demo.html">run the demo</a>
+          <a href="apps/unproven-isolation-fails-closed/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/verified-secret-redaction/demo.html">verified-secret-redaction</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">No registered secret can appear in an emitted artifact — the emitter redacts, then re-reads its own serialized output and refuses to emit if any secret survived.</p>
+        
+        <div class="links">
+          <a href="apps/verified-secret-redaction/demo.html">run the demo</a>
+          <a href="apps/verified-secret-redaction/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/write-scope-confinement/demo.html">write-scope-confinement</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A write is denied before any bytes touch disk unless its fully resolved path lies inside the declared scope root — traversal, absolute paths, prefix siblings, and symlink escapes all fail closed.</p>
+        
+        <div class="links">
+          <a href="apps/write-scope-confinement/demo.html">run the demo</a>
+          <a href="apps/write-scope-confinement/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/governed-preflight-denial-evidence/demo.html">governed-preflight-denial-evidence</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">When a precondition fails, the system emits a fixed-shape, allowlisted-field denial record — never raw stderr, paths, or secrets.</p>
+        
+        <div class="links">
+          <a href="apps/governed-preflight-denial-evidence/demo.html">run the demo</a>
+          <a href="apps/governed-preflight-denial-evidence/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/safe-failure-diagnostics/demo.html">safe-failure-diagnostics</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A child-process failure is classified into one of a fixed vocabulary of categories from at most 8,192 observed bytes, and only the category — never the bytes — is ever persisted.</p>
+        
+        <div class="links">
+          <a href="apps/safe-failure-diagnostics/demo.html">run the demo</a>
+          <a href="apps/safe-failure-diagnostics/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/workspace-attestation/demo.html">workspace-attestation</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A governed run&#x27;s claimed file changes are diffed against a real git-worktree snapshot taken immediately before and after — a claim that doesn&#x27;t match the diff fails closed.</p>
+        
+        <div class="links">
+          <a href="apps/workspace-attestation/demo.html">run the demo</a>
+          <a href="apps/workspace-attestation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/deterministic-primitives-kit/demo.html">deterministic-primitives-kit</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">The same input byte-for-byte always produces the same canonical JSON, the same hash, and the same safe-ID validation — across restarts, across machines.</p>
+        
+        <div class="links">
+          <a href="apps/deterministic-primitives-kit/demo.html">run the demo</a>
+          <a href="apps/deterministic-primitives-kit/README.md">read the claim</a>
+        </div>
+      </article>
+    </section>
+    <section>
+      <h3>Tier 2 &middot; Review &amp; process governance <span class="count">16</span></h3>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/producer-approver-separation/demo.html">producer-approver-separation</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Whoever produced an artifact cannot approve it, and an approval is bound to the exact digest it covers — a rename, a delegate, or a later edit all fail closed.</p>
+        
+        <div class="links">
+          <a href="apps/producer-approver-separation/demo.html">run the demo</a>
+          <a href="apps/producer-approver-separation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/typed-ledger-slot-supersession/demo.html">typed-ledger-slot-supersession</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A later record can only replace an earlier one by naming that exact slot key and the exact digest of the record it&#x27;s replacing — a fork or missing predecessor fails closed.</p>
+        
+        <div class="links">
+          <a href="apps/typed-ledger-slot-supersession/demo.html">run the demo</a>
+          <a href="apps/typed-ledger-slot-supersession/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/attested-rollback-checkpoint/demo.html">attested-rollback-checkpoint</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A rollback restores exactly a previously attested state digest, failing closed on an unattested target or a checkpoint whose bytes no longer hash to it.</p>
+        
+        <div class="links">
+          <a href="apps/attested-rollback-checkpoint/demo.html">run the demo</a>
+          <a href="apps/attested-rollback-checkpoint/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/bounded-execution-budget/demo.html">bounded-execution-budget</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A run halts at the first action that would exceed a declared budget — the over-budget action never executes, nothing is partially charged, and the budget cannot be extended from inside the run.</p>
+        
+        <div class="links">
+          <a href="apps/bounded-execution-budget/demo.html">run the demo</a>
+          <a href="apps/bounded-execution-budget/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/bounded-review-epoch-escalation/demo.html">bounded-review-epoch-escalation</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">After 3 review rounds with open findings, the loop stops and requires a new, hash-bound human reauthorization naming the exact terminal evidence — it cannot self-extend.</p>
+        
+        <div class="links">
+          <a href="apps/bounded-review-epoch-escalation/demo.html">run the demo</a>
+          <a href="apps/bounded-review-epoch-escalation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/concurrent-append-integrity/demo.html">concurrent-append-integrity</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Under concurrent writers an append-only ledger admits exactly one entry per accepted append, with contiguous indices and an unbroken hash chain — a writer whose predecessor moved is rejected.</p>
+        
+        <div class="links">
+          <a href="apps/concurrent-append-integrity/demo.html">run the demo</a>
+          <a href="apps/concurrent-append-integrity/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/deterministic-ledger-replay/demo.html">deterministic-ledger-replay</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Replaying a ledger from genesis reproduces its state byte-for-byte, and any state the replay cannot reproduce is rejected — with the first divergent event named.</p>
+        
+        <div class="links">
+          <a href="apps/deterministic-ledger-replay/demo.html">run the demo</a>
+          <a href="apps/deterministic-ledger-replay/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/failure-bulkhead/demo.html">failure-bulkhead</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">After a declared number of consecutive failures the breaker opens and every subsequent call fails fast without invoking the dependency — and it closes only when an explicit probe, allowed no earlier than a declared cooldown, actually succeeds.</p>
+        
+        <div class="links">
+          <a href="apps/failure-bulkhead/demo.html">run the demo</a>
+          <a href="apps/failure-bulkhead/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/forward-only-revert-journal/demo.html">forward-only-revert-journal</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A revert is recorded as a new forward record naming the state it left behind, so the abandoned state stays readable and a rewritten history is detected.</p>
+        
+        <div class="links">
+          <a href="apps/forward-only-revert-journal/demo.html">run the demo</a>
+          <a href="apps/forward-only-revert-journal/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/provable-dry-run/demo.html">provable-dry-run</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A dry run performs no effect and still produces the complete plan — and the plan a dry run produces is the same plan the live run produces, because both execute the same routine.</p>
+        
+        <div class="links">
+          <a href="apps/provable-dry-run/demo.html">run the demo</a>
+          <a href="apps/provable-dry-run/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/trusted-revision-anchor/demo.html">trusted-revision-anchor</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">The &quot;current&quot; commit is selected only from a ledger slot position, never from caller-supplied input; &quot;fresh&quot; means &quot;at the ledger head,&quot; not &quot;recent by clock time.&quot;</p>
+        
+        <div class="links">
+          <a href="apps/trusted-revision-anchor/demo.html">run the demo</a>
+          <a href="apps/trusted-revision-anchor/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/canonical-outcome-reconciliation/demo.html">canonical-outcome-reconciliation</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Every input key in a batch receives exactly one attributable success or failure outcome, in a fixed order — nothing silently dropped, nothing double-counted.</p>
+        
+        <div class="links">
+          <a href="apps/canonical-outcome-reconciliation/demo.html">run the demo</a>
+          <a href="apps/canonical-outcome-reconciliation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/canonical-output-shape/demo.html">canonical-output-shape</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Generated output is accepted only if its headings are canonical, spelled exactly and in the declared order, with no wrapper fence, no empty section, and no more than the declared word bound — and the checker never repairs what it rejects.</p>
+        
+        <div class="links">
+          <a href="apps/canonical-output-shape/demo.html">run the demo</a>
+          <a href="apps/canonical-output-shape/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/non-overlapping-error-mapping/demo.html">non-overlapping-error-mapping</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Every test fixture reaches exactly one named validation stage and exactly one named error — never two, never zero.</p>
+        
+        <div class="links">
+          <a href="apps/non-overlapping-error-mapping/demo.html">run the demo</a>
+          <a href="apps/non-overlapping-error-mapping/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/optional-input-does-not-block/demo.html">optional-input-does-not-block</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A run starts when every required input is present, even if every optional one is missing — a missing optional input is recorded and the run marked degraded, never escalated into a stop.</p>
+        
+        <div class="links">
+          <a href="apps/optional-input-does-not-block/demo.html">run the demo</a>
+          <a href="apps/optional-input-does-not-block/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/validated-artifact-reuse/demo.html">validated-artifact-reuse</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An existing artifact is reused only when it is still valid for the inputs at hand — same input digest and same producer version — and every decision records which way it went and why.</p>
+        
+        <div class="links">
+          <a href="apps/validated-artifact-reuse/demo.html">run the demo</a>
+          <a href="apps/validated-artifact-reuse/README.md">read the claim</a>
+        </div>
+      </article>
+    </section>
+    <section>
+      <h3>Tier 3 &middot; Persona &amp; agent architecture <span class="count">6</span></h3>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/authenticated-agent-message/demo.html">authenticated-agent-message</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A message between agents is accepted only if it is signed by a sender the recipient knows, addressed to that recipient, and carries a sequence number strictly greater than the last one accepted from that sender.</p>
+        
+        <div class="links">
+          <a href="apps/authenticated-agent-message/demo.html">run the demo</a>
+          <a href="apps/authenticated-agent-message/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/capability-gated-tool-invocation/demo.html">capability-gated-tool-invocation</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A tool call runs only if the calling persona&#x27;s declared capability set contains that tool&#x27;s exact required capability — and a denied call never enters the tool function at all.</p>
+        
+        <div class="links">
+          <a href="apps/capability-gated-tool-invocation/demo.html">run the demo</a>
+          <a href="apps/capability-gated-tool-invocation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/delegation-scope-attenuation/demo.html">delegation-scope-attenuation</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Authority can only shrink as it is delegated — each link in a chain may hold a subset of what the link before it held, never a capability its delegator did not have.</p>
+        
+        <div class="links">
+          <a href="apps/delegation-scope-attenuation/demo.html">run the demo</a>
+          <a href="apps/delegation-scope-attenuation/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/governed-context-provenance/demo.html">governed-context-provenance</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Every piece of context handed to a model carries its source and an explicit injection_disposition (&quot;clear&quot; vs. untrusted) before assembly — the model never has to guess what it can trust.</p>
+        
+        <div class="links">
+          <a href="apps/governed-context-provenance/demo.html">run the demo</a>
+          <a href="apps/governed-context-provenance/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/persona-capability-catalog/demo.html">persona-capability-catalog</a>
+          <span class="chip C3" title="a convention whose violation costs clarity">C3</span>
+          <span class="enf">informational</span>
+        </div>
+        <p class="claim">&quot;Who is allowed to do what&quot; (a YAML+JSON-Schema catalog) is fully separate from &quot;what&#x27;s running right now&quot; (a runtime process list) — you can audit the first without touching the second.</p>
+        
+        <div class="links">
+          <a href="apps/persona-capability-catalog/demo.html">run the demo</a>
+          <a href="apps/persona-capability-catalog/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/single-purpose-adversarial-reviewer/demo.html">single-purpose-adversarial-reviewer</a>
+          <span class="chip C3" title="a convention whose violation costs clarity">C3</span>
+          <span class="enf">hybrid</span>
+        </div>
+        <p class="claim">One adversarial-review agent, schema-in/findings-out, callable with zero pipeline, zero orchestrator, and no state carried between calls.</p>
+        
+        <div class="links">
+          <a href="apps/single-purpose-adversarial-reviewer/demo.html">run the demo</a>
+          <a href="apps/single-purpose-adversarial-reviewer/README.md">read the claim</a>
+        </div>
+      </article>
+    </section>
+    <section>
+      <h3>Tier 4 &middot; Domain example <span class="count">2</span></h3>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/prompt-injection-scanner-mcp/demo.html">prompt-injection-scanner-mcp</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">hybrid</span>
+        </div>
+        <p class="claim">A single-purpose MCP server that does exactly one thing (flag likely prompt injection in a text blob) and nothing else.</p>
+        
+        <div class="links">
+          <a href="apps/prompt-injection-scanner-mcp/demo.html">run the demo</a>
+          <a href="apps/prompt-injection-scanner-mcp/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/deterministic-embedding-contract-check/demo.html">deterministic-embedding-contract-check</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An embedding call&#x27;s provider, model ID, version, and dimensions can be verified byte-for-byte against a captured request — with no live AWS call.</p>
+        
+        <div class="links">
+          <a href="apps/deterministic-embedding-contract-check/demo.html">run the demo</a>
+          <a href="apps/deterministic-embedding-contract-check/README.md">read the claim</a>
+        </div>
+      </article>
+    </section>
+    <section>
+      <h3>Tier 5 &middot; Model-behavior constraint &amp; drift detection <span class="count">5</span></h3>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/declared-objective-conformance/demo.html">declared-objective-conformance</a>
+          <span class="chip C0" title="unauthorized action becomes possible, or its evidence is destroyed">C0</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Every action must cite an objective declared for the run — an action citing nothing, or citing an objective never declared, is refused before it executes, and the declared set cannot be widened from inside the run.</p>
+        
+        <div class="links">
+          <a href="apps/declared-objective-conformance/demo.html">run the demo</a>
+          <a href="apps/declared-objective-conformance/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/grounded-claim-verification/demo.html">grounded-claim-verification</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Every factual claim a model emits must name a ground-truth key that exists and quote that record&#x27;s value exactly — an uncited claim, an invented source, or an altered quote fails closed.</p>
+        
+        <div class="links">
+          <a href="apps/grounded-claim-verification/demo.html">run the demo</a>
+          <a href="apps/grounded-claim-verification/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/measured-token-accounting/demo.html">measured-token-accounting</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An unmeasured model call is refused rather than counted as zero, and the recorded per-call parts must reconcile exactly with the provider&#x27;s own reported total.</p>
+        
+        <div class="links">
+          <a href="apps/measured-token-accounting/demo.html">run the demo</a>
+          <a href="apps/measured-token-accounting/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/memory-conflict-quarantine/demo.html">memory-conflict-quarantine</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">When two memory records assert different values for the same key, both are retained and the conflict is surfaced — the newer one never silently overwrites the older, and the key has no answer until someone resolves it.</p>
+        
+        <div class="links">
+          <a href="apps/memory-conflict-quarantine/demo.html">run the demo</a>
+          <a href="apps/memory-conflict-quarantine/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/tiered-model-escalation-gate/demo.html">tiered-model-escalation-gate</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">hybrid</span>
+        </div>
+        <p class="claim">A cheap tier&#x27;s output is used only if it passes the declared deterministic check — otherwise the call escalates to the next tier, and the ledger records which tier actually answered.</p>
+        
+        <div class="links">
+          <a href="apps/tiered-model-escalation-gate/demo.html">run the demo</a>
+          <a href="apps/tiered-model-escalation-gate/README.md">read the claim</a>
+        </div>
+      </article>
+    </section>
+
+  <footer>
+    <p>
+      <a href="METHOD.md">How these are written</a> &middot;
+      <a href="CONFORMANCE.md">Mapping to OWASP ASI 2026, NIST SP 800-53, ISO/IEC 42001</a> &middot;
+      <a href="PLAN.md">Catalog decisions and what is deliberately out of scope</a>
+    </p>
+    <p>
+      Run everything with <code>python run_all.py</code>. This page is generated
+      from <code>claims.json</code> by <code>tools/generate_index.py</code>;
+      the reading path above is a teaching judgment written by hand.
+    </p>
+  </footer>
+</div>
+</body>
+</html>

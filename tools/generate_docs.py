@@ -78,9 +78,26 @@ def mapping_tables(apps: list[dict]) -> str:
     return "\n".join(out).strip("\n")
 
 
+def method_counts(apps: list[dict]) -> str:
+    from collections import Counter
+
+    enforcement = Counter(a["enforcement"] for a in apps)
+    criticality = Counter(a["criticality"] for a in apps)
+    total = len(apps)
+
+    rows = ["| Enforcement | Apps | | Criticality | Apps |", "|---|---|---|---|---|"]
+    order = [("deterministic", "C0"), ("hybrid", "C1"), ("informational", "C2"),
+             (None, "C3")]
+    for enf, crit in order:
+        left = f"| {enf} | {enforcement.get(enf, 0)} of {total} " if enf else "| | "
+        rows.append(f"{left}| {crit} | {criticality.get(crit, 0)} of {total} |")
+    return "\n".join(rows)
+
+
 TARGETS = {
     "README.md": status_tables,
     "CONFORMANCE.md": mapping_tables,
+    "METHOD.md": method_counts,
 }
 
 

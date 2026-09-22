@@ -37,12 +37,22 @@ with a one-sentence **atomic claim** — the single testable thing it proves —
 and a note on which real-world pattern inspired it. An app that can't state
 its atomic claim in one sentence is scoped wrong.
 
+## Start here
+
+Open [index.html](index.html) in a browser: the whole catalog, grouped by tier
+and criticality, with a five-app reading path and a link to every demo. No
+server, no build step.
+
+[METHOD.md](METHOD.md) is the other half — how an app here is written, and how
+to tell whether a new one is scoped right.
+
 ## Running the catalog
 
 ```bash
-python run_all.py                  # every app's tests
+python run_all.py                  # every app and composition
 python run_all.py --demos          # also re-record demos and check byte-stability
-python tools/generate_docs.py --check   # are the docs still in sync with claims.json?
+python tools/generate_docs.py --check   # are the docs in sync with claims.json?
+python tools/generate_index.py --check   # is index.html in sync?
 
 npm install && npx playwright install chromium
 npx playwright test                # every demo page against its recording

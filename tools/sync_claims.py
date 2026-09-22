@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CLAIMS = ROOT / "claims.json"
 
 DERIVED = ("claim", "enforcement", "denial_type", "modules", "tests", "demo_steps")
-AUTHORED = ("tier", "release", "asi", "nist", "iso", "strength")
+AUTHORED = ("tier", "release", "asi", "nist", "iso", "strength", "criticality")
 
 
 def derived_fields(app_dir: Path) -> dict:

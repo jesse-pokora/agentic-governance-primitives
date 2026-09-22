@@ -33,6 +33,9 @@ jobs:
       - name: Check the documents match claims.json
         run: python tools/generate_docs.py --check
 
+      - name: Check the catalog index matches claims.json
+        run: python tools/generate_index.py --check
+
       # A demo.json that no longer matches its demo.py means a page is showing
       # an outcome the code has stopped producing.
       - name: Check no recording drifted from its source

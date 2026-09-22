@@ -192,6 +192,53 @@ out-of-scope list. Patterns that failed that test — a message bus, a router, a
 lifecycle state machine — stayed out, because they are orchestration however
 small you make them.
 
+## Overlap review (v1.4)
+
+The one-sentence rule cuts in only one direction. It catches an app that should
+be **split**, because the tell is an "and" joining two rules. Nothing in this
+plan catches an app that should be **merged**, and after 47 apps that is worth
+checking rather than assuming.
+
+Reviewed: the three pairs with the highest lexical overlap between their claims,
+the four pairs a reader would most plausibly call redundant, and the two dense
+clusters. **No merges.** The distinctions, recorded so the question does not
+have to be re-opened from scratch:
+
+| Pair | Why both exist |
+|---|---|
+| `bounded-execution-budget` / `declared-objective-conformance` | The highest lexical overlap in the catalog, because they share an idiom: a declared bound, an action refused, nothing executed. What is declared differs — a quantity versus a purpose. The shared shape is consistency, not duplication. |
+| `capability-gated-tool-invocation` / `delegation-scope-attenuation` | A membership test versus a monotonicity property. The first asks whether an actor holds a capability now; the second asks whether authority grew as it was passed along. Either can hold without the other. |
+| `bounded-execution-budget` / `failure-bulkhead` | Different subject. A budget bounds what one run may consume and halts the run; a breaker bounds how hard one dependency may be pushed and has its own open/probe/closed lifecycle. One protects the system from the agent, the other protects a dependency from the agent's retries. |
+| `hash-pinned-identity` / `trusted-revision-anchor` | Different objects: which executable file may run, versus which commit counts as current. |
+| `capability-gated-tool-invocation` / `generated-code-admission-gate` | Authorizing a caller versus inspecting an artifact. |
+| `deterministic-embedding-contract-check` / `tiered-model-escalation-gate` | Request side versus response side. |
+
+**The two dense clusters, and why they are not padding.**
+
+Five apps concern append-only structures — `authenticated-transition-ledger`,
+`concurrent-append-integrity`, `deterministic-ledger-replay`,
+`forward-only-revert-journal` and `typed-ledger-slot-supersession`. Each proves
+a different property of one: that the log is tamper-evident, that concurrent
+writers cannot corrupt it, that state is derivable from it, that history is
+appended rather than erased, and that replacing a record requires naming its
+exact predecessor. A system can have any one of those without the others, and
+the failures are not interchangeable.
+
+Three concern secrets reaching output — `verified-secret-redaction`,
+`governed-preflight-denial-evidence` and `safe-failure-diagnostics`. They cover
+the success path, the denial path and the failure path, by replacement, by
+field allowlist and by classification. The path is where the leaks actually
+differ.
+
+These two clusters are where a reader is most likely to feel lost, which is a
+navigation problem rather than a scoping one — see the reading path in the
+catalog index.
+
+**What this review is.** A judgment, recorded with its reasoning; not a proof.
+It says these 47 claims looked distinct to someone who read all of them
+together. Anyone who disagrees about a specific pair now has an argument to
+argue against, which is the point of writing it down.
+
 ## Build phasing
 
 **Phase 1 (build first — highest teaching value, fewest dependencies):**

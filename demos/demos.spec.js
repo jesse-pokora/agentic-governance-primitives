@@ -10,18 +10,23 @@ const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
 
-const APPS_DIR = path.join(__dirname, "..", "apps");
+// Both the primitives and the compositions that exercise them: a composition's
+// page has to tell the truth about its recording for the same reason an app's
+// does.
+const ROOTS = ["apps", "compositions"].map((d) => path.join(__dirname, "..", d));
 
-const demos = fs
-  .readdirSync(APPS_DIR)
-  .filter((name) => fs.existsSync(path.join(APPS_DIR, name, "demo.json")))
-  .map((name) => ({
-    name,
-    dir: path.join(APPS_DIR, name),
-    trace: JSON.parse(
-      fs.readFileSync(path.join(APPS_DIR, name, "demo.json"), "utf-8")
-    ),
-  }));
+const demos = ROOTS.filter((dir) => fs.existsSync(dir)).flatMap((dir) =>
+  fs
+    .readdirSync(dir)
+    .filter((name) => fs.existsSync(path.join(dir, name, "demo.json")))
+    .map((name) => ({
+      name,
+      dir: path.join(dir, name),
+      trace: JSON.parse(
+        fs.readFileSync(path.join(dir, name, "demo.json"), "utf-8")
+      ),
+    }))
+);
 
 test("at least one demo exists to check", () => {
   expect(demos.length).toBeGreaterThan(0);

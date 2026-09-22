@@ -20,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 APPS = ROOT / "apps"
+COMPOSITIONS = ROOT / "compositions"
 RAN = re.compile(r"Ran (\d+) test")
 
 
@@ -43,8 +44,11 @@ def rerecord(app: Path) -> tuple[bool, str]:
     """Re-record the demo and report whether the recording changed.
 
     A recording that churns cannot be diffed in review, so instability is a
-    failure here rather than a curiosity.
+    failure here rather than a curiosity. A directory with no demo.py has
+    nothing to re-record and is not a failure.
     """
+    if not (app / "demo.py").exists():
+        return True, ""
     trace = app / "demo.json"
     before = hashlib.sha256(trace.read_bytes()).hexdigest() if trace.exists() else None
     result = subprocess.run([sys.executable, "demo.py"], cwd=app,
@@ -66,11 +70,15 @@ def main(argv: list[str]) -> int:
 
     known = claims()
     apps = sorted(p for p in APPS.iterdir() if p.is_dir())
+    # Compositions are not primitives and carry no claims.json entry. They are
+    # run because they exercise the real modules, and a composition breaking is
+    # how you find out that two apps stopped fitting together.
+    compositions = sorted(p for p in COMPOSITIONS.iterdir() if p.is_dir())         if COMPOSITIONS.exists() else []
 
     failures, total_tests = [], 0
     undocumented = [p.name for p in apps if p.name not in known]
 
-    for app in apps:
+    for app in apps + compositions:
         ok, count, output = run_tests(app)
         total_tests += count
         status = "ok  " if ok else "FAIL"
@@ -84,11 +92,13 @@ def main(argv: list[str]) -> int:
         if not ok:
             failures.append((app.name, output))
         if not args.quiet:
-            claim = known.get(app.name, {}).get("claim", "(not in claims.json)")
+            claim = known.get(app.name, {}).get("claim", "(composition)")
             print(f"  {status}  {app.name:<36} {count:>3} tests  {claim[:72]}")
 
     print()
-    print(f"{len(apps) - len(failures)}/{len(apps)} apps passed, {total_tests} tests")
+    total = len(apps) + len(compositions)
+    print(f"{total - len(failures)}/{total} suites passed "
+          f"({len(apps)} apps, {len(compositions)} compositions), {total_tests} tests")
 
     if undocumented:
         print(f"\nnot in claims.json: {', '.join(undocumented)}")

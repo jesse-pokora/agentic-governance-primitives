@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentic Governance Primitives</title>
+<style>
+  :root {
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1a1a18; --muted: #6b6b66;
+    --line: #e4e4e0; --accent: #3b5bdb; --mono-bg: #f4f4f1;
+    --c0: #b3341f; --c1: #b5761a; --c2: #3b5bdb; --c3: #6b6b66;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16171a; --panel: #1e2024; --ink: #e9e9e6; --muted: #9a9a94;
+      --line: #32343a; --accent: #8fa6f5; --mono-bg: #24262b;
+      --c0: #f0836a; --c1: #e0a75c; --c2: #8fa6f5; --c3: #9a9a94;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16171a; --panel: #1e2024; --ink: #e9e9e6; --muted: #9a9a94;
+    --line: #32343a; --accent: #8fa6f5; --mono-bg: #24262b;
+    --c0: #f0836a; --c1: #e0a75c; --c2: #8fa6f5; --c3: #9a9a94;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 40px 16px 80px;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .tagline { color: var(--muted); margin: 0 0 8px; }
+  .lede { margin: 0 0 28px; }
+  h2 { font-size: 1.1rem; margin: 40px 0 6px; letter-spacing: -0.01em; }
+  h2 + p { color: var(--muted); margin: 0 0 16px; font-size: 0.92rem; }
+  h3 {
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--muted); margin: 28px 0 10px; font-weight: 600;
+  }
+  .count {
+    background: var(--mono-bg); color: var(--muted); border-radius: 20px;
+    padding: 1px 8px; font-size: 0.82em; margin-left: 4px;
+  }
+  .app {
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+    padding: 14px 16px; margin-bottom: 10px;
+  }
+  .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .name {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.92rem; font-weight: 600; color: var(--accent);
+    text-decoration: none;
+  }
+  .name:hover { text-decoration: underline; }
+  .chip {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+    border: 1px solid currentColor; border-radius: 4px; padding: 0 5px; cursor: help;
+  }
+  .chip.C0 { color: var(--c0); } .chip.C1 { color: var(--c1); }
+  .chip.C2 { color: var(--c2); } .chip.C3 { color: var(--c3); }
+  .enf { font-size: 0.76rem; color: var(--muted); margin-left: auto; }
+  .claim { margin: 8px 0 0; font-size: 0.92rem; }
+  .why {
+    margin: 8px 0 0; font-size: 0.9rem; color: var(--muted);
+    border-left: 2px solid var(--line); padding-left: 12px;
+  }
+  .links { margin-top: 10px; display: flex; gap: 14px; }
+  .links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+  .links a:hover { color: var(--accent); text-decoration: underline; }
+  .legend {
+    display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem;
+    color: var(--muted); margin: 0 0 20px;
+  }
+  .legend b { font-weight: 700; }
+  .callout {
+    border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0; background: var(--panel);
+    padding: 14px 16px; margin: 0 0 10px;
+  }
+  footer {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 0.84rem; color: var(--muted);
+  }
+  footer a { color: var(--accent); }
+  code {
+    background: var(--mono-bg); padding: 1px 5px; border-radius: 4px;
+    font-size: 0.86em; font-family: ui-monospace, Menlo, Consolas, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Agentic Governance Primitives</h1>
+  <p class="tagline">__TOTAL__ primitives. Each one is a single claim with a test that fails if the claim stops being true.</p>
+  <p class="lede">
+    Every app here demonstrates exactly one governed-agent-execution property,
+    standalone, with no orchestrator and no dependency on any other codebase.
+    Each page below animates a trace recorded by running that app&rsquo;s real
+    Python module, so a demo cannot show an outcome the code does not produce.
+  </p>
+
+  <h2>Start here</h2>
+  <p>Five apps in the order they teach best. Roughly twenty minutes.</p>
+__START__
+
+  <h2>Then watch them compose</h2>
+  <p>Forty-seven primitives side by side still leave the load-bearing claim untested.</p>
+  <div class="callout">
+    <div class="head">
+      <a class="name" href="compositions/governed-call-path/demo.html">governed-call-path</a>
+      <span class="enf">composition</span>
+    </div>
+    <p class="claim">
+      One request through seven gates in a fixed order. The first gate that
+      refuses stops it: no later gate is entered, no effect occurs, and the
+      ledger records which gate refused.
+    </p>
+    <p class="why">
+      A control plane that nothing routes through is documentation. This is the
+      smallest artifact that shows the primitives actually fitting together
+      &mdash; and it is still not an orchestrator: no router, no scheduler, no
+      second agent, no loop.
+    </p>
+    <div class="links">
+      <a href="compositions/governed-call-path/demo.html">run the demo</a>
+      <a href="compositions/governed-call-path/README.md">read the claim</a>
+    </div>
+  </div>
+
+  <h2>The whole catalog</h2>
+  <p>By tier, most critical first within each.</p>
+  <div class="legend">
+    <span><b class="chip C0">C0</b> unauthorized action becomes possible, or its evidence is destroyed</span>
+    <span><b class="chip C1">C1</b> governance degrades, or a fact an auditor needs is hidden</span>
+    <span><b class="chip C2">C2</b> correctness suffers; authority is intact</span>
+    <span><b class="chip C3">C3</b> a convention whose violation costs clarity</span>
+  </div>
+__TIERS__
+
+  <footer>
+    <p>
+      <a href="METHOD.md">How these are written</a> &middot;
+      <a href="CONFORMANCE.md">Mapping to OWASP ASI 2026, NIST SP 800-53, ISO/IEC 42001</a> &middot;
+      <a href="PLAN.md">Catalog decisions and what is deliberately out of scope</a>
+    </p>
+    <p>
+      Run everything with <code>python run_all.py</code>. This page is generated
+      from <code>claims.json</code> by <code>tools/generate_index.py</code>;
+      the reading path above is a teaching judgment written by hand.
+    </p>
+  </footer>
+</div>
+</body>
+</html>
