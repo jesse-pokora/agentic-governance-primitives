@@ -80,14 +80,20 @@ def render_managed(document: str, content: str) -> str:
             "generated content carries a managed-block marker",
         )
 
-    block = f"{START_MARKER}\n{content}\n{END_MARKER}"
+    # Use the document's prevailing line ending for the separators the block
+    # introduces. Writing LF into a CRLF document would leave it mixed — a
+    # change the human who owns the file never asked for, and the same quiet
+    # normalization this app exists to prevent everywhere else.
+    newline = "\r\n" if "\r\n" in document else "\n"
+
+    block = f"{START_MARKER}{newline}{content}{newline}{END_MARKER}"
     bounds = locate_block(document)
 
     if bounds is None:
         # Creating the block for the first time appends it; nothing that was
         # already in the document moves.
-        separator = "" if document == "" or document.endswith("\n") else "\n"
-        return f"{document}{separator}{block}\n"
+        separator = "" if document == "" or document.endswith(("\n", "\r")) else newline
+        return f"{document}{separator}{block}{newline}"
 
     before = document[: bounds.start]
     after = document[bounds.end + len(END_MARKER) :]

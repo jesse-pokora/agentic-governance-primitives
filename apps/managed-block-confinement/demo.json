@@ -12,7 +12,7 @@
         "new content": "generated v2"
       },
       "outcome": "allowed",
-      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\ngenerated v2\n<!-- END MANAGED BLOCK -->\r\n## Notes\r\n\tstill hand-written\r\n",
+      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\r\ngenerated v2\r\n<!-- END MANAGED BLOCK -->\r\n## Notes\r\n\tstill hand-written\r\n",
       "reason": "",
       "detail": "",
       "evidence": "text above and below the markers is the original bytes, CRLF endings and trailing spaces included",
@@ -62,7 +62,7 @@
         "new content": "first generation"
       },
       "outcome": "allowed",
-      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\nfirst generation\n<!-- END MANAGED BLOCK -->\n",
+      "result": "# Toy Repository\r\n\r\nHand-written by a person.   \r\n<!-- BEGIN MANAGED BLOCK -->\r\nfirst generation\r\n<!-- END MANAGED BLOCK -->\r\n",
       "reason": "",
       "detail": "",
       "evidence": "exactly one block; temp files left behind: []",

@@ -1,0 +1,1133 @@
+{
+  "apps": [
+    {
+      "name": "argv-not-shell-invocation",
+      "tier": 1,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "InvocationDenied",
+      "claim": "A child process is launched from an absolute program path and a list of argument values, so a shell metacharacter inside an argument arrives as literal text — never as a second command.",
+      "modules": [
+        "invocation.py"
+      ],
+      "tests": [
+        "test_invocation.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI05"
+      ],
+      "nist": [
+        "SI-10",
+        "CM-7"
+      ],
+      "iso": [
+        "A.6.2.5"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "attested-rollback-checkpoint",
+      "tier": 2,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "RollbackDenied",
+      "claim": "A rollback restores exactly a previously attested state digest, failing closed on an unattested target or a checkpoint whose bytes no longer hash to it.",
+      "modules": [
+        "rollback.py"
+      ],
+      "tests": [
+        "test_rollback.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI08"
+      ],
+      "nist": [
+        "CP-10",
+        "SI-7"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "authenticated-transition-ledger",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "VerificationResult(valid=False)",
+      "claim": "An append-only, SHA-256-chained, HMAC-signed event log detects a single edited byte anywhere in its history, not just at the tampered row.",
+      "modules": [
+        "ledger.py"
+      ],
+      "tests": [
+        "test_ledger.py"
+      ],
+      "demo_steps": 3,
+      "asi": [
+        "ASI10"
+      ],
+      "nist": [
+        "AU-9",
+        "AU-10",
+        "SR-9"
+      ],
+      "iso": [
+        "A.6.2.8"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "bounded-execution-budget",
+      "tier": 2,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "BudgetDenied",
+      "claim": "A run halts at the first action that would exceed a declared budget — the over-budget action never executes, nothing is partially charged, and the budget cannot be extended from inside the run.",
+      "modules": [
+        "budget.py"
+      ],
+      "tests": [
+        "test_budget.py"
+      ],
+      "demo_steps": 6,
+      "asi": [
+        "ASI10"
+      ],
+      "nist": [
+        "SC-5",
+        "AC-3"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "bounded-review-epoch-escalation",
+      "tier": 2,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "EscalationRequired / ReauthorizationDenied",
+      "claim": "After 3 review rounds with open findings, the loop stops and requires a new, hash-bound human reauthorization naming the exact terminal evidence — it cannot self-extend.",
+      "modules": [
+        "review_loop.py"
+      ],
+      "tests": [
+        "test_review_loop.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI09",
+        "ASI10"
+      ],
+      "nist": [
+        "AC-3",
+        "CM-3"
+      ],
+      "iso": [
+        "A.9.2"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "canonical-outcome-reconciliation",
+      "tier": 2,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — this app returns one Outcome per key",
+      "claim": "Every input key in a batch receives exactly one attributable success or failure outcome, in a fixed order — nothing silently dropped, nothing double-counted.",
+      "modules": [
+        "reconciliation.py"
+      ],
+      "tests": [
+        "test_reconciliation.py"
+      ],
+      "demo_steps": 3,
+      "asi": [],
+      "nist": [
+        "AU-12",
+        "SI-10"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent"
+    },
+    {
+      "name": "canonical-output-shape",
+      "tier": 2,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "OutputShapeRejected",
+      "claim": "Generated output is accepted only if its headings are canonical, spelled exactly and in the declared order, with no wrapper fence, no empty section, and no more than the declared word bound — and the checker never repairs what it rejects.",
+      "modules": [
+        "output_shape.py"
+      ],
+      "tests": [
+        "test_output_shape.py"
+      ],
+      "demo_steps": 8,
+      "asi": [
+        "ASI09"
+      ],
+      "nist": [
+        "SI-10"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "capability-gated-tool-invocation",
+      "tier": 3,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "CapabilityDenied",
+      "claim": "A tool call runs only if the calling persona's declared capability set contains that tool's exact required capability — and a denied call never enters the tool function at all.",
+      "modules": [
+        "capability_gate.py"
+      ],
+      "tests": [
+        "test_capability_gate.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI02",
+        "ASI03"
+      ],
+      "nist": [
+        "AC-3",
+        "AC-6"
+      ],
+      "iso": [
+        "A.9.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "concurrent-append-integrity",
+      "tier": 2,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "ConcurrentAppendRejected",
+      "claim": "Under concurrent writers an append-only ledger admits exactly one entry per accepted append, with contiguous indices and an unbroken hash chain — a writer whose predecessor moved is rejected.",
+      "modules": [
+        "concurrent_ledger.py"
+      ],
+      "tests": [
+        "test_concurrent_ledger.py"
+      ],
+      "demo_steps": 3,
+      "asi": [],
+      "nist": [
+        "AU-9",
+        "AU-12"
+      ],
+      "iso": [
+        "A.6.2.8"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "deterministic-embedding-contract-check",
+      "tier": 4,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "ContractMismatch",
+      "claim": "An embedding call's provider, model ID, version, and dimensions can be verified byte-for-byte against a captured request — with no live AWS call.",
+      "modules": [
+        "contract_check.py"
+      ],
+      "tests": [
+        "test_contract_check.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI04"
+      ],
+      "nist": [
+        "SI-7",
+        "SR-4"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "deterministic-ledger-replay",
+      "tier": 2,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "ReplayRejected",
+      "claim": "Replaying a ledger from genesis reproduces its state byte-for-byte, and any state the replay cannot reproduce is rejected — with the first divergent event named.",
+      "modules": [
+        "replay.py"
+      ],
+      "tests": [
+        "test_replay.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI06"
+      ],
+      "nist": [
+        "AU-9",
+        "AU-10",
+        "SI-7"
+      ],
+      "iso": [
+        "A.6.2.8"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "deterministic-primitives-kit",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — these are pure functions returning values",
+      "claim": "The same input byte-for-byte always produces the same canonical JSON, the same hash, and the same safe-ID validation — across restarts, across machines.",
+      "modules": [
+        "primitives.py"
+      ],
+      "tests": [
+        "test_primitives.py"
+      ],
+      "demo_steps": 6,
+      "asi": [],
+      "nist": [
+        "SI-10"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent"
+    },
+    {
+      "name": "exact-plan-approval-gate",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "ApprovalDenied",
+      "claim": "A destructive action can only be approved by echoing back the exact SHA-256 of the plan that was shown — a \"yes\" with no hash is rejected.",
+      "modules": [
+        "approval_gate.py"
+      ],
+      "tests": [
+        "test_approval_gate.py"
+      ],
+      "demo_steps": 3,
+      "asi": [
+        "ASI09",
+        "ASI10"
+      ],
+      "nist": [
+        "AC-3",
+        "CM-3"
+      ],
+      "iso": [
+        "A.9.2",
+        "A.9.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "execution-lock-and-recovery",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "LockHeld / RecoveryDenied",
+      "claim": "A crashed run leaves a lock that only an explicit, challenge-authenticated operator attestation can clear — the system never infers liveness on its own.",
+      "modules": [
+        "lock_manager.py"
+      ],
+      "tests": [
+        "test_lock_manager.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI08"
+      ],
+      "nist": [
+        "CP-10",
+        "AC-3"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "partial"
+    },
+    {
+      "name": "forward-only-revert-journal",
+      "tier": 2,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "JournalRejected",
+      "claim": "A revert is recorded as a new forward record naming the state it left behind, so the abandoned state stays readable and a rewritten history is detected.",
+      "modules": [
+        "revert_journal.py"
+      ],
+      "tests": [
+        "test_revert_journal.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI08"
+      ],
+      "nist": [
+        "AU-9",
+        "AU-11",
+        "SR-9"
+      ],
+      "iso": [
+        "A.6.2.8"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "generated-code-admission-gate",
+      "tier": 1,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "AdmissionDenied",
+      "claim": "Model-generated code is admitted only if every import, call, and attribute access in its parsed AST is permitted by the declared policy — a denied program is never compiled and never runs.",
+      "modules": [
+        "admission_gate.py"
+      ],
+      "tests": [
+        "test_admission_gate.py"
+      ],
+      "demo_steps": 6,
+      "asi": [
+        "ASI05"
+      ],
+      "nist": [
+        "SI-7",
+        "SI-10",
+        "CM-7"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "governed-context-provenance",
+      "tier": 3,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "ProvenanceMissing",
+      "claim": "Every piece of context handed to a model carries its source and an explicit injection_disposition (\"clear\" vs. untrusted) before assembly — the model never has to guess what it can trust.",
+      "modules": [
+        "context_assembly.py"
+      ],
+      "tests": [
+        "test_context_assembly.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI01",
+        "ASI06"
+      ],
+      "nist": [
+        "AC-16",
+        "SI-10",
+        "SR-4"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "governed-preflight-denial-evidence",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — this app emits a denial record, it does not raise",
+      "claim": "When a precondition fails, the system emits a fixed-shape, allowlisted-field denial record — never raw stderr, paths, or secrets.",
+      "modules": [
+        "preflight.py"
+      ],
+      "tests": [
+        "test_preflight.py"
+      ],
+      "demo_steps": 3,
+      "asi": [],
+      "nist": [
+        "AU-3",
+        "AU-9"
+      ],
+      "iso": [
+        "A.6.2.8"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "grounded-claim-verification",
+      "tier": 5,
+      "release": "v1.2",
+      "enforcement": "deterministic",
+      "denial_type": "GroundingRejected",
+      "claim": "Every factual claim a model emits must name a ground-truth key that exists and quote that record's value exactly — an uncited claim, an invented source, or an altered quote fails closed.",
+      "modules": [
+        "grounding.py"
+      ],
+      "tests": [
+        "test_grounding.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI06",
+        "ASI09"
+      ],
+      "nist": [
+        "SI-10",
+        "AC-16",
+        "SR-4"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "hash-pinned-identity",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "IdentityMismatch",
+      "claim": "A launcher refuses to run any executable whose resolved absolute path and SHA-256 don't both match a policy pinned outside the workspace — even if the name on PATH is identical.",
+      "modules": [
+        "launcher.py"
+      ],
+      "tests": [
+        "test_launcher.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI04",
+        "ASI05"
+      ],
+      "nist": [
+        "SI-7",
+        "SR-4",
+        "SR-11",
+        "CM-5"
+      ],
+      "iso": [
+        "A.6.2.5"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "hash-pinned-instruction-set",
+      "tier": 1,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "InstructionDrift",
+      "claim": "A run executes only under the exact instruction set it pinned — a single edited byte, an added file, a removed file, or two files swapping contents all fail closed before the run starts.",
+      "modules": [
+        "instruction_set.py"
+      ],
+      "tests": [
+        "test_instruction_set.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI01",
+        "ASI04"
+      ],
+      "nist": [
+        "CM-3",
+        "CM-5",
+        "SI-7"
+      ],
+      "iso": [
+        "A.6.2.7"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "managed-block-confinement",
+      "tier": 1,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "ManagedWriteDenied",
+      "claim": "A managed write replaces only the content between the exact markers — everything outside them survives byte for byte, and generated content carrying a marker of its own is refused rather than written.",
+      "modules": [
+        "managed_block.py"
+      ],
+      "tests": [
+        "test_managed_block.py"
+      ],
+      "demo_steps": 6,
+      "asi": [
+        "ASI02"
+      ],
+      "nist": [
+        "AC-3",
+        "CM-5",
+        "SI-7"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "measured-token-accounting",
+      "tier": 5,
+      "release": "v1.2",
+      "enforcement": "deterministic",
+      "denial_type": "AccountingRejected",
+      "claim": "An unmeasured model call is refused rather than counted as zero, and the recorded per-call parts must reconcile exactly with the provider's own reported total.",
+      "modules": [
+        "token_account.py"
+      ],
+      "tests": [
+        "test_token_account.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI10"
+      ],
+      "nist": [
+        "AU-12",
+        "SC-5"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "memory-conflict-quarantine",
+      "tier": 5,
+      "release": "v1.2",
+      "enforcement": "deterministic",
+      "denial_type": "MemoryRejected",
+      "claim": "When two memory records assert different values for the same key, both are retained and the conflict is surfaced — the newer one never silently overwrites the older, and the key has no answer until someone resolves it.",
+      "modules": [
+        "memory_store.py"
+      ],
+      "tests": [
+        "test_memory_store.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI06"
+      ],
+      "nist": [
+        "SI-7",
+        "AU-9"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "non-overlapping-error-mapping",
+      "tier": 2,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — this app returns a classified Outcome",
+      "claim": "Every test fixture reaches exactly one named validation stage and exactly one named error — never two, never zero.",
+      "modules": [
+        "validation.py"
+      ],
+      "tests": [
+        "test_validation.py"
+      ],
+      "demo_steps": 5,
+      "asi": [],
+      "nist": [
+        "SI-10",
+        "SI-11"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent"
+    },
+    {
+      "name": "optional-input-does-not-block",
+      "tier": 2,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "StartupRefused",
+      "claim": "A run starts when every required input is present, even if every optional one is missing — a missing optional input is recorded and the run marked degraded, never escalated into a stop.",
+      "modules": [
+        "startup.py"
+      ],
+      "tests": [
+        "test_startup.py"
+      ],
+      "demo_steps": 6,
+      "asi": [],
+      "nist": [
+        "SI-10",
+        "CP-2"
+      ],
+      "iso": [
+        "A.9.2"
+      ],
+      "strength": "adjacent"
+    },
+    {
+      "name": "persona-capability-catalog",
+      "tier": 3,
+      "release": "v1",
+      "enforcement": "informational",
+      "denial_type": "n/a — this app is a catalog, it denies nothing",
+      "claim": "\"Who is allowed to do what\" (a YAML+JSON-Schema catalog) is fully separate from \"what's running right now\" (a runtime process list) — you can audit the first without touching the second.",
+      "modules": [
+        "catalog.py",
+        "runtime.py"
+      ],
+      "tests": [
+        "test_catalog.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI03"
+      ],
+      "nist": [
+        "AC-2",
+        "AC-6"
+      ],
+      "iso": [
+        "A.3.2"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "pinned-egress-allowlist",
+      "tier": 1,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "EgressDenied",
+      "claim": "An outbound request is allowed only if its scheme, host, and port all match an allowlist entry exactly — and every hop of a redirect chain is checked, not just the first.",
+      "modules": [
+        "egress.py"
+      ],
+      "tests": [
+        "test_egress.py"
+      ],
+      "demo_steps": 6,
+      "asi": [
+        "ASI02",
+        "ASI04"
+      ],
+      "nist": [
+        "SC-7",
+        "AC-4"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "producer-approver-separation",
+      "tier": 2,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "ApprovalDenied",
+      "claim": "Whoever produced an artifact cannot approve it, and an approval is bound to the exact digest it covers — a rename, a delegate, or a later edit all fail closed.",
+      "modules": [
+        "separation.py"
+      ],
+      "tests": [
+        "test_separation.py"
+      ],
+      "demo_steps": 7,
+      "asi": [
+        "ASI03",
+        "ASI09"
+      ],
+      "nist": [
+        "AC-5",
+        "AU-10",
+        "CM-3"
+      ],
+      "iso": [
+        "A.9.2"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "prompt-injection-scanner-mcp",
+      "tier": 4,
+      "release": "v1",
+      "enforcement": "hybrid",
+      "denial_type": "UnknownTool",
+      "claim": "A single-purpose MCP server that does exactly one thing (flag likely prompt injection in a text blob) and nothing else.",
+      "modules": [
+        "scanner_server.py"
+      ],
+      "tests": [
+        "test_scanner_server.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI01"
+      ],
+      "nist": [
+        "SI-10"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "partial"
+    },
+    {
+      "name": "provable-dry-run",
+      "tier": 2,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "EffectDenied",
+      "claim": "A dry run performs no effect and still produces the complete plan — and the plan a dry run produces is the same plan the live run produces, because both execute the same routine.",
+      "modules": [
+        "dry_run.py"
+      ],
+      "tests": [
+        "test_dry_run.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI02"
+      ],
+      "nist": [
+        "CM-3",
+        "AU-12"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "reduced-child-environment",
+      "tier": 1,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "EnvironmentDenied",
+      "claim": "A child process receives only the variables a declared policy passes through — every other variable in the parent's environment, including ones nobody anticipated, is absent rather than redacted.",
+      "modules": [
+        "environment.py"
+      ],
+      "tests": [
+        "test_environment.py"
+      ],
+      "demo_steps": 5,
+      "asi": [],
+      "nist": [
+        "AC-6",
+        "SC-28",
+        "CM-7"
+      ],
+      "iso": [
+        "A.6.2.5"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "safe-failure-diagnostics",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — this app persists a category, it does not raise",
+      "claim": "A child-process failure is classified into one of a fixed vocabulary of categories from at most 8,192 observed bytes, and only the category — never the bytes — is ever persisted.",
+      "modules": [
+        "diagnostics.py"
+      ],
+      "tests": [
+        "test_diagnostics.py"
+      ],
+      "demo_steps": 5,
+      "asi": [],
+      "nist": [
+        "AU-3",
+        "SI-11"
+      ],
+      "iso": [
+        "A.6.2.8"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "single-purpose-adversarial-reviewer",
+      "tier": 3,
+      "release": "v1",
+      "enforcement": "hybrid",
+      "denial_type": "InvalidReviewPayload",
+      "claim": "One adversarial-review agent, schema-in/findings-out, callable with zero pipeline, zero orchestrator, and no state carried between calls.",
+      "modules": [
+        "review_agent.py"
+      ],
+      "tests": [
+        "test_review_agent.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI09"
+      ],
+      "nist": [
+        "SA-11"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent"
+    },
+    {
+      "name": "staged-input-allowlist",
+      "tier": 1,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "StagingRefused",
+      "claim": "Only files matching the declared policy enter the agent's view, every excluded file is recorded with a fixed-vocabulary reason, and exceeding a declared cap stages nothing at all.",
+      "modules": [
+        "staging.py"
+      ],
+      "tests": [
+        "test_staging.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI04",
+        "ASI06"
+      ],
+      "nist": [
+        "AC-4",
+        "SC-7",
+        "SI-10"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "tiered-model-escalation-gate",
+      "tier": 5,
+      "release": "v1.2",
+      "enforcement": "hybrid",
+      "denial_type": "NoTierPassed",
+      "claim": "A cheap tier's output is used only if it passes the declared deterministic check — otherwise the call escalates to the next tier, and the ledger records which tier actually answered.",
+      "modules": [
+        "escalation_gate.py"
+      ],
+      "tests": [
+        "test_escalation_gate.py"
+      ],
+      "demo_steps": 4,
+      "asi": [
+        "ASI09",
+        "ASI10"
+      ],
+      "nist": [
+        "SI-10",
+        "AU-12"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "trusted-revision-anchor",
+      "tier": 2,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "NoRevisionsRecorded",
+      "claim": "The \"current\" commit is selected only from a ledger slot position, never from caller-supplied input; \"fresh\" means \"at the ledger head,\" not \"recent by clock time.\"",
+      "modules": [
+        "revision_ledger.py"
+      ],
+      "tests": [
+        "test_revision_ledger.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI04"
+      ],
+      "nist": [
+        "CM-3",
+        "SI-7",
+        "SR-4"
+      ],
+      "iso": [
+        "A.6.2.5"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "typed-ledger-slot-supersession",
+      "tier": 2,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "SupersessionDenied",
+      "claim": "A later record can only replace an earlier one by naming that exact slot key and the exact digest of the record it's replacing — a fork or missing predecessor fails closed.",
+      "modules": [
+        "slot_ledger.py"
+      ],
+      "tests": [
+        "test_slot_ledger.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI03"
+      ],
+      "nist": [
+        "AC-3",
+        "AU-9",
+        "CM-5"
+      ],
+      "iso": [
+        "A.6.2.8"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "unproven-isolation-fails-closed",
+      "tier": 1,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "IsolationUnproven",
+      "claim": "A run proceeds only when isolation is verified by a probe that actually ran — an operator assertion and a child's capability declaration are recorded for audit and contribute nothing to the verdict.",
+      "modules": [
+        "isolation.py"
+      ],
+      "tests": [
+        "test_isolation.py"
+      ],
+      "demo_steps": 7,
+      "asi": [
+        "ASI05"
+      ],
+      "nist": [
+        "CM-7",
+        "SA-11",
+        "AU-10"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "validated-artifact-reuse",
+      "tier": 2,
+      "release": "v1.3",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — this app returns a Decision, it does not raise",
+      "claim": "An existing artifact is reused only when it is still valid for the inputs at hand — same input digest and same producer version — and every decision records which way it went and why.",
+      "modules": [
+        "reuse.py"
+      ],
+      "tests": [
+        "test_reuse.py"
+      ],
+      "demo_steps": 7,
+      "asi": [
+        "ASI04"
+      ],
+      "nist": [
+        "SI-7",
+        "CM-3"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "verified-secret-redaction",
+      "tier": 1,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "RedactionFailure",
+      "claim": "No registered secret can appear in an emitted artifact — the emitter redacts, then re-reads its own serialized output and refuses to emit if any secret survived.",
+      "modules": [
+        "redaction.py"
+      ],
+      "tests": [
+        "test_redaction.py"
+      ],
+      "demo_steps": 4,
+      "asi": [],
+      "nist": [
+        "AC-4",
+        "SC-28",
+        "AU-9"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "workspace-attestation",
+      "tier": 1,
+      "release": "v1",
+      "enforcement": "deterministic",
+      "denial_type": "AttestationMismatch",
+      "claim": "A governed run's claimed file changes are diffed against a real git-worktree snapshot taken immediately before and after — a claim that doesn't match the diff fails closed.",
+      "modules": [
+        "attestation.py"
+      ],
+      "tests": [
+        "test_attestation.py"
+      ],
+      "demo_steps": 3,
+      "asi": [
+        "ASI05"
+      ],
+      "nist": [
+        "SI-7",
+        "CM-3",
+        "AU-12"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    },
+    {
+      "name": "write-scope-confinement",
+      "tier": 1,
+      "release": "v1.1",
+      "enforcement": "deterministic",
+      "denial_type": "WriteDenied",
+      "claim": "A write is denied before any bytes touch disk unless its fully resolved path lies inside the declared scope root — traversal, absolute paths, prefix siblings, and symlink escapes all fail closed.",
+      "modules": [
+        "confined_writer.py"
+      ],
+      "tests": [
+        "test_confined_writer.py"
+      ],
+      "demo_steps": 5,
+      "asi": [
+        "ASI02",
+        "ASI05"
+      ],
+      "nist": [
+        "AC-3",
+        "AC-6",
+        "SC-7"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "direct"
+    }
+  ]
+}

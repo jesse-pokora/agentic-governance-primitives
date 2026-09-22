@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  catalog:
+    name: Catalog suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the one app with dependencies
+        run: pip install -r apps/persona-capability-catalog/requirements.txt
+
+      # Every app's tests, plus a re-record of every demo: a recording that
+      # changes on re-run cannot be diffed in review, so instability fails here.
+      - name: Run every app's tests and re-record every demo
+        run: python run_all.py --demos
+
+      - name: Check the documents match claims.json
+        run: python tools/generate_docs.py --check
+
+      # A demo.json that no longer matches its demo.py means a page is showing
+      # an outcome the code has stopped producing.
+      - name: Check no recording drifted from its source
+        run: git diff --exit-code -- apps
+
+  demos:
+    name: Demo pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Re-render every page from its recording
+        run: python demos/render.py
+
+      - name: Check every page tells the truth about its recording
+        run: npx playwright test

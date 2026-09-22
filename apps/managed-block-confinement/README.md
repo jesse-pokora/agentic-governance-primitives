@@ -34,6 +34,12 @@ Four decisions carry the claim:
   state — it has not been created yet, and creating it appends without moving
   anything that was already there. Two starts, an unpaired marker, or an end
   before a start all refuse, because any answer would be a guess.
+- **The block adopts the document's line endings.** Writing LF separators into
+  a CRLF document would leave the file mixed — a change the human who owns it
+  never asked for, and the same quiet normalization this app exists to prevent
+  everywhere else. This one was found by using the app for real: the repo's
+  [doc generator](../../tools/generate_docs.py) writes its tables through here,
+  and the mixed endings showed up immediately.
 - **The replacement is indivisible.** `atomic_write` writes a temporary file
   in the same directory and calls `os.replace`, so a reader sees either the
   old document or the new one. That is the honest scope: it makes one file's
@@ -50,8 +56,9 @@ cd apps/managed-block-confinement
 python -m unittest test_managed_block.py -v
 ```
 
-All eleven tests run against real temp files: replacing a block, byte-for-byte
+All fourteen tests run against real temp files: replacing a block, byte-for-byte
 preservation of CRLF and trailing whitespace outside it, first-time creation,
 start-marker and end-marker injection, duplicate markers, an unpaired marker,
 an inverted pair, a refused render leaving the file untouched, no temporary
-file left behind, and idempotence.
+file left behind, idempotence, and three line-ending cases (a CRLF document
+staying CRLF, an LF document staying LF, and block creation in a CRLF file).

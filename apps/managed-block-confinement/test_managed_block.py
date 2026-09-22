@@ -55,6 +55,32 @@ class ManagedBlockConfinementTests(unittest.TestCase):
         self.assertEqual(result[: len(above)], above)
         self.assertEqual(result[-len(below) :], below)
 
+    def test_a_crlf_document_stays_entirely_crlf(self):
+        # The block introduces line endings of its own. Emitting LF into a CRLF
+        # document leaves the file mixed, which is a change nobody asked for.
+        self.write(f"# Toy\r\n\r\n{START_MARKER}\r\nold\r\n{END_MARKER}\r\n")
+
+        write_managed_block(self.path, "new content")
+        result = self.read()
+
+        self.assertIn("new content", result)
+        self.assertEqual(result.count("\n"), result.count("\r\n"))
+
+    def test_an_lf_document_stays_entirely_lf(self):
+        self.write(DOCUMENT)
+
+        write_managed_block(self.path, "new content")
+
+        self.assertNotIn("\r\n", self.read())
+
+    def test_creating_a_block_in_a_crlf_document_uses_crlf(self):
+        self.write("# Toy\r\n\r\nhuman text\r\n")
+
+        write_managed_block(self.path, "first generation")
+        result = self.read()
+
+        self.assertEqual(result.count("\n"), result.count("\r\n"))
+
     def test_creating_the_block_when_none_exists_appends_it(self):
         self.write(HUMAN_ABOVE)
 

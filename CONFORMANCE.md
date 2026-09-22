@@ -48,57 +48,61 @@ Strength column: **direct** — the app demonstrates the criterion's core
 property; **partial** — it demonstrates one part of it; **adjacent** — it
 supports the criterion without demonstrating it.
 
+<!-- BEGIN MANAGED BLOCK -->
 ### Tier 1 — Deterministic security primitives
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
-| hash-pinned-identity | ASI04, ASI05 | SI-7, SR-4, SR-11, CM-5 | A.6.2.5 | direct |
-| exact-plan-approval-gate | ASI09, ASI10 | AC-3, CM-3 | A.9.2, A.9.4 | direct |
+| argv-not-shell-invocation | ASI05 | SI-10, CM-7 | A.6.2.5 | direct |
 | authenticated-transition-ledger | ASI10 | AU-9, AU-10, SR-9 | A.6.2.8 | direct |
-| governed-preflight-denial-evidence | — | AU-3, AU-9 | A.6.2.8 | direct |
-| safe-failure-diagnostics | — | AU-3, SI-11 | A.6.2.8 | direct |
-| execution-lock-and-recovery | ASI08 | CP-10, AC-3 | A.6.2.6 | partial |
 | deterministic-primitives-kit | — | SI-10 | A.6.2.4 | adjacent |
-| workspace-attestation | ASI05 | SI-7, CM-3, AU-12 | A.6.2.6 | direct |
-| hash-pinned-instruction-set | ASI01, ASI04 | CM-3, CM-5, SI-7 | A.6.2.7 | direct |
-| pinned-egress-allowlist | ASI02, ASI04 | SC-7, AC-4 | A.6.2.6 | direct |
-| write-scope-confinement | ASI02, ASI05 | AC-3, AC-6, SC-7 | A.6.2.6 | direct |
-| verified-secret-redaction | — | AC-4, SC-28, AU-9 | A.6.2.6 | direct |
+| exact-plan-approval-gate | ASI09, ASI10 | AC-3, CM-3 | A.9.2, A.9.4 | direct |
+| execution-lock-and-recovery | ASI08 | CP-10, AC-3 | A.6.2.6 | partial |
 | generated-code-admission-gate | ASI05 | SI-7, SI-10, CM-7 | A.6.2.4 | direct |
+| governed-preflight-denial-evidence | — | AU-3, AU-9 | A.6.2.8 | direct |
+| hash-pinned-identity | ASI04, ASI05 | SI-7, SR-4, SR-11, CM-5 | A.6.2.5 | direct |
+| hash-pinned-instruction-set | ASI01, ASI04 | CM-3, CM-5, SI-7 | A.6.2.7 | direct |
 | managed-block-confinement | ASI02 | AC-3, CM-5, SI-7 | A.6.2.6 | direct |
+| pinned-egress-allowlist | ASI02, ASI04 | SC-7, AC-4 | A.6.2.6 | direct |
+| reduced-child-environment | — | AC-6, SC-28, CM-7 | A.6.2.5 | direct |
+| safe-failure-diagnostics | — | AU-3, SI-11 | A.6.2.8 | direct |
 | staged-input-allowlist | ASI04, ASI06 | AC-4, SC-7, SI-10 | A.6.2.6 | direct |
 | unproven-isolation-fails-closed | ASI05 | CM-7, SA-11, AU-10 | A.6.2.4 | direct |
-| argv-not-shell-invocation | ASI05 | SI-10, CM-7 | A.6.2.5 | direct |
-| reduced-child-environment | — | AC-6, SC-28, CM-7 | A.6.2.5 | direct |
+| verified-secret-redaction | — | AC-4, SC-28, AU-9 | A.6.2.6 | direct |
+| workspace-attestation | ASI05 | SI-7, CM-3, AU-12 | A.6.2.6 | direct |
+| write-scope-confinement | ASI02, ASI05 | AC-3, AC-6, SC-7 | A.6.2.6 | direct |
+
 
 ### Tier 2 — Review & process governance
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
-| bounded-review-epoch-escalation | ASI09, ASI10 | AC-3, CM-3 | A.9.2 | direct |
-| non-overlapping-error-mapping | — | SI-10, SI-11 | A.6.2.4 | adjacent |
-| canonical-outcome-reconciliation | — | AU-12, SI-10 | A.6.2.4 | adjacent |
-| trusted-revision-anchor | ASI04 | CM-3, SI-7, SR-4 | A.6.2.5 | direct |
-| typed-ledger-slot-supersession | ASI03 | AC-3, AU-9, CM-5 | A.6.2.8 | direct |
-| bounded-execution-budget | ASI10 | SC-5, AC-3 | A.6.2.6 | direct |
-| deterministic-ledger-replay | ASI06 | AU-9, AU-10, SI-7 | A.6.2.8 | direct |
 | attested-rollback-checkpoint | ASI08 | CP-10, SI-7 | A.6.2.6 | direct |
-| forward-only-revert-journal | ASI08 | AU-9, AU-11, SR-9 | A.6.2.8 | direct |
+| bounded-execution-budget | ASI10 | SC-5, AC-3 | A.6.2.6 | direct |
+| bounded-review-epoch-escalation | ASI09, ASI10 | AC-3, CM-3 | A.9.2 | direct |
+| canonical-outcome-reconciliation | — | AU-12, SI-10 | A.6.2.4 | adjacent |
+| canonical-output-shape | ASI09 | SI-10 | A.6.2.4 | direct |
 | concurrent-append-integrity | — | AU-9, AU-12 | A.6.2.8 | direct |
+| deterministic-ledger-replay | ASI06 | AU-9, AU-10, SI-7 | A.6.2.8 | direct |
+| forward-only-revert-journal | ASI08 | AU-9, AU-11, SR-9 | A.6.2.8 | direct |
+| non-overlapping-error-mapping | — | SI-10, SI-11 | A.6.2.4 | adjacent |
 | optional-input-does-not-block | — | SI-10, CP-2 | A.9.2 | adjacent |
 | producer-approver-separation | ASI03, ASI09 | AC-5, AU-10, CM-3 | A.9.2 | direct |
 | provable-dry-run | ASI02 | CM-3, AU-12 | A.6.2.4 | direct |
-| canonical-output-shape | ASI09 | SI-10 | A.6.2.4 | direct |
+| trusted-revision-anchor | ASI04 | CM-3, SI-7, SR-4 | A.6.2.5 | direct |
+| typed-ledger-slot-supersession | ASI03 | AC-3, AU-9, CM-5 | A.6.2.8 | direct |
 | validated-artifact-reuse | ASI04 | SI-7, CM-3 | A.6.2.6 | direct |
+
 
 ### Tier 3 — Persona & agent architecture
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
+| capability-gated-tool-invocation | ASI02, ASI03 | AC-3, AC-6 | A.9.4 | direct |
+| governed-context-provenance | ASI01, ASI06 | AC-16, SI-10, SR-4 | A.6.2.6 | direct |
 | persona-capability-catalog | ASI03 | AC-2, AC-6 | A.3.2 | direct |
 | single-purpose-adversarial-reviewer | ASI09 | SA-11 | A.6.2.4 | adjacent |
-| governed-context-provenance | ASI01, ASI06 | AC-16, SI-10, SR-4 | A.6.2.6 | direct |
-| capability-gated-tool-invocation | ASI02, ASI03 | AC-3, AC-6 | A.9.4 | direct |
+
 
 ### Tier 4 — Domain example
 
@@ -107,14 +111,16 @@ supports the criterion without demonstrating it.
 | deterministic-embedding-contract-check | ASI04 | SI-7, SR-4 | A.6.2.4 | direct |
 | prompt-injection-scanner-mcp | ASI01 | SI-10 | A.6.2.6 | partial |
 
+
 ### Tier 5 — Model-behavior constraint & drift detection
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
-| measured-token-accounting | ASI10 | AU-12, SC-5 | A.6.2.6 | direct |
 | grounded-claim-verification | ASI06, ASI09 | SI-10, AC-16, SR-4 | A.6.2.4 | direct |
+| measured-token-accounting | ASI10 | AU-12, SC-5 | A.6.2.6 | direct |
 | memory-conflict-quarantine | ASI06 | SI-7, AU-9 | A.6.2.6 | direct |
 | tiered-model-escalation-gate | ASI09, ASI10 | SI-10, AU-12 | A.6.2.4 | direct |
+<!-- END MANAGED BLOCK -->
 
 ## Coverage against OWASP ASI 2026
 

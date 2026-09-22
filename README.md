@@ -37,6 +37,25 @@ with a one-sentence **atomic claim** — the single testable thing it proves —
 and a note on which real-world pattern inspired it. An app that can't state
 its atomic claim in one sentence is scoped wrong.
 
+## Running the catalog
+
+```bash
+python run_all.py                  # every app's tests
+python run_all.py --demos          # also re-record demos and check byte-stability
+python tools/generate_docs.py --check   # are the docs still in sync with claims.json?
+
+npm install && npx playwright install chromium
+npx playwright test                # every demo page against its recording
+```
+
+[claims.json](claims.json) is the single source of truth for every app's
+claim, tier, release, enforcement class and standards mapping. The catalog
+tables in this file and in [CONFORMANCE.md](CONFORMANCE.md) are generated from
+it into a managed region — via this repo's own
+[managed-block-confinement](apps/managed-block-confinement) app, so the prose
+around them stays exactly as written. CI fails if they drift apart, which is
+the only durable answer to the same facts living in several documents.
+
 ## Demo pages
 
 Every app ships an animated page demonstrating its atomic claim — open
@@ -80,26 +99,28 @@ is still one atomic claim, standalone, and off the out-of-scope list. See
 [CONFORMANCE.md](CONFORMANCE.md) for how each app maps to published
 standards.
 
+<!-- BEGIN MANAGED BLOCK -->
 | App | Enforcement | Status |
 |---|---|---|
-| [hash-pinned-identity](apps/hash-pinned-identity) | deterministic | built |
-| [exact-plan-approval-gate](apps/exact-plan-approval-gate) | deterministic | built |
 | [authenticated-transition-ledger](apps/authenticated-transition-ledger) | deterministic | built |
-| [bounded-review-epoch-escalation](apps/bounded-review-epoch-escalation) | deterministic | built |
-| [governed-preflight-denial-evidence](apps/governed-preflight-denial-evidence) | deterministic | built |
-| [safe-failure-diagnostics](apps/safe-failure-diagnostics) | deterministic | built |
-| [execution-lock-and-recovery](apps/execution-lock-and-recovery) | deterministic | built |
 | [deterministic-primitives-kit](apps/deterministic-primitives-kit) | deterministic | built |
+| [exact-plan-approval-gate](apps/exact-plan-approval-gate) | deterministic | built |
+| [execution-lock-and-recovery](apps/execution-lock-and-recovery) | deterministic | built |
+| [governed-preflight-denial-evidence](apps/governed-preflight-denial-evidence) | deterministic | built |
+| [hash-pinned-identity](apps/hash-pinned-identity) | deterministic | built |
+| [safe-failure-diagnostics](apps/safe-failure-diagnostics) | deterministic | built |
 | [workspace-attestation](apps/workspace-attestation) | deterministic | built |
-| [non-overlapping-error-mapping](apps/non-overlapping-error-mapping) | deterministic | built |
+| [bounded-review-epoch-escalation](apps/bounded-review-epoch-escalation) | deterministic | built |
 | [canonical-outcome-reconciliation](apps/canonical-outcome-reconciliation) | deterministic | built |
+| [non-overlapping-error-mapping](apps/non-overlapping-error-mapping) | deterministic | built |
 | [trusted-revision-anchor](apps/trusted-revision-anchor) | deterministic | built |
 | [typed-ledger-slot-supersession](apps/typed-ledger-slot-supersession) | deterministic | built |
+| [governed-context-provenance](apps/governed-context-provenance) | deterministic | built |
 | [persona-capability-catalog](apps/persona-capability-catalog) | informational | built |
 | [single-purpose-adversarial-reviewer](apps/single-purpose-adversarial-reviewer) | hybrid | built |
-| [governed-context-provenance](apps/governed-context-provenance) | deterministic | built |
 | [deterministic-embedding-contract-check](apps/deterministic-embedding-contract-check) | deterministic | built |
 | [prompt-injection-scanner-mcp](apps/prompt-injection-scanner-mcp) | hybrid | built |
+
 
 ### v1.1 — gap closure
 
@@ -108,35 +129,18 @@ system: each closes a gap the v1 apps leave open.
 
 | App | Enforcement | Status |
 |---|---|---|
-| [hash-pinned-instruction-set](apps/hash-pinned-instruction-set) | deterministic | built |
-| [capability-gated-tool-invocation](apps/capability-gated-tool-invocation) | deterministic | built |
-| [bounded-execution-budget](apps/bounded-execution-budget) | deterministic | built |
-| [pinned-egress-allowlist](apps/pinned-egress-allowlist) | deterministic | built |
-| [write-scope-confinement](apps/write-scope-confinement) | deterministic | built |
-| [verified-secret-redaction](apps/verified-secret-redaction) | deterministic | built |
-| [deterministic-ledger-replay](apps/deterministic-ledger-replay) | deterministic | built |
-| [attested-rollback-checkpoint](apps/attested-rollback-checkpoint) | deterministic | built |
-| [concurrent-append-integrity](apps/concurrent-append-integrity) | deterministic | built |
-| [forward-only-revert-journal](apps/forward-only-revert-journal) | deterministic | built |
 | [generated-code-admission-gate](apps/generated-code-admission-gate) | deterministic | built |
+| [hash-pinned-instruction-set](apps/hash-pinned-instruction-set) | deterministic | built |
+| [pinned-egress-allowlist](apps/pinned-egress-allowlist) | deterministic | built |
+| [verified-secret-redaction](apps/verified-secret-redaction) | deterministic | built |
+| [write-scope-confinement](apps/write-scope-confinement) | deterministic | built |
+| [attested-rollback-checkpoint](apps/attested-rollback-checkpoint) | deterministic | built |
+| [bounded-execution-budget](apps/bounded-execution-budget) | deterministic | built |
+| [concurrent-append-integrity](apps/concurrent-append-integrity) | deterministic | built |
+| [deterministic-ledger-replay](apps/deterministic-ledger-replay) | deterministic | built |
+| [forward-only-revert-journal](apps/forward-only-revert-journal) | deterministic | built |
+| [capability-gated-tool-invocation](apps/capability-gated-tool-invocation) | deterministic | built |
 
-### v1.3 — derived from an atomic instruction and test matrix
-
-Found by reading a 192-criterion instruction-adherence matrix for one real
-governed agent and asking which of its themes had no teaching app here.
-
-| App | Enforcement | Status |
-|---|---|---|
-| [managed-block-confinement](apps/managed-block-confinement) | deterministic | built |
-| [staged-input-allowlist](apps/staged-input-allowlist) | deterministic | built |
-| [unproven-isolation-fails-closed](apps/unproven-isolation-fails-closed) | deterministic | built |
-| [argv-not-shell-invocation](apps/argv-not-shell-invocation) | deterministic | built |
-| [reduced-child-environment](apps/reduced-child-environment) | deterministic | built |
-| [optional-input-does-not-block](apps/optional-input-does-not-block) | deterministic | built |
-| [producer-approver-separation](apps/producer-approver-separation) | deterministic | built |
-| [provable-dry-run](apps/provable-dry-run) | deterministic | built |
-| [canonical-output-shape](apps/canonical-output-shape) | deterministic | built |
-| [validated-artifact-reuse](apps/validated-artifact-reuse) | deterministic | built |
 
 ### v1.2 — model-behavior constraint & drift detection
 
@@ -145,10 +149,30 @@ model is wrapped in, so its output becomes predictable.
 
 | App | Enforcement | Status |
 |---|---|---|
-| [measured-token-accounting](apps/measured-token-accounting) | deterministic | built |
 | [grounded-claim-verification](apps/grounded-claim-verification) | deterministic | built |
+| [measured-token-accounting](apps/measured-token-accounting) | deterministic | built |
 | [memory-conflict-quarantine](apps/memory-conflict-quarantine) | deterministic | built |
 | [tiered-model-escalation-gate](apps/tiered-model-escalation-gate) | hybrid | built |
+
+
+### v1.3 — derived from an atomic instruction and test matrix
+
+Found by reading a 192-criterion instruction-adherence matrix for one real
+governed agent and asking which of its themes had no teaching app here.
+
+| App | Enforcement | Status |
+|---|---|---|
+| [argv-not-shell-invocation](apps/argv-not-shell-invocation) | deterministic | built |
+| [managed-block-confinement](apps/managed-block-confinement) | deterministic | built |
+| [reduced-child-environment](apps/reduced-child-environment) | deterministic | built |
+| [staged-input-allowlist](apps/staged-input-allowlist) | deterministic | built |
+| [unproven-isolation-fails-closed](apps/unproven-isolation-fails-closed) | deterministic | built |
+| [canonical-output-shape](apps/canonical-output-shape) | deterministic | built |
+| [optional-input-does-not-block](apps/optional-input-does-not-block) | deterministic | built |
+| [producer-approver-separation](apps/producer-approver-separation) | deterministic | built |
+| [provable-dry-run](apps/provable-dry-run) | deterministic | built |
+| [validated-artifact-reuse](apps/validated-artifact-reuse) | deterministic | built |
+<!-- END MANAGED BLOCK -->
 
 ## What the catalog adds up to
 
