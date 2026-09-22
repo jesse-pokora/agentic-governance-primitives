@@ -31,7 +31,8 @@ def render_one(app_dir: Path) -> Path | None:
 
     html = template.replace("__APP__", trace["app"]).replace("__TRACE__", payload)
     out = app_dir / "demo.html"
-    out.write_text(html, encoding="utf-8")
+    with open(out, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(html)
     return out
 
 

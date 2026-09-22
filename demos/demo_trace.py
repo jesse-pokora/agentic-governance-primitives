@@ -155,7 +155,10 @@ class Trace:
             "recorded_with": f"CPython {platform.python_version()}",
             "steps": [self._scrub(asdict(step)) for step in self.steps],
         }
-        out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        # Explicit LF: recordings are committed and compared byte for byte,
+        # so one must not depend on which platform regenerated it.
+        with open(out, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(json.dumps(payload, indent=2) + "\n")
         return out
 
 

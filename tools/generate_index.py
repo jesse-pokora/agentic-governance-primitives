@@ -118,7 +118,10 @@ def main(argv: list[str]) -> int:
         return 1
 
     page = build(apps)
-    current = OUT.read_text(encoding="utf-8") if OUT.exists() else ""
+    current = ''
+    if OUT.exists():
+        with open(OUT, "r", encoding="utf-8", newline="") as handle:
+            current = handle.read()
 
     if args.check:
         if current != page:
@@ -127,7 +130,8 @@ def main(argv: list[str]) -> int:
         print(f"index.html is in sync with claims.json ({len(apps)} apps)")
         return 0
 
-    OUT.write_text(page, encoding="utf-8")
+    with open(OUT, "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(page)
     print(f"wrote index.html ({len(apps)} apps)")
     return 0
 

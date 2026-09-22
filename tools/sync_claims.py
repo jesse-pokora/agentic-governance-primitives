@@ -95,9 +95,10 @@ def main(argv: list[str]) -> int:
         print(problem)
     if changed:
         data["apps"] = sorted(entries.values(), key=lambda a: a["name"])
-        CLAIMS.write_text(
-            json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-        )
+        # Explicit LF: claims.json is committed and compared, so it must not
+        # depend on which platform last refreshed it.
+        with open(CLAIMS, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
         print("refreshed derived fields for: " + ", ".join(changed))
     else:
         print(f"claims.json already in sync ({len(entries)} apps)")
