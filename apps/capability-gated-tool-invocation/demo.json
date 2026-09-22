@@ -1,0 +1,81 @@
+{
+  "app": "capability-gated-tool-invocation",
+  "claim": "A tool call runs only if the calling persona's declared capability set contains that tool's exact required capability \u2014 and a denied call never enters the tool function at all.",
+  "enforcement": "deterministic",
+  "denial_type": "CapabilityDenied",
+  "recorded_with": "CPython 3.10.11",
+  "steps": [
+    {
+      "label": "reviewer holds repo.read, and read_repo requires it",
+      "request": {
+        "persona": "reviewer",
+        "tool": "read_repo",
+        "requires": "repo.read"
+      },
+      "outcome": "allowed",
+      "result": "toy file contents",
+      "reason": "",
+      "detail": "",
+      "evidence": "tool body entered 1 time",
+      "note": ""
+    },
+    {
+      "label": "reviewer does not hold deploy.execute",
+      "request": {
+        "persona": "reviewer",
+        "tool": "deploy",
+        "requires": "deploy.execute"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "capability_not_granted",
+      "detail": "persona=reviewer tool=deploy requires=deploy.execute",
+      "evidence": "tool body entered 0 times",
+      "note": "The count stays at zero: this is a gate, not an audit after the fact."
+    },
+    {
+      "label": "a capability prefix does not imply the longer capability",
+      "request": {
+        "persona": "reviewer",
+        "holds": "repo.read",
+        "tool": "read_secrets",
+        "requires": "repo.read_secrets"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "capability_not_granted",
+      "detail": "persona=reviewer tool=read_secrets requires=repo.read_secrets",
+      "evidence": "tool body entered 0 times",
+      "note": ""
+    },
+    {
+      "label": "a wildcard string grants nothing",
+      "request": {
+        "persona": "wildcard-persona",
+        "holds": "repo.*",
+        "tool": "read_repo",
+        "requires": "repo.read"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "capability_not_granted",
+      "detail": "persona=wildcard-persona tool=read_repo requires=repo.read",
+      "evidence": "",
+      "note": "Reading structure into capability names would make every new tool name a silent policy change."
+    },
+    {
+      "label": "mutating the source catalog after construction grants nothing",
+      "request": {
+        "persona": "reviewer",
+        "tool": "deploy",
+        "attempt": "runtime escalation"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "capability_not_granted",
+      "detail": "persona=reviewer tool=deploy requires=deploy.execute",
+      "evidence": "tool body entered 0 times",
+      "note": "The catalog captured at construction is the only authority."
+    }
+  ]
+}

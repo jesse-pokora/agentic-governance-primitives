@@ -1,0 +1,11 @@
+{
+  "name": "agentic-governance-primitives-demos",
+  "private": true,
+  "description": "Playwright checks that each app's demo page tells the truth about its recorded trace",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
