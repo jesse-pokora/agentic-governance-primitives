@@ -104,16 +104,16 @@ is a serious, actively maintained implementation — see the comparison in
 [CONFORMANCE.md](CONFORMANCE.md), which also records where its coverage and
 this catalog's differ.
 
-## Relationship to the Instruction Adherence Bench (IAB)
+## The instruction-adherence thesis
 
-Baker Tilly's internal IAB proposal (Pokora, v0.5) argues that an
-instruction only earns a place in an
-always-on agent instruction file if it is followed, needed, worth its cost,
-and produces better work — and that every claim should be traceable to a
-stable criterion ID, an exact source, and one atomic test (per the companion
-*Agentic SDLC POC Grading Rubric*).
+An instruction earns its place in an always-on agent instruction file only if
+it is **followed**, **needed**, worth its cost, and produces better work — and
+every claim about it should be traceable to a stable criterion ID, an exact
+source, and one atomic test.
 
-This repo borrows that discipline for code, not prose: every app here ships
+That argument is not this repository's; it comes from prior unpublished work of
+the author's on measuring instruction adherence. What this repo does is borrow
+the discipline for code rather than prose: every app here ships
 with a one-sentence **atomic claim** — the single testable thing it proves —
 and a note on which real-world pattern inspired it. An app that can't state
 its atomic claim in one sentence is scoped wrong.
@@ -156,29 +156,21 @@ cannot show an outcome the code does not produce. A Playwright suite checks
 every page against its recording, including the exact denial reason each
 module raised. See [demos/](demos) for the workflow.
 
-## Reference documents
+## Where the conventions came from
 
-The discipline here derives from four internal Baker Tilly documents — the
-Instruction Adherence Bench proposal (Pokora, v0.5), its two-page short form,
-the Agentic SDLC POC Grading Rubric, and a 192-criterion Repository Summary
-atomic instruction and test matrix.
+The claim discipline here — one atomic claim per app, a stable identifier, an
+exact source, one test — derives from earlier unpublished work of the author's:
+a proposal for measuring instruction adherence, a grading rubric that
+accompanies it, and a 192-criterion atomic instruction and test matrix written
+for a single governed agent.
 
-**Those documents are not distributed with this repository.** The matrix is
-marked Confidential — Internal Use Only, and the catalog is built so it does
-not need them: every app states its own claim, and
-[METHOD.md](METHOD.md) carries the conventions they taught without
-reproducing their contents.
+**None of that material is distributed with this repository**, and the catalog
+is built so it does not need to be. Every app states its own claim, and
+[METHOD.md](METHOD.md) carries the conventions in full without reproducing any
+source.
 
-The four, for the record:
-
-- *Instruction Adherence Bench proposal* (Pokora, v0.5), and its two-page
-  short form — the argument that an instruction earns its place only if it is
-  followed, needed, worth its cost, and produces better work.
-- *Agentic SDLC POC Grading Rubric* — the companion each app's atomic claim is
-  written to satisfy.
-- *Repository Summary: Atomic Instruction and Test Matrix* — 192 criteria for
-  one governed agent, which the v1.3 and v1.5 apps were derived from by asking
-  which of its themes had no teaching app here.
+The matrix mattered most: the v1.3 and v1.5 apps were found by reading it and
+asking which of its themes had no teaching app here.
 
 ## Layout
 

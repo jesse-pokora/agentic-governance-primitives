@@ -431,11 +431,10 @@ Amber = Phase 6, v1.2 model-behavior tier.)*
 
 ## Relationship to future IAB work
 
-Baker Tilly's Instruction Adherence Bench (IAB) proposal measures whether
-agent instructions are followed, needed, worth their cost, and produce
-better work, against a real "estate" of repositories. This repo is not IAB
-and does not build IAB's `corpus/registry/runner/scorer/analysis`
-components. But every app here already carries the one thing IAB's registry
+An instruction adherence bench measures whether agent instructions are
+followed, needed, worth their cost, and produce better work, against a real
+estate of repositories. This repo is not such a bench and does not build one's
+corpus, registry, runner, scorer or analysis components. But every app here already carries the one thing IAB's registry
 would need per instruction — a stable atomic claim traceable to an exact
 statement of what it proves — so if a future IAB corpus wants small,
 single-concept repositories as task targets, these apps are a natural fit
