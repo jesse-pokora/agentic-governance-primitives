@@ -1,5 +1,8 @@
 # Agentic Governance Primitives
 
+[![CI](https://github.com/jesse-pokora/agentic-governance-primitives/actions/workflows/ci.yml/badge.svg)](https://github.com/jesse-pokora/agentic-governance-primitives/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **An executable assurance case for agent governance.** Fifty-nine controls,
 each stated as one testable claim, each with a test that fails if the claim
 stops being true, and each with a page that animates the real code enforcing
