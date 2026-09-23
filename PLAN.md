@@ -269,6 +269,32 @@ These two clusters are where a reader is most likely to feel lost, which is a
 navigation problem rather than a scoping one — see the reading path in the
 catalog index.
 
+### Structural duplication, measured (v1.5)
+
+The v1.4 review above was a reading. This one is a measurement: the catalog's
+own [structural-duplicate-detection](apps/structural-duplicate-detection) run
+over all 61 shipped modules by `tools/self_check.py`.
+
+**324 functions, 8 groups of structurally identical ones, 58 functions with at
+least one twin.** What it found, and what was done about each:
+
+| Finding | Verdict |
+|---|---|
+| 34 identical `__init__` bodies | Deliberate. Every app declares its own denial exception because no app imports from a sibling. The repetition *is* the standalone property. |
+| 7 copies of `canonical_json` / `_canonical_json` | Deliberate, same reason — and note the detector matched the underscore-prefixed variant, which is the renamed-reimplementation case it exists for. |
+| `digest_of` and `plan_hash`, same shape | Deliberate: different domains, and the names say which. Also a true positive of the same case. |
+| `visit_ClassDef` and `visit_FunctionDef` in one module | **A genuine redundancy, and fixed.** Two methods with identical bodies inside a single file, which the standalone argument does not excuse. They are now one method with two aliases. |
+
+The exercise was worth more than the fix. Every app in this catalog is
+demonstrated against toy fixtures, which is the right way to prove a claim and
+a poor way to learn whether the detector survives real code. Pointed at 324
+real functions it found the exact phenomenon it was built for — the same
+implementation under a different name — twice, unprompted.
+
+`self_check.py` reports and does not gate. A count that had to stay green would
+turn deliberate repetition into pressure to couple the apps together, which is
+the one thing the catalog's structure exists to prevent.
+
 **What this review is.** A judgment, recorded with its reasoning; not a proof.
 It says these 47 claims looked distinct to someone who read all of them
 together. Anyone who disagrees about a specific pair now has an argument to

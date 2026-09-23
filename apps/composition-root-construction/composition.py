@@ -61,13 +61,16 @@ class _Walker(ast.NodeVisitor):
         self.generic_visit(node)
         self._scope.pop()
 
-    def visit_ClassDef(self, node: ast.ClassDef) -> None:
-        self._enter(node.name, node)
-
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """A class body and a function body are both scopes for this purpose.
+
+        These three were separate methods with identical bodies until the
+        catalog's own structural-duplicate-detection was pointed at it.
+        """
         self._enter(node.name, node)
 
     visit_AsyncFunctionDef = visit_FunctionDef
+    visit_ClassDef = visit_FunctionDef
 
     def visit_Name(self, node: ast.Name) -> None:
         if node.id in self.collaborators:
