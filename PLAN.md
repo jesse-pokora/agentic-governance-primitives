@@ -192,6 +192,41 @@ out-of-scope list. Patterns that failed that test — a message bus, a router, a
 lifecycle state machine — stayed out, because they are orchestration however
 small you make them.
 
+### Tier 2 — v1.5, instruction adherence
+
+*Whether an agent followed the instructions that define what it does. The part
+that is mechanically checkable is gated; the part that is not is reported as
+unchecked rather than quietly assumed.*
+
+| App | Atomic claim | Enforcement |
+|---|---|---|
+| `instruction-policy-gate` | Every declared instruction receives an explicit verdict; one with no mechanical checker is reported unenforceable, never counted as satisfied. | deterministic |
+| `absent-evidence-is-not-compliance` | A criterion whose checker exists but produced no evidence this run is recorded as not observed, never as passed. | deterministic |
+| `permissive-contract-is-a-gap` | A contract that admits a value the instruction forbids is a gap, recorded even when no artifact has ever sent one. | deterministic |
+| `falsifiable-instruction-check` | An instruction registers only if its own checker rejects the violating fixture it ships. | deterministic |
+| `deterministic-checker-contract` | A checker must return the same verdict for the same artifact on repeated evaluation. | deterministic |
+| `traceable-instruction-source` | An instruction is bound to exact text at an exact location; if the source no longer holds it, resolving is refused. | deterministic |
+| `ablation-required-for-causal-claim` | A finding is recorded as caused by an instruction only with a leave-one-out comparison; otherwise as correlation. | deterministic |
+| `repeat-reliability-predeclared` | The attempt count is declared before the first run, every attempt retained, and an early conclusion refused. | deterministic |
+| `enforcement-mechanism-attribution` | A result that does not name the enforcing mechanism cannot be compared with one that does. | deterministic |
+| `composition-root-construction` | A declared collaborator may be constructed only in the composition root. | deterministic |
+| `telemetry-is-not-cost` | A token count becomes money only against a pinned rate card for that exact model and version. | deterministic |
+| `structural-duplicate-detection` | Two functions with the same implementation shape fingerprint identically regardless of their names. | deterministic |
+
+These twelve came from sections 9 to 11 of the source matrix, which name five
+test layers per criterion — unit, followed, needed, mechanism, repeat — and a
+status vocabulary richer than pass and fail. They were built as twelve apps
+rather than two so that each property can be observed on its own, which is the
+same reason the rest of the catalog is shaped this way.
+
+Two of them draw their own boundary in the README rather than overclaiming.
+`structural-duplicate-detection` catches the same implementation under a
+different name and not a different implementation of the same idea, because
+that needs a similarity threshold and a picked number is not deterministic.
+`composition-root-construction` checks a declared list of collaborator types,
+because a checker that guessed which calls look like collaborators would flag
+every `Decimal` and be switched off.
+
 ## Overlap review (v1.4)
 
 The one-sentence rule cuts in only one direction. It catches an app that should

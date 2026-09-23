@@ -1,0 +1,86 @@
+{
+  "app": "composition-root-construction",
+  "claim": "A declared collaborator type may be constructed only inside the composition root; anywhere else it must arrive as a parameter.",
+  "enforcement": "deterministic",
+  "denial_type": "n/a \u2014 this app returns (verdict, detail)",
+  "steps": [
+    {
+      "label": "collaborators wired in the composition root",
+      "request": {
+        "source": "class Service: /     def __init__(self, repo, mailer): /         self.repo = repo /         self.mailer = mailer /  / def compose(): /     return Service(SqlRepository(), Mailer()) /",
+        "policy": "collaborators: SqlRepository, HttpClient, Mailer | composition root: compose, main"
+      },
+      "outcome": "allowed",
+      "result": "passed \u2014 2 construction(s), all in the composition root",
+      "reason": "",
+      "detail": "",
+      "evidence": "one place knows how the system is wired",
+      "note": ""
+    },
+    {
+      "label": "a class building its own collaborator",
+      "request": {
+        "source": "class Service: /     def __init__(self): /         self.repo = SqlRepository() /",
+        "policy": "collaborators: SqlRepository, HttpClient, Mailer | composition root: compose, main"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "failed \u2014 SqlRepository at line 3 in Service.__init__",
+      "detail": "",
+      "evidence": "",
+      "note": "The textbook violation, and the one everybody already looks for."
+    },
+    {
+      "label": "a module-level singleton",
+      "request": {
+        "source": "REPO = SqlRepository() /  / class Service: /     def run(self): /         return REPO /",
+        "policy": "collaborators: SqlRepository, HttpClient, Mailer | composition root: compose, main"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "failed \u2014 SqlRepository at line 1 in <module>",
+      "detail": "",
+      "evidence": "the class itself looks injected",
+      "note": "The sneakiest shape: the wiring has moved one line out of sight, above the class that appears to receive everything."
+    },
+    {
+      "label": "construction in a default argument",
+      "request": {
+        "source": "def handler(repo=SqlRepository()): /     return repo /",
+        "policy": "collaborators: SqlRepository, HttpClient, Mailer | composition root: compose, main"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "failed \u2014 SqlRepository at line 1 in handler",
+      "detail": "",
+      "evidence": "",
+      "note": "Evaluated once at import, so it is a singleton too."
+    },
+    {
+      "label": "value objects that are not declared collaborators",
+      "request": {
+        "source": "class Service: /     def __init__(self, repo): /         self.repo = repo /         self.items = [] /         self.total = Decimal('1.00') /",
+        "policy": "collaborators: SqlRepository, HttpClient, Mailer | composition root: compose, main"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "not_applicable \u2014 no declared collaborator appears in this source",
+      "detail": "",
+      "evidence": "lists and Decimals are not wiring",
+      "note": "A checker that decided for itself which calls look like collaborators would flag this and be switched off by lunchtime."
+    },
+    {
+      "label": "a type annotation, not a construction",
+      "request": {
+        "source": "def handle(repo: SqlRepository): /     return repo.load() /",
+        "policy": "collaborators: SqlRepository, HttpClient, Mailer | composition root: compose, main"
+      },
+      "outcome": "allowed",
+      "result": "passed \u2014 0 construction(s), all in the composition root",
+      "reason": "",
+      "detail": "",
+      "evidence": "a mention is not a wiring",
+      "note": ""
+    }
+  ]
+}

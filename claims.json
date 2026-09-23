@@ -1,6 +1,30 @@
 {
   "apps": [
     {
+      "name": "ablation-required-for-causal-claim",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "CA-2"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C2",
+      "claim": "A finding may be recorded as caused by an instruction only when a leave-one-out comparison exists — two runs identical in every declared factor except that instruction. Without one it is recorded as a correlation.",
+      "enforcement": "deterministic",
+      "denial_type": "AttributionRefused",
+      "modules": [
+        "attribution.py"
+      ],
+      "tests": [
+        "test_attribution.py"
+      ],
+      "demo_steps": 6
+    },
+    {
       "name": "absent-evidence-is-not-compliance",
       "tier": 2,
       "release": "v1.5",
@@ -270,6 +294,33 @@
       "criticality": "C0"
     },
     {
+      "name": "composition-root-construction",
+      "tier": 1,
+      "release": "v1.5",
+      "asi": [
+        "ASI01"
+      ],
+      "nist": [
+        "CM-3",
+        "SA-11"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct",
+      "criticality": "C2",
+      "claim": "A declared collaborator type may be constructed only inside the composition root; anywhere else it must arrive as a parameter.",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — this app returns (verdict, detail)",
+      "modules": [
+        "composition.py"
+      ],
+      "tests": [
+        "test_composition.py"
+      ],
+      "demo_steps": 6
+    },
+    {
       "name": "concurrent-append-integrity",
       "tier": 2,
       "release": "v1.1",
@@ -351,6 +402,31 @@
       "criticality": "C0"
     },
     {
+      "name": "deterministic-checker-contract",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "CA-2",
+        "SA-11"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C1",
+      "claim": "A checker must return the same verdict for the same artifact on repeated evaluation — one that does not is refused, and the refusal reports the whole distribution.",
+      "enforcement": "deterministic",
+      "denial_type": "NondeterministicChecker",
+      "modules": [
+        "determinism.py"
+      ],
+      "tests": [
+        "test_determinism.py"
+      ],
+      "demo_steps": 6
+    },
+    {
       "name": "deterministic-embedding-contract-check",
       "tier": 4,
       "release": "v1",
@@ -428,6 +504,31 @@
       ],
       "strength": "adjacent",
       "criticality": "C2"
+    },
+    {
+      "name": "enforcement-mechanism-attribution",
+      "tier": 3,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "CA-2",
+        "AU-12"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C2",
+      "claim": "A result that does not name the mechanism enforcing an instruction cannot be compared with one that does.",
+      "enforcement": "deterministic",
+      "denial_type": "Incomparable",
+      "modules": [
+        "mechanism.py"
+      ],
+      "tests": [
+        "test_mechanism.py"
+      ],
+      "demo_steps": 7
     },
     {
       "name": "exact-plan-approval-gate",
@@ -1084,6 +1185,31 @@
       "criticality": "C0"
     },
     {
+      "name": "repeat-reliability-predeclared",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "CA-2",
+        "SA-11"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C2",
+      "claim": "The number of attempts is declared before the first one runs, every attempt is retained, and a conclusion drawn from fewer than the declared number is refused.",
+      "enforcement": "deterministic",
+      "denial_type": "SeriesRefused",
+      "modules": [
+        "repeats.py"
+      ],
+      "tests": [
+        "test_repeats.py"
+      ],
+      "demo_steps": 6
+    },
+    {
       "name": "safe-failure-diagnostics",
       "tier": 1,
       "release": "v1",
@@ -1164,6 +1290,56 @@
       "criticality": "C0"
     },
     {
+      "name": "structural-duplicate-detection",
+      "tier": 5,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "SA-11",
+        "CM-3"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C2",
+      "claim": "Two functions with the same implementation shape produce the same fingerprint regardless of their names, so a re-implementation under a new name is detected exactly.",
+      "enforcement": "deterministic",
+      "denial_type": "n/a — this app returns fingerprints and groups",
+      "modules": [
+        "fingerprint.py"
+      ],
+      "tests": [
+        "test_fingerprint.py"
+      ],
+      "demo_steps": 7
+    },
+    {
+      "name": "telemetry-is-not-cost",
+      "tier": 5,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "AU-12",
+        "SA-5"
+      ],
+      "iso": [
+        "A.6.2.6"
+      ],
+      "strength": "adjacent",
+      "criticality": "C2",
+      "claim": "A token count becomes a monetary figure only against a pinned rate card for that exact model and version — and two amounts in different currencies will not add.",
+      "enforcement": "deterministic",
+      "denial_type": "CostRefused",
+      "modules": [
+        "rate_card.py"
+      ],
+      "tests": [
+        "test_rate_card.py"
+      ],
+      "demo_steps": 7
+    },
+    {
       "name": "tiered-model-escalation-gate",
       "tier": 5,
       "release": "v1.2",
@@ -1190,6 +1366,34 @@
       ],
       "strength": "direct",
       "criticality": "C2"
+    },
+    {
+      "name": "traceable-instruction-source",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [
+        "ASI01"
+      ],
+      "nist": [
+        "CM-3",
+        "SI-7",
+        "AU-10"
+      ],
+      "iso": [
+        "A.6.2.7"
+      ],
+      "strength": "direct",
+      "criticality": "C1",
+      "claim": "An instruction is bound to the exact text at an exact location; if the source no longer contains that text, resolving it is refused rather than silently re-read from whatever now sits at those lines.",
+      "enforcement": "deterministic",
+      "denial_type": "StaleInstruction",
+      "modules": [
+        "anchor.py"
+      ],
+      "tests": [
+        "test_anchor.py"
+      ],
+      "demo_steps": 7
     },
     {
       "name": "trusted-revision-anchor",

@@ -1,0 +1,99 @@
+{
+  "app": "structural-duplicate-detection",
+  "claim": "Two functions with the same implementation shape produce the same fingerprint regardless of their names, so a re-implementation under a new name is detected exactly.",
+  "enforcement": "deterministic",
+  "denial_type": "n/a \u2014 this app returns fingerprints and groups",
+  "steps": [
+    {
+      "label": "the existing helper, and what an agent wrote having forgotten it",
+      "request": {
+        "existing": "def normalize_path(raw): /     cleaned = raw.strip() /     if not cleaned: /         return None /     return cleaned.lower() /",
+        "written": "def tidy_path_value(value): /     trimmed = value.strip() /     if not trimmed: /         return None /     return trimmed.lower() /"
+      },
+      "outcome": "allowed",
+      "result": "same fingerprint: 46397ba80308a05853e1a01b...",
+      "reason": "",
+      "detail": "",
+      "evidence": "names are the one part guaranteed to differ, so the fingerprint discards them",
+      "note": "Nothing notices this normally, because nothing is looking for the shape."
+    },
+    {
+      "label": "a genuinely different implementation of the same idea",
+      "request": {
+        "existing": "strip, lower",
+        "other": "replace backslashes"
+      },
+      "outcome": "allowed",
+      "result": "different fingerprints",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "Not reported, and that is the boundary: catching it needs similarity scoring, which needs a threshold somebody picks."
+    },
+    {
+      "label": "the same body with renamed parameters",
+      "request": {
+        "a": "def f(alpha, beta): return alpha + beta",
+        "b": "def g(x, y): return x + y"
+      },
+      "outcome": "allowed",
+      "result": "same fingerprint",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "the same body with a docstring added",
+      "request": {
+        "a": "def f(x): return x + 1",
+        "b": "def f(x): \"\"\"Explains.\"\"\"; return x + 1"
+      },
+      "outcome": "allowed",
+      "result": "same fingerprint",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "one changed constant",
+      "request": {
+        "a": "def f(x): return x + 1",
+        "b": "def f(x): return x + 2"
+      },
+      "outcome": "allowed",
+      "result": "different fingerprints",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "Two functions differing only in a constant are doing different things. Collapsing them would make the fingerprint lie."
+    },
+    {
+      "label": "one different helper call",
+      "request": {
+        "a": "def f(x): return clean(x)",
+        "b": "def f(x): return scrub(x)"
+      },
+      "outcome": "allowed",
+      "result": "different fingerprints",
+      "reason": "",
+      "detail": "",
+      "evidence": "only names bound inside the function are normalized away",
+      "note": ""
+    },
+    {
+      "label": "scanning two modules for duplicate shapes",
+      "request": {
+        "module a": "normalize_path",
+        "module b": "tidy_path_value"
+      },
+      "outcome": "allowed",
+      "result": "[[\"normalize_path\", \"tidy_path_value\"]]",
+      "reason": "",
+      "detail": "",
+      "evidence": "1 group(s); a function with no twin is not reported",
+      "note": ""
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "app": "traceable-instruction-source",
+  "claim": "An instruction is bound to the exact text at an exact location; if the source no longer contains that text, resolving it is refused rather than silently re-read from whatever now sits at those lines.",
+  "enforcement": "deterministic",
+  "denial_type": "StaleInstruction",
+  "steps": [
+    {
+      "label": "the source is unchanged",
+      "request": {
+        "anchor": "AGENTS.md:4-5",
+        "digest": "e021a146d2339111..."
+      },
+      "outcome": "allowed",
+      "result": "Constructors receive their collaborators. / Collaborators are built in the composition root.",
+      "reason": "",
+      "detail": "",
+      "evidence": "text and digest both match",
+      "note": ""
+    },
+    {
+      "label": "the instruction itself was edited",
+      "request": {
+        "anchor": "AGENTS.md:4-5",
+        "line 4 now": "Constructors may build their collaborators."
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "text_changed",
+      "detail": "AGENTS.md:4-5 no longer contains the quoted instruction",
+      "evidence": "",
+      "note": "'receive' became 'may build' \u2014 the criterion id and the citation both survive an edit like this. Only the meaning changes."
+    },
+    {
+      "label": "a paragraph was inserted above it",
+      "request": {
+        "anchor": "AGENTS.md:4-5",
+        "change": "one line added at the top"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "text_changed",
+      "detail": "AGENTS.md:4-5 no longer contains the quoted instruction",
+      "evidence": "lines 4-5 now hold different text",
+      "note": "The trap. Without the quoted text this still resolves cleanly, still returns something, and now points at somebody else's words."
+    },
+    {
+      "label": "trailing whitespace was added",
+      "request": {
+        "anchor": "AGENTS.md:4-5",
+        "change": "two spaces at the end of line 4"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "text_changed",
+      "detail": "AGENTS.md:4-5 no longer contains the quoted instruction",
+      "evidence": "",
+      "note": "Comparison is exact. An exact gate can be loosened deliberately; a fuzzy one cannot be tightened back with confidence."
+    },
+    {
+      "label": "the file was truncated",
+      "request": {
+        "anchor": "AGENTS.md:4-5",
+        "file now": "3 lines"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "range_out_of_bounds",
+      "detail": "AGENTS.md has 3 lines, anchor needs 5",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "the anchor's own digest was tampered with",
+      "request": {
+        "quoted text": "unchanged",
+        "recorded digest": "ffff...ffff"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "digest_mismatch",
+      "detail": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "evidence": "the quote matched; the anchor did not",
+      "note": ""
+    },
+    {
+      "label": "an unrelated edit elsewhere in the file",
+      "request": {
+        "anchor": "AGENTS.md:4-5",
+        "change": "line 8 reworded"
+      },
+      "outcome": "allowed",
+      "result": "Constructors receive their collaborators. / Collaborators are built in the composition root.",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "A rule that cried wolf on every unrelated change would be switched off within a week."
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "app": "enforcement-mechanism-attribution",
+  "claim": "A result that does not name the mechanism enforcing an instruction cannot be compared with one that does.",
+  "enforcement": "deterministic",
+  "denial_type": "Incomparable",
+  "steps": [
+    {
+      "label": "the same instruction as prose, then behind a gate",
+      "request": {
+        "r1": "prose, not followed",
+        "r2": "gate, followed",
+        "scale": "prose < skill < hook < gate < host"
+      },
+      "outcome": "allowed",
+      "result": "stronger_mechanism_helped",
+      "reason": "",
+      "detail": "",
+      "evidence": "the instruction needs enforcement, not better wording",
+      "note": ""
+    },
+    {
+      "label": "an instruction followed under prose alone",
+      "request": {
+        "r1": "prose, followed",
+        "r2": "gate, followed"
+      },
+      "outcome": "allowed",
+      "result": "weaker_sufficed",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "A gate here would be cost without benefit. This is the comparison that stops a policy accumulating machinery it does not need."
+    },
+    {
+      "label": "an instruction ignored under both",
+      "request": {
+        "r1": "prose, not followed",
+        "r2": "hook, not followed"
+      },
+      "outcome": "allowed",
+      "result": "no_difference",
+      "reason": "",
+      "detail": "",
+      "evidence": "neither the wording nor that enforcement is the problem",
+      "note": ""
+    },
+    {
+      "label": "one of the results never recorded its mechanism",
+      "request": {
+        "r1": "mechanism not recorded",
+        "r2": "gate, followed"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "mechanism_not_recorded",
+      "detail": "r1",
+      "evidence": "",
+      "note": "Not a data point about the instruction \u2014 a data point about an unknown."
+    },
+    {
+      "label": "both results used the same mechanism",
+      "request": {
+        "r1": "gate, followed",
+        "r2": "gate, not followed"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "same_mechanism",
+      "detail": "both gate; this compares runs, not mechanisms",
+      "evidence": "",
+      "note": "That compares runs, not mechanisms."
+    },
+    {
+      "label": "the results are about different instructions",
+      "request": {
+        "r1": "INS-001 under prose",
+        "r2": "INS-002 under gate"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "different_instructions",
+      "detail": "INS-001 vs INS-002",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a mechanism outside the vocabulary",
+      "request": {
+        "mechanism": "vibes",
+        "vocabulary": "prose, skill, hook, gate, host"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "unknown_mechanism",
+      "detail": "vibes",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

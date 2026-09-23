@@ -55,6 +55,7 @@ supports the criterion without demonstrating it.
 |---|---|---|---|---|
 | argv-not-shell-invocation | ASI05 | SI-10, CM-7 | A.6.2.5 | direct |
 | authenticated-transition-ledger | ASI10 | AU-9, AU-10, SR-9 | A.6.2.8 | direct |
+| composition-root-construction | ASI01 | CM-3, SA-11 | A.6.2.4 | direct |
 | deterministic-primitives-kit | — | SI-10 | A.6.2.4 | adjacent |
 | exact-plan-approval-gate | ASI09, ASI10 | AC-3, CM-3 | A.9.2, A.9.4 | direct |
 | execution-lock-and-recovery | ASI08 | CP-10, AC-3 | A.6.2.6 | partial |
@@ -77,6 +78,7 @@ supports the criterion without demonstrating it.
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
+| ablation-required-for-causal-claim | — | CA-2 | A.6.2.4 | adjacent |
 | absent-evidence-is-not-compliance | — | CA-2, AU-12 | A.6.2.4 | adjacent |
 | attested-rollback-checkpoint | ASI08 | CP-10, SI-7 | A.6.2.6 | direct |
 | bounded-execution-budget | ASI10 | SC-5, AC-3 | A.6.2.6 | direct |
@@ -84,6 +86,7 @@ supports the criterion without demonstrating it.
 | canonical-outcome-reconciliation | — | AU-12, SI-10 | A.6.2.4 | adjacent |
 | canonical-output-shape | ASI09 | SI-10 | A.6.2.4 | direct |
 | concurrent-append-integrity | — | AU-9, AU-12 | A.6.2.8 | direct |
+| deterministic-checker-contract | — | CA-2, SA-11 | A.6.2.4 | adjacent |
 | deterministic-ledger-replay | ASI06 | AU-9, AU-10, SI-7 | A.6.2.8 | direct |
 | failure-bulkhead | ASI08 | SC-5, CP-10 | A.6.2.6 | direct |
 | falsifiable-instruction-check | — | CA-2, SA-11 | A.6.2.4 | adjacent |
@@ -94,6 +97,8 @@ supports the criterion without demonstrating it.
 | permissive-contract-is-a-gap | — | SI-10, CA-2 | A.6.2.4 | adjacent |
 | producer-approver-separation | ASI03, ASI09 | AC-5, AU-10, CM-3 | A.9.2 | direct |
 | provable-dry-run | ASI02 | CM-3, AU-12 | A.6.2.4 | direct |
+| repeat-reliability-predeclared | — | CA-2, SA-11 | A.6.2.4 | adjacent |
+| traceable-instruction-source | ASI01 | CM-3, SI-7, AU-10 | A.6.2.7 | direct |
 | trusted-revision-anchor | ASI04 | CM-3, SI-7, SR-4 | A.6.2.5 | direct |
 | typed-ledger-slot-supersession | ASI03 | AC-3, AU-9, CM-5 | A.6.2.8 | direct |
 | validated-artifact-reuse | ASI04 | SI-7, CM-3 | A.6.2.6 | direct |
@@ -106,6 +111,7 @@ supports the criterion without demonstrating it.
 | authenticated-agent-message | ASI07 | AU-10, SC-8, SI-10 | A.6.2.6 | direct |
 | capability-gated-tool-invocation | ASI02, ASI03 | AC-3, AC-6 | A.9.4 | direct |
 | delegation-scope-attenuation | ASI03, ASI07 | AC-3, AC-4, AC-6 | A.9.4 | direct |
+| enforcement-mechanism-attribution | — | CA-2, AU-12 | A.6.2.4 | adjacent |
 | governed-context-provenance | ASI01, ASI06 | AC-16, SI-10, SR-4 | A.6.2.6 | direct |
 | persona-capability-catalog | ASI03 | AC-2, AC-6 | A.3.2 | direct |
 | single-purpose-adversarial-reviewer | ASI09 | SA-11 | A.6.2.4 | adjacent |
@@ -127,6 +133,8 @@ supports the criterion without demonstrating it.
 | grounded-claim-verification | ASI06, ASI09 | SI-10, AC-16, SR-4 | A.6.2.4 | direct |
 | measured-token-accounting | ASI10 | AU-12, SC-5 | A.6.2.6 | direct |
 | memory-conflict-quarantine | ASI06 | SI-7, AU-9 | A.6.2.6 | direct |
+| structural-duplicate-detection | — | SA-11, CM-3 | A.6.2.4 | adjacent |
+| telemetry-is-not-cost | — | AU-12, SA-5 | A.6.2.6 | adjacent |
 | tiered-model-escalation-gate | ASI09, ASI10 | SI-10, AU-12 | A.6.2.4 | direct |
 <!-- END MANAGED BLOCK -->
 

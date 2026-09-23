@@ -205,10 +205,18 @@ as unchecked rather than quietly assumed.
 
 | App | Enforcement | Status |
 |---|---|---|
+| [composition-root-construction](apps/composition-root-construction) | deterministic | built |
+| [ablation-required-for-causal-claim](apps/ablation-required-for-causal-claim) | deterministic | built |
 | [absent-evidence-is-not-compliance](apps/absent-evidence-is-not-compliance) | deterministic | built |
+| [deterministic-checker-contract](apps/deterministic-checker-contract) | deterministic | built |
 | [falsifiable-instruction-check](apps/falsifiable-instruction-check) | deterministic | built |
 | [instruction-policy-gate](apps/instruction-policy-gate) | deterministic | built |
 | [permissive-contract-is-a-gap](apps/permissive-contract-is-a-gap) | deterministic | built |
+| [repeat-reliability-predeclared](apps/repeat-reliability-predeclared) | deterministic | built |
+| [traceable-instruction-source](apps/traceable-instruction-source) | deterministic | built |
+| [enforcement-mechanism-attribution](apps/enforcement-mechanism-attribution) | deterministic | built |
+| [structural-duplicate-detection](apps/structural-duplicate-detection) | deterministic | built |
+| [telemetry-is-not-cost](apps/telemetry-is-not-cost) | deterministic | built |
 <!-- END MANAGED BLOCK -->
 
 ## What the catalog adds up to

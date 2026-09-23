@@ -1,0 +1,89 @@
+{
+  "app": "ablation-required-for-causal-claim",
+  "claim": "A finding may be recorded as caused by an instruction only when a leave-one-out comparison exists \u2014 two runs identical in every declared factor except that instruction. Without one it is recorded as a correlation.",
+  "enforcement": "deterministic",
+  "denial_type": "AttributionRefused",
+  "steps": [
+    {
+      "label": "a violated instruction alongside a poor outcome, with no control run",
+      "request": {
+        "run": "r1",
+        "instructions": "INS-001, INS-002",
+        "outcome": "poor",
+        "control": "(none)"
+      },
+      "outcome": "allowed",
+      "result": "correlated",
+      "reason": "",
+      "detail": "",
+      "evidence": "recorded, not discarded \u2014 an observed omission is worth knowing, it just is not a cause",
+      "note": "The conclusion everybody reaches and almost nobody tests. On the strength of this coincidence an instruction earns permanent residency in a prompt that every future run pays for."
+    },
+    {
+      "label": "a clean leave-one-out comparison",
+      "request": {
+        "treatment": "r1 with INS-001, outcome good",
+        "control": "r2 without INS-001, outcome poor",
+        "factors": "task=summarize-toy-repo, model=toy-model-v2, corpus=toy-corpus"
+      },
+      "outcome": "allowed",
+      "result": "caused",
+      "reason": "",
+      "detail": "",
+      "evidence": "identical in every declared factor except the instruction",
+      "note": ""
+    },
+    {
+      "label": "the same outcome with and without it",
+      "request": {
+        "treatment": "r1 with INS-001, outcome good",
+        "control": "r2 without INS-001, outcome good"
+      },
+      "outcome": "allowed",
+      "result": "no_effect",
+      "reason": "",
+      "detail": "",
+      "evidence": "the result that retires an instruction",
+      "note": "Nobody goes looking for this one, which is why prompts only ever grow."
+    },
+    {
+      "label": "the control run also changed the model",
+      "request": {
+        "treatment": "model=toy-model-v2",
+        "control": "model=toy-model-v3"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "confounded_comparison",
+      "detail": "model",
+      "evidence": "the denial names the confound",
+      "note": "With two differences the comparison cannot say which did the work."
+    },
+    {
+      "label": "the control dropped two instructions at once",
+      "request": {
+        "treatment": "INS-001, INS-002",
+        "control": "(none)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "multiple_instructions_removed",
+      "detail": "INS-001, INS-002",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "the control still has the instruction in effect",
+      "request": {
+        "treatment": "INS-001, INS-002",
+        "control": "INS-001, INS-002"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "control_retains_instruction",
+      "detail": "INS-001 is still in effect in r2",
+      "evidence": "",
+      "note": "Not an ablation at all."
+    }
+  ]
+}

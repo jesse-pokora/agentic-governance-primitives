@@ -1,0 +1,88 @@
+{
+  "app": "deterministic-checker-contract",
+  "claim": "A checker must return the same verdict for the same artifact on repeated evaluation \u2014 one that does not is refused, and the refusal reports the whole distribution.",
+  "enforcement": "deterministic",
+  "denial_type": "NondeterministicChecker",
+  "steps": [
+    {
+      "label": "a pure checker, evaluated three times",
+      "request": {
+        "artifact": "result = int(user_input)",
+        "runs": 3
+      },
+      "outcome": "allowed",
+      "result": "passed",
+      "reason": "",
+      "detail": "",
+      "evidence": "every run agreed",
+      "note": ""
+    },
+    {
+      "label": "a checker that counts its own calls",
+      "request": {
+        "artifact": "result = int(user_input)",
+        "runs": 5,
+        "checker": "alternates each call"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "verdicts_disagree",
+      "detail": "over 5 runs: failedx2, passedx3",
+      "evidence": "the distribution is reported, not just the disagreement",
+      "note": "'Sometimes fails' is not actionable. A red result gets re-run until it goes green and nobody learns anything."
+    },
+    {
+      "label": "a checker that consults a clock",
+      "request": {
+        "artifact": "result = int(user_input)",
+        "runs": 3,
+        "checker": "verdict depends on elapsed ticks"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "verdicts_disagree",
+      "detail": "over 3 runs: failedx2, passedx1",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "evaluating only once",
+      "request": {
+        "artifact": "result = int(user_input)",
+        "runs": 1
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "insufficient_runs",
+      "detail": "1 < 2; one run proves nothing",
+      "evidence": "",
+      "note": "A single run cannot disagree with anything, so it can never detect the thing this check exists to detect."
+    },
+    {
+      "label": "different verdicts for different artifacts",
+      "request": {
+        "artifacts": "result = int(user_input) | result = eval(user_input)",
+        "runs": 3
+      },
+      "outcome": "allowed",
+      "result": "[\"passed\", \"failed\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "only disagreement about the same artifact is a defect",
+      "note": ""
+    },
+    {
+      "label": "a checker that raises",
+      "request": {
+        "artifact": "result = int(user_input)",
+        "checker": "raises RuntimeError"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "checker_errored",
+      "detail": "run 1 raised RuntimeError",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

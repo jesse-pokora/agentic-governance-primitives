@@ -1,0 +1,99 @@
+{
+  "app": "telemetry-is-not-cost",
+  "claim": "A token count becomes a monetary figure only against a pinned rate card for that exact model and version \u2014 and two amounts in different currencies will not add.",
+  "enforcement": "deterministic",
+  "denial_type": "CostRefused",
+  "steps": [
+    {
+      "label": "usage priced against a matching card",
+      "request": {
+        "usage": "10,000 in / 2,000 out, toy-model 2026-01-01",
+        "rate card": "toy-model 2026-01-01, USD, 0.003/1k in, 0.015/1k out"
+      },
+      "outcome": "allowed",
+      "result": "0.060 USD",
+      "reason": "",
+      "detail": "",
+      "evidence": "input and output priced separately",
+      "note": ""
+    },
+    {
+      "label": "the same usage, reported as money with no card",
+      "request": {
+        "usage": "10,000 in / 2,000 out",
+        "rate card": "(none)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_rate_card",
+      "detail": "a token count is a measure of work, not an amount of money",
+      "evidence": "Usage has a cost method: False; a currency: False",
+      "note": "Token counts get quoted as money because they are the number in the log. The type is built so it cannot express the claim."
+    },
+    {
+      "label": "a card for a different model",
+      "request": {
+        "usage": "toy-model 2026-01-01",
+        "card": "other-model 2026-01-01"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "rate_card_mismatch",
+      "detail": "card is for other-model 2026-01-01, usage is toy-model 2026-01-01",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a card for a later version of the same model",
+      "request": {
+        "usage": "toy-model 2026-01-01",
+        "card": "toy-model 2026-06-01"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "rate_card_mismatch",
+      "detail": "card is for toy-model 2026-06-01, usage is toy-model 2026-01-01",
+      "evidence": "",
+      "note": "Applying last quarter's card is a guess wearing a decimal point."
+    },
+    {
+      "label": "two amounts in the same currency",
+      "request": {
+        "a": "0.060 USD",
+        "b": "0.060 USD"
+      },
+      "outcome": "allowed",
+      "result": "0.120 USD",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "two amounts in different currencies",
+      "request": {
+        "a": "1.00 USD",
+        "b": "1.00 EUR"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "currency_mismatch",
+      "detail": "USD + EUR",
+      "evidence": "",
+      "note": "Summing across currencies needs an exchange rate, which is another pinned fact nobody supplied."
+    },
+    {
+      "label": "a rate card with no currency",
+      "request": {
+        "model": "toy-model",
+        "currency": "(empty)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "currency_missing",
+      "detail": "toy-model 2026-01-01",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

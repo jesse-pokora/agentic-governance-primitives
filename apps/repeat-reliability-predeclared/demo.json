@@ -1,0 +1,85 @@
+{
+  "app": "repeat-reliability-predeclared",
+  "claim": "The number of attempts is declared before the first one runs, every attempt is retained, and a conclusion drawn from fewer than the declared number is refused.",
+  "enforcement": "deterministic",
+  "denial_type": "SeriesRefused",
+  "steps": [
+    {
+      "label": "five declared, five run, all agreeing",
+      "request": {
+        "declared": 5,
+        "attempts": "passed x5"
+      },
+      "outcome": "allowed",
+      "result": "stable=True, outcome=passed",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "four greens and a temptation to stop",
+      "request": {
+        "declared": 5,
+        "attempts": "passed x4"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "series_incomplete",
+      "detail": "4 of 5 declared attempts",
+      "evidence": "",
+      "note": "Run it again because that one looked odd; stop when it is green. Every step is reasonable, and the series measures the stopping rule rather than the system."
+    },
+    {
+      "label": "five run, one disagreed",
+      "request": {
+        "declared": 5,
+        "attempts": "passed, passed, failed, passed, passed"
+      },
+      "outcome": "allowed",
+      "result": "stable=False, outcome=None, distribution={'failed': 1, 'passed': 4}",
+      "reason": "",
+      "detail": "",
+      "evidence": "an unstable series has no outcome",
+      "note": "Reporting the majority would turn 'fails one time in five' into 'passes', which is the whole failure this app prevents."
+    },
+    {
+      "label": "a sixth attempt after the declared five",
+      "request": {
+        "declared": 5,
+        "attempts": "passed x5, failed"
+      },
+      "outcome": "allowed",
+      "result": "attempts=6, stable=False",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "Included, not trimmed. Discarding it would be the same selective stopping running backwards."
+    },
+    {
+      "label": "five failures",
+      "request": {
+        "declared": 5,
+        "attempts": "failed x5"
+      },
+      "outcome": "allowed",
+      "result": "stable=True, outcome=failed",
+      "reason": "",
+      "detail": "",
+      "evidence": "stable means the system agrees with itself, not that the news is good",
+      "note": ""
+    },
+    {
+      "label": "declaring a single run",
+      "request": {
+        "declared": 1
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "insufficient_declaration",
+      "detail": "1 < 2",
+      "evidence": "",
+      "note": "One attempt cannot disagree with anything."
+    }
+  ]
+}

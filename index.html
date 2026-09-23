@@ -92,7 +92,7 @@
 <body>
 <div class="wrap">
   <h1>Agentic Governance Primitives</h1>
-  <p class="tagline">51 primitives. Each one is a single claim with a test that fails if the claim stops being true.</p>
+  <p class="tagline">59 primitives. Each one is a single claim with a test that fails if the claim stops being true.</p>
   <p class="lede">
     Every app here demonstrates exactly one governed-agent-execution property,
     standalone, with no orchestrator and no dependency on any other codebase.
@@ -201,7 +201,7 @@
     <span><b class="chip C3">C3</b> a convention whose violation costs clarity</span>
   </div>
     <section>
-      <h3>Tier 1 &middot; Deterministic security primitives <span class="count">18</span></h3>
+      <h3>Tier 1 &middot; Deterministic security primitives <span class="count">19</span></h3>
       <article class="app">
         <div class="head">
           <a class="name" href="apps/argv-not-shell-invocation/demo.html">argv-not-shell-invocation</a>
@@ -425,6 +425,19 @@
       </article>
       <article class="app">
         <div class="head">
+          <a class="name" href="apps/composition-root-construction/demo.html">composition-root-construction</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A declared collaborator type may be constructed only inside the composition root; anywhere else it must arrive as a parameter.</p>
+        
+        <div class="links">
+          <a href="apps/composition-root-construction/demo.html">run the demo</a>
+          <a href="apps/composition-root-construction/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
           <a class="name" href="apps/deterministic-primitives-kit/demo.html">deterministic-primitives-kit</a>
           <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
           <span class="enf">deterministic</span>
@@ -438,7 +451,7 @@
       </article>
     </section>
     <section>
-      <h3>Tier 2 &middot; Review &amp; process governance <span class="count">20</span></h3>
+      <h3>Tier 2 &middot; Review &amp; process governance <span class="count">24</span></h3>
       <article class="app">
         <div class="head">
           <a class="name" href="apps/producer-approver-separation/demo.html">producer-approver-separation</a>
@@ -528,6 +541,19 @@
         <div class="links">
           <a href="apps/concurrent-append-integrity/demo.html">run the demo</a>
           <a href="apps/concurrent-append-integrity/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/deterministic-checker-contract/demo.html">deterministic-checker-contract</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A checker must return the same verdict for the same artifact on repeated evaluation — one that does not is refused, and the refusal reports the whole distribution.</p>
+        
+        <div class="links">
+          <a href="apps/deterministic-checker-contract/demo.html">run the demo</a>
+          <a href="apps/deterministic-checker-contract/README.md">read the claim</a>
         </div>
       </article>
       <article class="app">
@@ -623,6 +649,19 @@
       </article>
       <article class="app">
         <div class="head">
+          <a class="name" href="apps/traceable-instruction-source/demo.html">traceable-instruction-source</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An instruction is bound to the exact text at an exact location; if the source no longer contains that text, resolving it is refused rather than silently re-read from whatever now sits at those lines.</p>
+        
+        <div class="links">
+          <a href="apps/traceable-instruction-source/demo.html">run the demo</a>
+          <a href="apps/traceable-instruction-source/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
           <a class="name" href="apps/trusted-revision-anchor/demo.html">trusted-revision-anchor</a>
           <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
           <span class="enf">deterministic</span>
@@ -632,6 +671,19 @@
         <div class="links">
           <a href="apps/trusted-revision-anchor/demo.html">run the demo</a>
           <a href="apps/trusted-revision-anchor/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/ablation-required-for-causal-claim/demo.html">ablation-required-for-causal-claim</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A finding may be recorded as caused by an instruction only when a leave-one-out comparison exists — two runs identical in every declared factor except that instruction. Without one it is recorded as a correlation.</p>
+        
+        <div class="links">
+          <a href="apps/ablation-required-for-causal-claim/demo.html">run the demo</a>
+          <a href="apps/ablation-required-for-causal-claim/README.md">read the claim</a>
         </div>
       </article>
       <article class="app">
@@ -688,6 +740,19 @@
       </article>
       <article class="app">
         <div class="head">
+          <a class="name" href="apps/repeat-reliability-predeclared/demo.html">repeat-reliability-predeclared</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">The number of attempts is declared before the first one runs, every attempt is retained, and a conclusion drawn from fewer than the declared number is refused.</p>
+        
+        <div class="links">
+          <a href="apps/repeat-reliability-predeclared/demo.html">run the demo</a>
+          <a href="apps/repeat-reliability-predeclared/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
           <a class="name" href="apps/validated-artifact-reuse/demo.html">validated-artifact-reuse</a>
           <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
           <span class="enf">deterministic</span>
@@ -701,7 +766,7 @@
       </article>
     </section>
     <section>
-      <h3>Tier 3 &middot; Persona &amp; agent architecture <span class="count">6</span></h3>
+      <h3>Tier 3 &middot; Persona &amp; agent architecture <span class="count">7</span></h3>
       <article class="app">
         <div class="head">
           <a class="name" href="apps/authenticated-agent-message/demo.html">authenticated-agent-message</a>
@@ -752,6 +817,19 @@
         <div class="links">
           <a href="apps/governed-context-provenance/demo.html">run the demo</a>
           <a href="apps/governed-context-provenance/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/enforcement-mechanism-attribution/demo.html">enforcement-mechanism-attribution</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A result that does not name the mechanism enforcing an instruction cannot be compared with one that does.</p>
+        
+        <div class="links">
+          <a href="apps/enforcement-mechanism-attribution/demo.html">run the demo</a>
+          <a href="apps/enforcement-mechanism-attribution/README.md">read the claim</a>
         </div>
       </article>
       <article class="app">
@@ -811,7 +889,7 @@
       </article>
     </section>
     <section>
-      <h3>Tier 5 &middot; Model-behavior constraint &amp; drift detection <span class="count">5</span></h3>
+      <h3>Tier 5 &middot; Model-behavior constraint &amp; drift detection <span class="count">7</span></h3>
       <article class="app">
         <div class="head">
           <a class="name" href="apps/declared-objective-conformance/demo.html">declared-objective-conformance</a>
@@ -862,6 +940,32 @@
         <div class="links">
           <a href="apps/memory-conflict-quarantine/demo.html">run the demo</a>
           <a href="apps/memory-conflict-quarantine/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/structural-duplicate-detection/demo.html">structural-duplicate-detection</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Two functions with the same implementation shape produce the same fingerprint regardless of their names, so a re-implementation under a new name is detected exactly.</p>
+        
+        <div class="links">
+          <a href="apps/structural-duplicate-detection/demo.html">run the demo</a>
+          <a href="apps/structural-duplicate-detection/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/telemetry-is-not-cost/demo.html">telemetry-is-not-cost</a>
+          <span class="chip C2" title="correctness or predictability suffers; authority is intact">C2</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A token count becomes a monetary figure only against a pinned rate card for that exact model and version — and two amounts in different currencies will not add.</p>
+        
+        <div class="links">
+          <a href="apps/telemetry-is-not-cost/demo.html">run the demo</a>
+          <a href="apps/telemetry-is-not-cost/README.md">read the claim</a>
         </div>
       </article>
       <article class="app">
