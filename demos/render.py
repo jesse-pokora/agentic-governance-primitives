@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = Path(__file__).resolve().parent / "template.html"
+DIAGRAMS = Path(__file__).resolve().parent / "diagrams"
 
 
 def render_one(app_dir: Path) -> Path | None:
@@ -29,7 +30,19 @@ def render_one(app_dir: Path) -> Path | None:
     # can break out is a literal "</script>".
     payload = json.dumps(trace, indent=2).replace("</", "<\/")
 
-    html = template.replace("__APP__", trace["app"]).replace("__TRACE__", payload)
+    # A diagram is authored, not recorded: it shows the mechanism the claim is
+    # about, which no trace can express. Inlined rather than linked so the page
+    # stays self-contained and makes no requests.
+    diagram_file = DIAGRAMS / f"{trace['app']}.svg"
+    diagram = ""
+    if diagram_file.exists():
+        diagram = "  " + diagram_file.read_text(encoding="utf-8").strip() + "\n"
+
+    html = (
+        template.replace("__APP__", trace["app"])
+        .replace("__DIAGRAM__", diagram)
+        .replace("__TRACE__", payload)
+    )
     out = app_dir / "demo.html"
     with open(out, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(html)

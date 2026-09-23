@@ -37,6 +37,14 @@
   }
   .claim b { display: block; font-size: 0.72rem; text-transform: uppercase;
     letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+  figure.diagram {
+    margin: 0 0 24px; padding: 18px 16px 12px; border: 1px solid var(--line);
+    border-radius: 12px; background: var(--panel); color: var(--ink);
+  }
+  figure.diagram svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+  figure.diagram figcaption {
+    margin-top: 12px; font-size: 0.84rem; color: var(--muted); text-align: center;
+  }
   .stage { border: 1px solid var(--line); border-radius: 12px;
     background: var(--panel); padding: 20px; min-height: 260px; }
   .steplabel { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px;
@@ -104,6 +112,67 @@
   <h1 id="app"></h1>
   <div class="meta" id="meta"></div>
   <div class="claim"><b>Atomic claim</b><span id="claim"></span></div>
+
+  <figure class="diagram">
+<svg viewBox="0 0 700 250" role="img" aria-label="A hash chain is a line: each entry names the entry before it. Two uncoordinated writers that read the same head both name it, turning the line into a fork. Compare-and-swap admits one of them and rejects the other, keeping the line.">
+  <defs>
+    <marker id="cai-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+    </marker>
+    <marker id="cai-deny" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--deny, #b3341f)"/>
+    </marker>
+  </defs>
+
+  <text x="18" y="22" font-size="12" font-weight="600" fill="currentColor">Uncoordinated: the line becomes a fork</text>
+  <text x="400" y="22" font-size="12" font-weight="600" fill="currentColor">Compare-and-swap: one wins</text>
+
+  <!-- left: fork -->
+  <circle cx="44" cy="110" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="44" y="114" font-size="10" text-anchor="middle" fill="currentColor">gen</text>
+  <line x1="62" y1="110" x2="104" y2="110" stroke="currentColor" stroke-width="1.5" marker-end="url(#cai-arrow)"/>
+
+  <circle cx="126" cy="110" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="126" y="114" font-size="10" text-anchor="middle" fill="currentColor">e0</text>
+
+  <line x1="142" y1="102" x2="196" y2="72" stroke="var(--deny, #b3341f)" stroke-width="1.8" marker-end="url(#cai-deny)"/>
+  <line x1="142" y1="118" x2="196" y2="148" stroke="var(--deny, #b3341f)" stroke-width="1.8" marker-end="url(#cai-deny)"/>
+
+  <circle cx="218" cy="62" r="16" fill="none" stroke="var(--deny, #b3341f)" stroke-width="1.5"/>
+  <text x="218" y="66" font-size="10" text-anchor="middle" fill="var(--deny, #b3341f)">e1</text>
+  <text x="248" y="58" font-size="10" fill="currentColor" opacity="0.8">writer a</text>
+
+  <circle cx="218" cy="158" r="16" fill="none" stroke="var(--deny, #b3341f)" stroke-width="1.5"/>
+  <text x="218" y="162" font-size="10" text-anchor="middle" fill="var(--deny, #b3341f)">e1</text>
+  <text x="248" y="164" font-size="10" fill="currentColor" opacity="0.8">writer b</text>
+
+  <text x="60" y="198" font-size="11" fill="var(--deny, #b3341f)">both name e0 as their predecessor</text>
+  <text x="60" y="216" font-size="11" fill="currentColor" opacity="0.75">verify() → chain_broken at index 1</text>
+
+  <!-- right: cas keeps the line -->
+  <circle cx="420" cy="110" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="420" y="114" font-size="10" text-anchor="middle" fill="currentColor">gen</text>
+  <line x1="438" y1="110" x2="480" y2="110" stroke="currentColor" stroke-width="1.5" marker-end="url(#cai-arrow)"/>
+
+  <circle cx="502" cy="110" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="502" y="114" font-size="10" text-anchor="middle" fill="currentColor">e0</text>
+  <line x1="520" y1="110" x2="562" y2="110" stroke="currentColor" stroke-width="1.5" marker-end="url(#cai-arrow)"/>
+
+  <circle cx="584" cy="110" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="584" y="114" font-size="10" text-anchor="middle" fill="currentColor">e1</text>
+  <text x="608" y="100" font-size="10" fill="currentColor" opacity="0.8">writer a</text>
+
+  <line x1="518" y1="122" x2="566" y2="156" stroke="var(--deny, #b3341f)" stroke-width="1.8"
+        stroke-dasharray="5 4" marker-end="url(#cai-deny)"/>
+  <text x="578" y="162" font-size="10" fill="var(--deny, #b3341f)">writer b</text>
+  <text x="578" y="178" font-size="10" fill="var(--deny, #b3341f)">head_moved</text>
+
+  <text x="420" y="216" font-size="11" fill="currentColor" opacity="0.75">the head each writer built on is named, and checked</text>
+</svg>
+<figcaption>A hash chain is a line because every entry names the one before it. Two writers that read the same head both name it and the line becomes a fork; compare-and-swap rejects the writer whose predecessor moved, so exactly one append lands.</figcaption>
+</figure>
 
   <div class="stage" id="stage"></div>
 

@@ -90,6 +90,47 @@ for (const demo of demos) {
       await expect(page.locator("#stage")).toHaveAttribute("data-step", "0");
     });
 
+    const hasDiagram = fs.existsSync(
+      path.join(__dirname, "diagrams", demo.name + ".svg")
+    );
+
+    test.describe(hasDiagram ? "diagram" : "diagram (none)", () => {
+      test.skip(!hasDiagram, "this app has no diagram");
+
+      test("is inline, labelled, and captioned", async ({ page }) => {
+        const figure = page.locator("figure.diagram");
+        await expect(figure).toHaveCount(1);
+
+        const svg = figure.locator("svg");
+        await expect(svg).toHaveAttribute("role", "img");
+        // A diagram nobody can see still has to say what it shows.
+        const label = await svg.getAttribute("aria-label");
+        expect((label || "").length).toBeGreaterThan(40);
+        await expect(figure.locator("figcaption")).not.toBeEmpty();
+      });
+
+      test("carries no external reference", async ({ page }) => {
+        const markup = await page.locator("figure.diagram").innerHTML();
+        expect(markup).not.toContain("<image");
+        expect(markup).not.toContain("http");
+        expect(markup).not.toContain("<script");
+        expect(markup).not.toContain("foreignObject");
+      });
+
+      test("inherits the page foreground rather than a fixed colour", async ({ page }) => {
+        // currentColor is what keeps it legible in both themes.
+        const markup = await page.locator("figure.diagram").innerHTML();
+        expect(markup).toContain("currentColor");
+      });
+
+      test("is legible in dark mode too", async ({ page }) => {
+        await page.emulateMedia({ colorScheme: "dark" });
+        const box = await page.locator("figure.diagram svg").boundingBox();
+        expect(box.width).toBeGreaterThan(200);
+        expect(box.height).toBeGreaterThan(80);
+      });
+    });
+
     test("makes no network requests", async ({ page }) => {
       const external = [];
       page.on("request", (r) => {

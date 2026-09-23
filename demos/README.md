@@ -52,6 +52,33 @@ both ends, and that the page makes **no network requests at all**.
 
 This is what makes a page a verified artifact rather than a picture of one.
 
+## Diagrams
+
+An app may have a diagram at `demos/diagrams/<app>.svg`, inlined into its page
+above the steps. Five do, and they exist because the same mechanism was being
+reassembled from prose on every read:
+
+| App | What the picture shows |
+|---|---|
+| `write-scope-confinement` | The scope is a subtree; `work-evil` is a sibling that shares every character of `work` |
+| `pinned-egress-allowlist` | The same error in the DNS tree: appending `.evil.test` keeps the text and changes the branch |
+| `delegation-scope-attenuation` | Capability sets as a lattice, with the chain descending and amplification pointing back up |
+| `bounded-execution-budget` | The declared limits as a region, the run as a staircase, and the step that leaves it refused whole |
+| `concurrent-append-integrity` | A chain is a line; two writers naming the same predecessor make it a fork |
+
+The first two are deliberately the same drawing in two domains, because the
+underlying bug — a string prefix standing in for a path in a tree — is the most
+repeated defect in the catalog and is invisible until you see it twice.
+
+A diagram is **authored, not recorded**. It shows the mechanism the claim is
+about, which no trace can express, so it is a file rather than something
+`demo.py` produces. It is inlined rather than linked so the page stays
+self-contained, and it draws in `currentColor` and the page's own `--deny`
+variable so it reads in both themes.
+
+Playwright checks each one: inline, `role="img"` with a real `aria-label`, a
+non-empty caption, no external reference, and a sane size in dark mode.
+
 ## Recordings are byte-stable
 
 Re-running every `demo.py` produces byte-identical `demo.json` files, so a

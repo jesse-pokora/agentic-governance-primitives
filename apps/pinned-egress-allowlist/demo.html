@@ -37,6 +37,14 @@
   }
   .claim b { display: block; font-size: 0.72rem; text-transform: uppercase;
     letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+  figure.diagram {
+    margin: 0 0 24px; padding: 18px 16px 12px; border: 1px solid var(--line);
+    border-radius: 12px; background: var(--panel); color: var(--ink);
+  }
+  figure.diagram svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+  figure.diagram figcaption {
+    margin-top: 12px; font-size: 0.84rem; color: var(--muted); text-align: center;
+  }
   .stage { border: 1px solid var(--line); border-radius: 12px;
     background: var(--panel); padding: 20px; min-height: 260px; }
   .steplabel { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px;
@@ -104,6 +112,53 @@
   <h1 id="app"></h1>
   <div class="meta" id="meta"></div>
   <div class="claim"><b>Atomic claim</b><span id="claim"></span></div>
+
+  <figure class="diagram">
+<svg viewBox="0 0 720 250" role="img" aria-label="A hostname is a tree read right to left. api.example.test.evil.test sits under the evil.test branch, not under example.test, even though its text begins with the allowlisted name.">
+  <defs>
+    <marker id="egr-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <text x="18" y="22" font-size="12" font-weight="600" fill="currentColor">A hostname is a tree, read right to left</text>
+
+  <!-- allowlisted branch -->
+  <rect x="24" y="92" width="150" height="86" rx="8" fill="currentColor" opacity="0.07"/>
+  <text x="99" y="196" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">allowlisted</text>
+
+  <text x="200" y="52" font-size="12" text-anchor="middle" fill="currentColor">.test</text>
+  <line x1="185" y1="60" x2="99" y2="92" stroke="currentColor" stroke-width="1.5" marker-end="url(#egr-arrow)"/>
+  <line x1="215" y1="60" x2="300" y2="92" stroke="currentColor" stroke-width="1.5" marker-end="url(#egr-arrow)"/>
+
+  <text x="99" y="106" font-size="12" text-anchor="middle" fill="currentColor">example</text>
+  <line x1="99" y1="114" x2="99" y2="144" stroke="currentColor" stroke-width="1.5" marker-end="url(#egr-arrow)"/>
+  <text x="99" y="160" font-size="12" text-anchor="middle" fill="currentColor">api</text>
+
+  <text x="300" y="106" font-size="12" text-anchor="middle" fill="var(--deny, #b3341f)">evil</text>
+  <line x1="300" y1="114" x2="300" y2="144" stroke="var(--deny, #b3341f)" stroke-width="1.5" marker-end="url(#egr-arrow)"/>
+  <text x="300" y="160" font-size="12" text-anchor="middle" fill="var(--deny, #b3341f)">api.example.test</text>
+  <text x="300" y="180" font-size="11" text-anchor="middle" fill="var(--deny, #b3341f)">a different branch</text>
+
+  <!-- string view -->
+  <text x="430" y="22" font-size="12" font-weight="600" fill="currentColor">A hostname is not a string</text>
+  <line x1="430" y1="34" x2="700" y2="34" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+
+  <rect x="430" y="56" width="152" height="22" rx="4" fill="currentColor" opacity="0.12"/>
+  <text x="434" y="72" font-size="12" font-family="ui-monospace, monospace" fill="currentColor">api.example.test</text>
+  <text x="590" y="72" font-size="11" fill="currentColor" opacity="0.75">allowlisted</text>
+
+  <rect x="430" y="96" width="152" height="22" rx="4" fill="currentColor" opacity="0.12"/>
+  <text x="434" y="112" font-size="12" font-family="ui-monospace, monospace" fill="currentColor">api.example.test</text>
+  <text x="584" y="112" font-size="12" font-family="ui-monospace, monospace" fill="var(--deny, #b3341f)">.evil.test</text>
+
+  <text x="430" y="148" font-size="11" fill="var(--deny, #b3341f)">startswith() → accepted</text>
+  <text x="430" y="168" font-size="11" fill="currentColor">whole-label equality → rejected</text>
+  <text x="430" y="196" font-size="11" fill="currentColor" opacity="0.75">the rightmost labels decide, not the leftmost</text>
+</svg>
+<figcaption>The same error as filesystem scope, in another tree. Appending <code>.evil.test</code> keeps every character of the allowlisted name while moving the host onto a different branch, so the whole hostname is compared rather than a prefix.</figcaption>
+</figure>
 
   <div class="stage" id="stage"></div>
 

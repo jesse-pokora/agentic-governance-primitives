@@ -37,6 +37,14 @@
   }
   .claim b { display: block; font-size: 0.72rem; text-transform: uppercase;
     letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+  figure.diagram {
+    margin: 0 0 24px; padding: 18px 16px 12px; border: 1px solid var(--line);
+    border-radius: 12px; background: var(--panel); color: var(--ink);
+  }
+  figure.diagram svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+  figure.diagram figcaption {
+    margin-top: 12px; font-size: 0.84rem; color: var(--muted); text-align: center;
+  }
   .stage { border: 1px solid var(--line); border-radius: 12px;
     background: var(--panel); padding: 20px; min-height: 260px; }
   .steplabel { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px;
@@ -105,6 +113,7 @@
   <div class="meta" id="meta"></div>
   <div class="claim"><b>Atomic claim</b><span id="claim"></span></div>
 
+__DIAGRAM__
   <div class="stage" id="stage"></div>
 
   <div class="controls">

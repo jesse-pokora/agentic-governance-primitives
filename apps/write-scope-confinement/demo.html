@@ -37,6 +37,14 @@
   }
   .claim b { display: block; font-size: 0.72rem; text-transform: uppercase;
     letter-spacing: 0.07em; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+  figure.diagram {
+    margin: 0 0 24px; padding: 18px 16px 12px; border: 1px solid var(--line);
+    border-radius: 12px; background: var(--panel); color: var(--ink);
+  }
+  figure.diagram svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+  figure.diagram figcaption {
+    margin-top: 12px; font-size: 0.84rem; color: var(--muted); text-align: center;
+  }
   .stage { border: 1px solid var(--line); border-radius: 12px;
     background: var(--panel); padding: 20px; min-height: 260px; }
   .steplabel { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px;
@@ -104,6 +112,55 @@
   <h1 id="app"></h1>
   <div class="meta" id="meta"></div>
   <div class="claim"><b>Atomic claim</b><span id="claim"></span></div>
+
+  <figure class="diagram">
+<svg viewBox="0 0 720 260" role="img" aria-label="The scope is a subtree, not a string prefix. In the filesystem tree, work-evil is a sibling of work and therefore outside the scope; as strings, work-evil starts with work and a prefix test lets it through.">
+  <defs>
+    <marker id="wsc-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <text x="18" y="22" font-size="12" font-weight="600" fill="currentColor">The filesystem is a tree</text>
+  <text x="400" y="22" font-size="12" font-weight="600" fill="currentColor">A path is not a string</text>
+
+  <!-- scope region -->
+  <rect x="30" y="86" width="120" height="120" rx="8" fill="currentColor" opacity="0.07"/>
+  <text x="90" y="222" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">in scope</text>
+
+  <!-- tree -->
+  <text x="150" y="55" font-size="12" text-anchor="middle" fill="currentColor">&lt;tmp&gt;</text>
+  <line x1="140" y1="62" x2="90" y2="92" stroke="currentColor" stroke-width="1.5" marker-end="url(#wsc-arrow)"/>
+  <line x1="162" y1="62" x2="250" y2="92" stroke="currentColor" stroke-width="1.5" marker-end="url(#wsc-arrow)"/>
+
+  <text x="90" y="106" font-size="12" text-anchor="middle" fill="currentColor">work</text>
+  <line x1="90" y1="114" x2="90" y2="144" stroke="currentColor" stroke-width="1.5" marker-end="url(#wsc-arrow)"/>
+  <text x="90" y="160" font-size="12" text-anchor="middle" fill="currentColor">notes</text>
+  <line x1="90" y1="168" x2="90" y2="188" stroke="currentColor" stroke-width="1.5" marker-end="url(#wsc-arrow)"/>
+  <text x="90" y="202" font-size="12" text-anchor="middle" fill="currentColor">toy.txt</text>
+
+  <text x="250" y="106" font-size="12" text-anchor="middle" fill="var(--deny, #b3341f)">work-evil</text>
+  <line x1="250" y1="114" x2="250" y2="144" stroke="var(--deny, #b3341f)" stroke-width="1.5" marker-end="url(#wsc-arrow)"/>
+  <text x="250" y="160" font-size="12" text-anchor="middle" fill="var(--deny, #b3341f)">stolen.txt</text>
+  <text x="250" y="182" font-size="11" text-anchor="middle" fill="var(--deny, #b3341f)">a sibling, not a child</text>
+
+  <!-- string view -->
+  <line x1="400" y1="52" x2="700" y2="52" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+  <rect x="400" y="72" width="104" height="22" rx="4" fill="currentColor" opacity="0.12"/>
+  <text x="404" y="88" font-size="12" font-family="ui-monospace, monospace" fill="currentColor">&lt;tmp&gt;/work</text>
+  <text x="512" y="88" font-size="11" fill="currentColor" opacity="0.75">the declared scope</text>
+
+  <rect x="400" y="112" width="104" height="22" rx="4" fill="currentColor" opacity="0.12"/>
+  <text x="404" y="128" font-size="12" font-family="ui-monospace, monospace" fill="currentColor">&lt;tmp&gt;/work</text>
+  <text x="506" y="128" font-size="12" font-family="ui-monospace, monospace" fill="var(--deny, #b3341f)">-evil/stolen.txt</text>
+
+  <text x="400" y="164" font-size="11" fill="var(--deny, #b3341f)">startswith() → accepted</text>
+  <text x="400" y="184" font-size="11" fill="currentColor">commonpath() → rejected</text>
+  <text x="400" y="212" font-size="11" fill="currentColor" opacity="0.75">the shared characters are not a shared ancestor</text>
+</svg>
+<figcaption>The scope is a subtree. <code>work-evil</code> shares every character of <code>work</code> and is a sibling of it, so containment is compared component-wise rather than as a string prefix.</figcaption>
+</figure>
 
   <div class="stage" id="stage"></div>
 
