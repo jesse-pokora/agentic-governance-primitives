@@ -72,13 +72,21 @@ is the fastest way to see what this catalog covers:
 |---|---|---|
 | **Enforce** | The gate refuses. The effect does not happen. | Yes — most of the catalog |
 | **Attest** | What happened is provable and tamper-evident afterwards. | Yes — the ledger and attestation apps |
-| **Measure outcomes** | How often it refused, how many refusals were wrong, what it cost. | **No.** Needs production traffic, which toy fixtures cannot have. |
+| **Measure outcomes** | How often it refused, how many refusals were wrong, what it cost. | **No** — see [agentic-governance-outcomes](https://github.com/jesse-pokora/agentic-governance-outcomes) |
 | **Audit the claim** | Is the compliance report itself trustworthy? | Yes — the v1.5 instruction-adherence apps |
 
 The third row is a deliberate hole, not an oversight. A rate like "99.9% policy
 compliance over 24 hours" requires real runs at real volume; no amount of
-further building here produces one. If you need that, you need a runtime that
-sees production traffic.
+further building here produces one, because a demonstration needs a fixture and
+a measurement needs traffic.
+
+It has its own repository —
+[agentic-governance-outcomes](https://github.com/jesse-pokora/agentic-governance-outcomes)
+— which builds the instrument and the preconditions a rate needs before it means
+anything: a reconciled denominator, attributable refusals, and a window, sample
+floor and budget fixed before the number is computed. Its harness reads this
+catalog's 319 recorded decisions, and its README is explicit that a refusal rate
+over demo recordings measures how a catalog chose to demonstrate itself.
 
 **Enforcement is not correctness.** A gate is subtractive: it removes
 possibilities. `write-scope-confinement` stops a write leaving a directory and
