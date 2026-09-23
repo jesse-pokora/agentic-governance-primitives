@@ -195,6 +195,20 @@ an orchestrator: an envelope is not a bus, and a breaker is not a scheduler.
 | [authenticated-agent-message](apps/authenticated-agent-message) | deterministic | built |
 | [delegation-scope-attenuation](apps/delegation-scope-attenuation) | deterministic | built |
 | [declared-objective-conformance](apps/declared-objective-conformance) | deterministic | built |
+
+
+### v1.5 — instruction adherence, gated deterministically
+
+Whether an agent followed the instructions that define what it does. The part
+that is mechanically checkable is gated here; the part that is not is reported
+as unchecked rather than quietly assumed.
+
+| App | Enforcement | Status |
+|---|---|---|
+| [absent-evidence-is-not-compliance](apps/absent-evidence-is-not-compliance) | deterministic | built |
+| [falsifiable-instruction-check](apps/falsifiable-instruction-check) | deterministic | built |
+| [instruction-policy-gate](apps/instruction-policy-gate) | deterministic | built |
+| [permissive-contract-is-a-gap](apps/permissive-contract-is-a-gap) | deterministic | built |
 <!-- END MANAGED BLOCK -->
 
 ## What the catalog adds up to

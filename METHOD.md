@@ -78,10 +78,10 @@ How the catalog currently distributes across both, generated from
 <!-- BEGIN MANAGED BLOCK -->
 | Enforcement | Apps | | Criticality | Apps |
 |---|---|---|---|---|
-| deterministic | 43 of 47 | C0 | 20 of 47 |
-| hybrid | 3 of 47 | C1 | 17 of 47 |
-| informational | 1 of 47 | C2 | 8 of 47 |
-| | | C3 | 2 of 47 |
+| deterministic | 47 of 51 | C0 | 20 of 51 |
+| hybrid | 3 of 51 | C1 | 21 of 51 |
+| informational | 1 of 51 | C2 | 8 of 51 |
+| | | C3 | 2 of 51 |
 <!-- END MANAGED BLOCK -->
 
 Criticality is about the **consequence of the control being absent**, not about

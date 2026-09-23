@@ -31,6 +31,7 @@ RELEASES = [
     ("v1.2", "### v1.2 — model-behavior constraint & drift detection\n\nReliability rather than security: the deterministic gates a nondeterministic\nmodel is wrapped in, so its output becomes predictable."),
     ("v1.3", "### v1.3 — derived from an atomic instruction and test matrix\n\nFound by reading a 192-criterion instruction-adherence matrix for one real\ngoverned agent and asking which of its themes had no teaching app here."),
     ("v1.4", "### v1.4 — the multi-agent risks, as primitives\n\nThe risks that involve more than one agent, built as contracts rather than as\nan orchestrator: an envelope is not a bus, and a breaker is not a scheduler."),
+    ("v1.5", "### v1.5 — instruction adherence, gated deterministically\n\nWhether an agent followed the instructions that define what it does. The part\nthat is mechanically checkable is gated here; the part that is not is reported\nas unchecked rather than quietly assumed."),
 ]
 
 TIER_TITLES = {

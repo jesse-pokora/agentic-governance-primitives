@@ -1,0 +1,98 @@
+{
+  "app": "falsifiable-instruction-check",
+  "claim": "An instruction registers only if its own checker rejects the violating fixture it ships and accepts the satisfying one \u2014 a checker that cannot discriminate between them is refused.",
+  "enforcement": "deterministic",
+  "denial_type": "NotFalsifiable",
+  "steps": [
+    {
+      "label": "a checker that tells the two fixtures apart",
+      "request": {
+        "instruction": "must not call eval()",
+        "violating": "result = eval(user_input)",
+        "satisfying": "result = int(user_input)"
+      },
+      "outcome": "allowed",
+      "result": "registered INS-010",
+      "reason": "",
+      "detail": "",
+      "evidence": "the fixtures stay attached, so the claim can be re-verified rather than trusted",
+      "note": ""
+    },
+    {
+      "label": "a checker that passes everything",
+      "request": {
+        "check": "lambda source: True",
+        "violating": "result = eval(user_input)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "checker_accepts_violation",
+      "detail": "INS-011 passes an artifact it is supposed to reject",
+      "evidence": "",
+      "note": "A policy full of checkers that never fire reports total compliance and means nothing."
+    },
+    {
+      "label": "a checker that fails everything",
+      "request": {
+        "check": "lambda source: False",
+        "satisfying": "result = int(user_input)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "checker_rejects_satisfying",
+      "detail": "INS-012 fails an artifact it is supposed to accept",
+      "evidence": "",
+      "note": "Not vacuous, useless in the other direction: it would fail every artifact and be switched off within a day."
+    },
+    {
+      "label": "a checker looking for the wrong string",
+      "request": {
+        "instruction": "must not call eval()",
+        "check": "'evaluate(' not in source"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "checker_accepts_violation",
+      "detail": "INS-013 passes an artifact it is supposed to reject",
+      "evidence": "reads correctly, matches nothing",
+      "note": "The real shape of this bug. Without a violating fixture it passes every artifact forever, silently, and looks exactly like a checker that works."
+    },
+    {
+      "label": "an instruction shipped without a violating fixture",
+      "request": {
+        "violating": "(none)",
+        "satisfying": "result = int(user_input)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "missing_violating_fixture",
+      "detail": "INS-014",
+      "evidence": "",
+      "note": "Without one there is no way to tell a strict checker from a stub."
+    },
+    {
+      "label": "a checker that raises on its own fixture",
+      "request": {
+        "check": "raises RuntimeError"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "checker_errored",
+      "detail": "INS-016 raised RuntimeError on its violating fixture",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "what a registry ends up holding",
+      "request": {
+        "offered": "INS-010 (sound), INS-011 (vacuous)"
+      },
+      "outcome": "allowed",
+      "result": "[\"INS-010\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "only the falsifiable one was admitted",
+      "note": ""
+    }
+  ]
+}

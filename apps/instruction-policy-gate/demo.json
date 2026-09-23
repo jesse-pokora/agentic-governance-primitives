@@ -1,0 +1,95 @@
+{
+  "app": "instruction-policy-gate",
+  "claim": "Every declared instruction receives an explicit verdict from a fixed vocabulary \u2014 and an instruction with no mechanical checker is reported as unenforceable, never counted as satisfied.",
+  "enforcement": "deterministic",
+  "denial_type": "PolicyRejected",
+  "steps": [
+    {
+      "label": "three instructions, two with checkers",
+      "request": {
+        "INS-001": "has a checker",
+        "INS-002": "has a checker",
+        "INS-003": "prose, no mechanical check"
+      },
+      "outcome": "allowed",
+      "result": "[\"INS-001: passed\", \"INS-002: not_applicable\", \"INS-003: unenforceable\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "one row per declared instruction: 3 of 3",
+      "note": "The instructions nobody could check are exactly the ones worth knowing about. Leaving them out of the report is how a policy that verifies a third of itself reads as green."
+    },
+    {
+      "label": "what the report says about coverage",
+      "request": {
+        "admitted": "nothing failed",
+        "question": "was everything checked?"
+      },
+      "outcome": "allowed",
+      "result": "admitted=True, coverage=2 of 3 checked",
+      "reason": "",
+      "detail": "",
+      "evidence": "'nothing failed' and 'everything was verified' are different statements",
+      "note": ""
+    },
+    {
+      "label": "not_applicable is not passed",
+      "request": {
+        "INS-002": "no module-level assignments exist to check"
+      },
+      "outcome": "allowed",
+      "result": "[\"INS-002\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": "An instruction with nothing to apply to has not been satisfied. Collapsing the two inflates every percentage in the report."
+    },
+    {
+      "label": "one instruction fails",
+      "request": {
+        "INS-004": "checker reports a violation"
+      },
+      "outcome": "allowed",
+      "result": "admitted=False, failed=['INS-004']",
+      "reason": "",
+      "detail": "",
+      "evidence": "Repo() built at line 7",
+      "note": ""
+    },
+    {
+      "label": "a checker trying to mark its own instruction unenforceable",
+      "request": {
+        "INS-009": "checker returns 'unenforceable'"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "invalid_verdict",
+      "detail": "INS-009 returned 'unenforceable'",
+      "evidence": "",
+      "note": "Unenforceable is what the absence of a checker produces. If a checker could return it, an instruction could mark itself unverifiable and vanish from the part of the report anyone reads."
+    },
+    {
+      "label": "a checker that invents a verdict",
+      "request": {
+        "INS-005": "checker returns 'probably fine'"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "invalid_verdict",
+      "detail": "INS-005 returned 'probably fine'",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a checker that raises",
+      "request": {
+        "INS-006": "checker raises RuntimeError"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "checker_errored",
+      "detail": "INS-006: RuntimeError",
+      "evidence": "",
+      "note": "A broken checker invalidates the whole report rather than failing one instruction. A report that is wrong somewhere unknown is worse than no report."
+    }
+  ]
+}

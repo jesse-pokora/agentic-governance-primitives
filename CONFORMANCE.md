@@ -77,6 +77,7 @@ supports the criterion without demonstrating it.
 
 | App | OWASP ASI (2026) | NIST SP 800-53 Rev 5 | ISO/IEC 42001 Annex A | Strength |
 |---|---|---|---|---|
+| absent-evidence-is-not-compliance | — | CA-2, AU-12 | A.6.2.4 | adjacent |
 | attested-rollback-checkpoint | ASI08 | CP-10, SI-7 | A.6.2.6 | direct |
 | bounded-execution-budget | ASI10 | SC-5, AC-3 | A.6.2.6 | direct |
 | bounded-review-epoch-escalation | ASI09, ASI10 | AC-3, CM-3 | A.9.2 | direct |
@@ -85,9 +86,12 @@ supports the criterion without demonstrating it.
 | concurrent-append-integrity | — | AU-9, AU-12 | A.6.2.8 | direct |
 | deterministic-ledger-replay | ASI06 | AU-9, AU-10, SI-7 | A.6.2.8 | direct |
 | failure-bulkhead | ASI08 | SC-5, CP-10 | A.6.2.6 | direct |
+| falsifiable-instruction-check | — | CA-2, SA-11 | A.6.2.4 | adjacent |
 | forward-only-revert-journal | ASI08 | AU-9, AU-11, SR-9 | A.6.2.8 | direct |
+| instruction-policy-gate | ASI10 | CA-2, AU-12 | A.6.2.4 | direct |
 | non-overlapping-error-mapping | — | SI-10, SI-11 | A.6.2.4 | adjacent |
 | optional-input-does-not-block | — | SI-10, CP-2 | A.9.2 | adjacent |
+| permissive-contract-is-a-gap | — | SI-10, CA-2 | A.6.2.4 | adjacent |
 | producer-approver-separation | ASI03, ASI09 | AC-5, AU-10, CM-3 | A.9.2 | direct |
 | provable-dry-run | ASI02 | CM-3, AU-12 | A.6.2.4 | direct |
 | trusted-revision-anchor | ASI04 | CM-3, SI-7, SR-4 | A.6.2.5 | direct |

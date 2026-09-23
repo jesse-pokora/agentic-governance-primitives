@@ -1,0 +1,73 @@
+{
+  "app": "permissive-contract-is-a-gap",
+  "claim": "If a contract admits a value the instruction forbids, that is a gap \u2014 recorded even when no artifact has ever sent such a value.",
+  "enforcement": "deterministic",
+  "denial_type": "ContractRejected",
+  "steps": [
+    {
+      "label": "a contract that rejects every forbidden value",
+      "request": {
+        "contract": "string, min length 1, must contain non-whitespace",
+        "rules": "RS-109, RS-111"
+      },
+      "outcome": "allowed",
+      "result": "[\"RS-109: enforced\", \"RS-111: enforced\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "",
+      "note": ""
+    },
+    {
+      "label": "a contract that only checks length",
+      "request": {
+        "contract": "string, min length 1",
+        "rules": "RS-109, RS-111"
+      },
+      "outcome": "allowed",
+      "result": "[\"RS-109: enforced\", \"RS-111: contract_gap\"]",
+      "reason": "",
+      "detail": "",
+      "evidence": "admitted by the contract: '   ', '/t', '/n'",
+      "note": "RS-109 holds because the empty string is rejected. RS-111 does not, because whitespace sails through \u2014 and nothing about today's traffic would tell you that."
+    },
+    {
+      "label": "every real value passes, and the gap is reported anyway",
+      "request": {
+        "contract": "string, any length",
+        "real traffic": "'summarize the repo', 'list the toy paths', 'explain the tests'"
+      },
+      "outcome": "allowed",
+      "result": "all real traffic accepted: True; gaps: ['RS-109', 'RS-111']",
+      "reason": "",
+      "detail": "",
+      "evidence": "the audit takes a contract and rules \u2014 there is nowhere to pass a sample",
+      "note": "The most comfortable failure there is. Every sample passes, every test is green, and the only thing holding the line is that nobody has yet sent the empty string the schema has always accepted."
+    },
+    {
+      "label": "a rule that forbids nothing",
+      "request": {
+        "rule": "RS-000 'be sensible'",
+        "forbidden examples": "(none)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "rule_forbids_nothing",
+      "detail": "RS-000",
+      "evidence": "",
+      "note": "It cannot be violated, so a contract cannot fail it, so declaring it proves nothing."
+    },
+    {
+      "label": "auditing a contract against no rules at all",
+      "request": {
+        "contract": "string, min length 1",
+        "rules": "(none)"
+      },
+      "outcome": "denied",
+      "result": "",
+      "reason": "no_rules",
+      "detail": "a contract audited against nothing passes",
+      "evidence": "",
+      "note": ""
+    }
+  ]
+}

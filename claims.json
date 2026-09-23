@@ -1,6 +1,31 @@
 {
   "apps": [
     {
+      "name": "absent-evidence-is-not-compliance",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "CA-2",
+        "AU-12"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C1",
+      "claim": "A criterion whose checker exists but produced no evidence in this run is recorded as not_observed — never as passed, and never dropped from the report.",
+      "enforcement": "deterministic",
+      "denial_type": "ObservationRejected",
+      "modules": [
+        "observation.py"
+      ],
+      "tests": [
+        "test_observation.py"
+      ],
+      "demo_steps": 7
+    },
+    {
       "name": "argv-not-shell-invocation",
       "tier": 1,
       "release": "v1.3",
@@ -488,6 +513,31 @@
       "criticality": "C1"
     },
     {
+      "name": "falsifiable-instruction-check",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "CA-2",
+        "SA-11"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C1",
+      "claim": "An instruction registers only if its own checker rejects the violating fixture it ships and accepts the satisfying one — a checker that cannot discriminate between them is refused.",
+      "enforcement": "deterministic",
+      "denial_type": "NotFalsifiable",
+      "modules": [
+        "falsifiable.py"
+      ],
+      "tests": [
+        "test_falsifiable.py"
+      ],
+      "demo_steps": 7
+    },
+    {
       "name": "forward-only-revert-journal",
       "tier": 2,
       "release": "v1.1",
@@ -686,6 +736,33 @@
       "criticality": "C0"
     },
     {
+      "name": "instruction-policy-gate",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [
+        "ASI10"
+      ],
+      "nist": [
+        "CA-2",
+        "AU-12"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "direct",
+      "criticality": "C1",
+      "claim": "Every declared instruction receives an explicit verdict from a fixed vocabulary — and an instruction with no mechanical checker is reported as unenforceable, never counted as satisfied.",
+      "enforcement": "deterministic",
+      "denial_type": "PolicyRejected",
+      "modules": [
+        "policy_gate.py"
+      ],
+      "tests": [
+        "test_policy_gate.py"
+      ],
+      "demo_steps": 7
+    },
+    {
       "name": "managed-block-confinement",
       "tier": 1,
       "release": "v1.3",
@@ -816,6 +893,31 @@
       ],
       "strength": "adjacent",
       "criticality": "C2"
+    },
+    {
+      "name": "permissive-contract-is-a-gap",
+      "tier": 2,
+      "release": "v1.5",
+      "asi": [],
+      "nist": [
+        "SI-10",
+        "CA-2"
+      ],
+      "iso": [
+        "A.6.2.4"
+      ],
+      "strength": "adjacent",
+      "criticality": "C1",
+      "claim": "If a contract admits a value the instruction forbids, that is a gap — recorded even when no artifact has ever sent such a value.",
+      "enforcement": "deterministic",
+      "denial_type": "ContractRejected",
+      "modules": [
+        "contract_gap.py"
+      ],
+      "tests": [
+        "test_contract_gap.py"
+      ],
+      "demo_steps": 5
     },
     {
       "name": "persona-capability-catalog",

@@ -92,7 +92,7 @@
 <body>
 <div class="wrap">
   <h1>Agentic Governance Primitives</h1>
-  <p class="tagline">47 primitives. Each one is a single claim with a test that fails if the claim stops being true.</p>
+  <p class="tagline">51 primitives. Each one is a single claim with a test that fails if the claim stops being true.</p>
   <p class="lede">
     Every app here demonstrates exactly one governed-agent-execution property,
     standalone, with no orchestrator and no dependency on any other codebase.
@@ -438,7 +438,7 @@
       </article>
     </section>
     <section>
-      <h3>Tier 2 &middot; Review &amp; process governance <span class="count">16</span></h3>
+      <h3>Tier 2 &middot; Review &amp; process governance <span class="count">20</span></h3>
       <article class="app">
         <div class="head">
           <a class="name" href="apps/producer-approver-separation/demo.html">producer-approver-separation</a>
@@ -463,6 +463,19 @@
         <div class="links">
           <a href="apps/typed-ledger-slot-supersession/demo.html">run the demo</a>
           <a href="apps/typed-ledger-slot-supersession/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/absent-evidence-is-not-compliance/demo.html">absent-evidence-is-not-compliance</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">A criterion whose checker exists but produced no evidence in this run is recorded as not_observed — never as passed, and never dropped from the report.</p>
+        
+        <div class="links">
+          <a href="apps/absent-evidence-is-not-compliance/demo.html">run the demo</a>
+          <a href="apps/absent-evidence-is-not-compliance/README.md">read the claim</a>
         </div>
       </article>
       <article class="app">
@@ -545,6 +558,19 @@
       </article>
       <article class="app">
         <div class="head">
+          <a class="name" href="apps/falsifiable-instruction-check/demo.html">falsifiable-instruction-check</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">An instruction registers only if its own checker rejects the violating fixture it ships and accepts the satisfying one — a checker that cannot discriminate between them is refused.</p>
+        
+        <div class="links">
+          <a href="apps/falsifiable-instruction-check/demo.html">run the demo</a>
+          <a href="apps/falsifiable-instruction-check/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
           <a class="name" href="apps/forward-only-revert-journal/demo.html">forward-only-revert-journal</a>
           <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
           <span class="enf">deterministic</span>
@@ -554,6 +580,32 @@
         <div class="links">
           <a href="apps/forward-only-revert-journal/demo.html">run the demo</a>
           <a href="apps/forward-only-revert-journal/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/instruction-policy-gate/demo.html">instruction-policy-gate</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">Every declared instruction receives an explicit verdict from a fixed vocabulary — and an instruction with no mechanical checker is reported as unenforceable, never counted as satisfied.</p>
+        
+        <div class="links">
+          <a href="apps/instruction-policy-gate/demo.html">run the demo</a>
+          <a href="apps/instruction-policy-gate/README.md">read the claim</a>
+        </div>
+      </article>
+      <article class="app">
+        <div class="head">
+          <a class="name" href="apps/permissive-contract-is-a-gap/demo.html">permissive-contract-is-a-gap</a>
+          <span class="chip C1" title="governance degrades, or a fact an auditor needs is hidden">C1</span>
+          <span class="enf">deterministic</span>
+        </div>
+        <p class="claim">If a contract admits a value the instruction forbids, that is a gap — recorded even when no artifact has ever sent such a value.</p>
+        
+        <div class="links">
+          <a href="apps/permissive-contract-is-a-gap/demo.html">run the demo</a>
+          <a href="apps/permissive-contract-is-a-gap/README.md">read the claim</a>
         </div>
       </article>
       <article class="app">
