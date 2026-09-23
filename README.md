@@ -1,11 +1,51 @@
 # Agentic Governance Primitives
 
-A collection of small, standalone demonstration apps, each showing **one**
-governed-agent-execution concept in isolation. This is its own independent
-project — it does not live inside, depend on, or ship code from any other
-repository. Its catalog was inspired by governance patterns observed in
-Baker Tilly's `Multiagentic-SDLC` (a large agentic-SDLC governance system),
-but every app here is built fresh, standalone, and self-contained.
+**An executable assurance case for agent governance.** Fifty-nine controls,
+each stated as one testable claim, each with a test that fails if the claim
+stops being true, and each with a page that animates the real code enforcing
+it.
+
+Governance claims are usually prose. "We enforce least privilege" is a
+sentence; nobody can run it. Every claim here is a sentence *and* an
+executable, and where a claim cannot be made deterministically the repo says
+so rather than rounding up.
+
+## Reading this in ten minutes
+
+If you are assessing this rather than using it, these six artifacts carry the
+argument. They are chosen for the claims they **decline** to make.
+
+| Read | For |
+|---|---|
+| [generated-code-admission-gate](apps/generated-code-admission-gate) | Opens by refusing its own most attractive claim: an admission gate is not a sandbox, and saying otherwise would make it the most dangerous app here |
+| [structural-duplicate-detection](apps/structural-duplicate-detection) | States what it cannot catch, and why a similarity threshold would not be deterministic however carefully the number is picked |
+| [optional-input-does-not-block](apps/optional-input-does-not-block) | Built as a counterweight after 33 apps of refusing, because a catalog that only teaches fail-closed produces agents that cannot start |
+| [CONFORMANCE.md](CONFORMANCE.md) | Maps to OWASP ASI 2026, NIST SP 800-53 and ISO/IEC 42001 — and defines "covered" as *one control demonstrated*, never *the risk handled* |
+| [PLAN.md](PLAN.md) | Records a scope rule being misread for three revisions, and the correction: "The rule did not change; the reading of it was wrong" |
+| [METHOD.md](METHOD.md) | The transferable part — how a claim is scoped, and the one-sentence test that says when an app should be split |
+
+## How this was built
+
+Directed and reviewed by [Jesse Pokora](https://github.com/jesse-pokora),
+written with Claude (Anthropic) as a pair, over two days. Every commit carries
+the co-authorship; none of it is concealed, because the interesting work is not
+the typing.
+
+What the history shows, if you want to check the direction rather than take it
+on trust:
+
+- **Scope corrections.** Three agentic risks were filed as out-of-scope on a
+  misreading of this repo's own rule; commit `71ed122` reverses that and
+  explains why an envelope is not a bus.
+- **Claims cut back under evidence.** CI regenerating a demo on Linux revealed
+  that `reduced-child-environment` could not claim what its README implied;
+  commit `c4c6195` narrows the claim rather than working around the finding.
+- **The catalog turned on itself.** `tools/self_check.py` runs this repo's own
+  duplicate detector over its own 324 functions, finds a genuine redundancy,
+  and records which of the other findings are deliberate.
+- **Tests that test the mechanism.** The no-shell check parses its own module's
+  AST rather than grepping it, because the prose mentions `shell=True` in order
+  to say it is never used.
 
 ## Why this repo exists
 
@@ -22,6 +62,39 @@ with no orchestrator, no multi-agent pipeline, and no dependency on any
 other codebase. **Bias is toward individual features, not orchestration** —
 see [PLAN.md](PLAN.md) for the explicit list of what this repo deliberately
 does *not* build (yet).
+
+## What this is, and what it is not
+
+Governing an agent is four jobs, and they get conflated constantly. Naming them
+is the fastest way to see what this catalog covers:
+
+| Job | What it means | Here? |
+|---|---|---|
+| **Enforce** | The gate refuses. The effect does not happen. | Yes — most of the catalog |
+| **Attest** | What happened is provable and tamper-evident afterwards. | Yes — the ledger and attestation apps |
+| **Measure outcomes** | How often it refused, how many refusals were wrong, what it cost. | **No.** Needs production traffic, which toy fixtures cannot have. |
+| **Audit the claim** | Is the compliance report itself trustworthy? | Yes — the v1.5 instruction-adherence apps |
+
+The third row is a deliberate hole, not an oversight. A rate like "99.9% policy
+compliance over 24 hours" requires real runs at real volume; no amount of
+further building here produces one. If you need that, you need a runtime that
+sees production traffic.
+
+**Enforcement is not correctness.** A gate is subtractive: it removes
+possibilities. `write-scope-confinement` stops a write leaving a directory and
+has no opinion on whether the file is any good; `exact-plan-approval-gate`
+binds an approval to a plan and cannot tell you the plan was sensible. What
+enforcement buys is a bounded blast radius and an attributable refusal — never
+a correct agent. Everything about whether the work was *good* lives in
+measurement, and measurement of a stochastic system is probabilistic.
+
+**This is a teaching catalog, not infrastructure.** Every app runs against toy
+fixtures. None is a production control, and running them proves nothing about
+any system that has not adopted them. For governing real agents in production,
+[microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit)
+is a serious, actively maintained implementation — see the comparison in
+[CONFORMANCE.md](CONFORMANCE.md), which also records where its coverage and
+this catalog's differ.
 
 ## Relationship to the Instruction Adherence Bench (IAB)
 
@@ -77,26 +150,40 @@ module raised. See [demos/](demos) for the workflow.
 
 ## Reference documents
 
-The [Docs/](Docs) folder holds the source documents this repo's discipline is
-based on:
+The discipline here derives from four internal Baker Tilly documents — the
+Instruction Adherence Bench proposal (Pokora, v0.5), its two-page short form,
+the Agentic SDLC POC Grading Rubric, and a 192-criterion Repository Summary
+atomic instruction and test matrix.
 
-- [IAB-proposal-2pp.docx](Docs/IAB-proposal-2pp.docx) — the short-form
-  Instruction Adherence Bench proposal.
-- [Instruction-Adherence-Bench-proposal.docx](Docs/Instruction-Adherence-Bench-proposal.docx) —
-  the full IAB proposal (Pokora, v0.5).
-- [Agentic-SDLC-POC-Grading-Rubric.docx](Docs/Agentic-SDLC-POC-Grading-Rubric.docx) —
-  the companion grading rubric each app's atomic claim is written to satisfy.
-- [Repository-Summary-Atomic-Instruction-Test-Matrix.docx](Docs/Repository-Summary-Atomic-Instruction-Test-Matrix.docx) —
-  the atomic-instruction test matrix referenced by the rubric.
+**Those documents are not distributed with this repository.** The matrix is
+marked Confidential — Internal Use Only, and the catalog is built so it does
+not need them: every app states its own claim, and
+[METHOD.md](METHOD.md) carries the conventions they taught without
+reproducing their contents.
+
+The four, for the record:
+
+- *Instruction Adherence Bench proposal* (Pokora, v0.5), and its two-page
+  short form — the argument that an instruction earns its place only if it is
+  followed, needed, worth its cost, and produces better work.
+- *Agentic SDLC POC Grading Rubric* — the companion each app's atomic claim is
+  written to satisfy.
+- *Repository Summary: Atomic Instruction and Test Matrix* — 192 criteria for
+  one governed agent, which the v1.3 and v1.5 apps were derived from by asking
+  which of its themes had no teaching app here.
 
 ## Layout
 
 ```
 agentic-governance-primitives/
-  README.md          this file
-  PLAN.md             the full decomposition catalog and build phasing
-  Docs/               reference documents (IAB proposal, grading rubric, test matrix)
-  apps/               one directory per demo app (created as each is built)
+  README.md           this file
+  METHOD.md           how an app here is written, and how to scope a new one
+  CONFORMANCE.md      mapping to OWASP ASI 2026, NIST SP 800-53, ISO/IEC 42001
+  PLAN.md             the catalog, its phasing, and what is deliberately excluded
+  index.html          the front door: every app, by tier and criticality
+  apps/               one directory per app
+  compositions/       the one artifact that shows the apps composing
+  demos/              the recorder, renderer, diagrams and Playwright suite
 ```
 
 ## Status
